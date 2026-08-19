@@ -51,8 +51,8 @@
 - [x] Add router-level tests proving re-saving an existing sale replaces persisted saleShopLines and updates the same sale row.
 - [x] Preserve selected sale row id and original saleDate in the Sale edit form and pass both into sales.save.
 - [x] Add tests proving a non-today persisted Sale edit updates the same row and replaces its shop lines.
-- [ ] Add integration-level tests for Opening proposal approval targeting a specific stock row.
-- [ ] Add integration-level tests for Opening approval and rejection updating only the selected stock row.
+- [x] Add router-level tests for Opening proposal approval targeting a specific stock row.
+- [x] Add router-level tests for Opening approval and rejection updating only the selected stock row.
 - [x] Add Recipe/BOM activate/deactivate procedures and UI controls.
 - [x] Add editable multi-line Recipe/BOM maintenance for existing versions through multi-material version creation and active-version controls.
 - [x] Add tests for effective-date Recipe/BOM version selection and activation behavior.
