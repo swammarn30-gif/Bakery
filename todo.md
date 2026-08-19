@@ -34,16 +34,20 @@
 - [x] Build Opening Stock proposal UI plus admin approval screen, and render pending values in a faded style while official calculations use approved values.
 - [x] Replace the Sale placeholder with a real sale table supporting product rows, shop breakdown lines, total sell aggregation, and closing calculation.
 - [ ] Complete mobile-first tables/forms for all implemented workflows and verify touch-friendly behavior on small screens.
-- [ ] Implement editable sale rows keyed by date and product so repeat entry updates the existing main row instead of hitting the unique constraint.
-- [ ] Add shop-breakdown detail viewing/editing for persisted sale rows.
+- [x] Implement editable sale rows keyed by date and product so repeat entry updates the existing main row instead of hitting the unique constraint.
+- [x] Add persisted shop-breakdown detail viewing for sale rows; editing remains protected by the same save/upsert workflow.
 - [x] Add calculation tests for multiple shops and repeated-save-safe sale aggregation.
 - [x] Add tests for repeated save/update on the same sale date and product to verify idempotent sale aggregation behavior.
 - [x] Add calculation tests covering multi-shop aggregation and multiple products in the sale workflow.
 - [x] Implement full item-master edit controls for name, unit, type, and minimum stock.
 - [x] Fix Opening Stock proposal submission to target the selected item row instead of the first row for the date.
 - [x] Verify pending and approved Opening behavior per selected stock row through the selected-row lookup and approval tests.
-- [ ] Build Stock Adjustment submission UI and connect it to adjustments.submit.
+- [x] Build Stock Adjustment submission UI and connect it to adjustments.submit.
 - [ ] Refactor item-master editing to controlled edit state so fields do not overwrite each other.
 - [ ] Add tests for Opening approval selected-row targeting, pending display, approval, and rejection behavior.
 - [ ] Add router-level tests for sales.save saving the same product/date twice and updating the existing sale row.
 - [ ] Add router-level tests for replacing persisted saleShopLines when re-saving the same sale row.
+- [x] Implement persisted Sale row editing that loads an existing sale and shop lines into the Sale form before saving.
+- [ ] Add router/UI tests proving re-saving an existing sale replaces persisted saleShopLines and updates the same sale row.
+- [x] Preserve selected sale row id and original saleDate in the Sale edit form and pass both into sales.save.
+- [ ] Add tests proving a non-today persisted Sale edit updates the same row and replaces its shop lines.
