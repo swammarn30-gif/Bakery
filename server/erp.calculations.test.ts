@@ -90,7 +90,7 @@ describe("ERP calculations", () => {
   });
 
   it("validates backup schema versions and required collections", () => {
-    const valid = { schemaVersion: 1, items: [], purchases: [], dailyStock: [], orders: [], sales: [], shops: [], recipes: [], stockAdjustments: [] };
+    const valid = { schemaVersion: 1, items: [], purchases: [], dailyStock: [], orders: [], sales: [], shops: [], recipes: [], recipeLines: [], saleShopLines: [], stockAdjustments: [] };
     expect(validateBackupSnapshot(valid).valid).toBe(true);
     expect(validateBackupSnapshot({ ...valid, schemaVersion: 2 }).valid).toBe(false);
     expect(validateBackupSnapshot({ schemaVersion: 1, items: [] }).valid).toBe(false);

@@ -100,7 +100,7 @@ export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) 
   if (!snapshot || typeof snapshot !== "object") return { valid: false, error: "Backup must be an object" };
   const record = snapshot as Record<string, unknown>;
   if (record.schemaVersion !== supportedVersion) return { valid: false, error: `Unsupported schema version: ${String(record.schemaVersion)}` };
-  const collections = ["items", "purchases", "dailyStock", "orders", "sales", "shops", "recipes", "stockAdjustments"];
+  const collections = ["items", "purchases", "dailyStock", "orders", "sales", "shops", "recipes", "recipeLines", "saleShopLines", "stockAdjustments"];
   const missing = collections.filter(key => !Array.isArray(record[key]));
   return missing.length ? { valid: false, error: `Missing collections: ${missing.join(", ")}` } : { valid: true as const };
 }
