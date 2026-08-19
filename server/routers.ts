@@ -46,6 +46,17 @@ export const appRouter = router({
       ].sort((a, b) => a.date.localeCompare(b.date));
       return { averageCost, events, totals: { quantity: events.reduce((sum, event) => sum + event.quantity, 0), value: events.reduce((sum, event) => sum + event.value, 0) } };
     }),
+    summary: protectedProcedure.input(dateRange).query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { productionRows: 0, packagingRows: 0, saleRows: 0, purchaseRows: 0, movementQuantity: 0, purchaseValue: 0, salesQuantity: 0 };
+      const [productionRows, packagingRows, saleRows, purchaseRows] = await Promise.all([
+        db.select().from(dailyStock).where(and(eq(dailyStock.department, "production"), gte(dailyStock.stockDate, input.from), lte(dailyStock.stockDate, input.to))),
+        db.select().from(dailyStock).where(and(eq(dailyStock.department, "packaging"), gte(dailyStock.stockDate, input.from), lte(dailyStock.stockDate, input.to))),
+        db.select().from(sales).where(and(gte(sales.saleDate, input.from), lte(sales.saleDate, input.to))),
+        db.select().from(purchases).where(and(gte(purchases.purchaseDate, input.from), lte(purchases.purchaseDate, input.to))),
+      ]);
+      return { productionRows: productionRows.length, packagingRows: packagingRows.length, saleRows: saleRows.length, purchaseRows: purchaseRows.length, movementQuantity: [...productionRows, ...packagingRows].reduce((sum, row) => sum + Number(row.inQty) + Number(row.issued), 0), purchaseValue: purchaseRows.reduce((sum, row) => sum + Number(row.quantity) * Number(row.unitCost), 0), salesQuantity: saleRows.reduce((sum, row) => sum + Number(row.sell), 0) };
+    }),
   }),
   items: router({
     list: protectedProcedure.query(() => listItems()),
