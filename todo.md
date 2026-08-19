@@ -58,8 +58,8 @@
 - [x] Add tests for effective-date Recipe/BOM version selection and activation behavior.
 - [x] Expose inactive Recipe/BOM versions in the Orders panel and add Activate controls.
 - [x] Add tests for recipe activation/deactivation and single-active-version enforcement.
-- [ ] Add router-level tests for recipes.setActive activation and deactivation, including single-active enforcement.
-- [ ] Add a test proving an inactive Recipe/BOM version can be reactivated and appears in the full recipe list.
+- [x] Add router-level tests for recipes.setActive activation and deactivation, including single-active enforcement.
+- [x] Add a test proving an inactive Recipe/BOM version can be reactivated and appears in the full recipe list.
 - [x] Add Recipe/BOM update procedures for existing headers and saved material lines.
 - [x] Add UI to load an existing Recipe/BOM version into an editable multi-line form and save it back to the same version.
 - [ ] Add tests proving existing Recipe/BOM versions can be edited and multi-line materials persist correctly.
