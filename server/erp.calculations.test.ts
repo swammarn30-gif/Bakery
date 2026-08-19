@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, saleRowKey, sumShopQuantities, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, saleRowKey, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -28,6 +28,14 @@ describe("ERP calculations", () => {
 
   it("keeps quantity and value separate", () => {
     expect(valueOf(73, 2500)).toBe(182500);
+  });
+
+  it("rejects duplicate and approved Excel import rows", () => {
+    const rows = [{ Date: "2026-08-19", Department: "production", Item: "Flour", Unit: "kg" }, { Date: "2026-08-19", Department: "production", Item: "Flour", Unit: "kg" }];
+    const result = validateImportRows(rows, new Set(["2026-08-20|production|Sugar"]));
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(error => error.includes("duplicate"))).toBe(true);
+    expect(validateImportRows([{ Date: "2026-08-20", Department: "production", Item: "Sugar", Unit: "kg" }], new Set(["2026-08-20|production|Sugar"])).errors[0]).toContain("approved");
   });
 
   it("uses one identity for repeated same-date/product sale saves", () => {

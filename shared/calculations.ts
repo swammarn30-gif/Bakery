@@ -54,6 +54,23 @@ export function carryForwardOpening(previousApprovedClosing: number | null | und
   return previousApprovedClosing === null || previousApprovedClosing === undefined ? fallback : previousApprovedClosing;
 }
 
+export const STANDARD_IMPORT_COLUMNS = ["Date", "Department", "Item", "Unit", "Opening", "In", "Issued", "Return", "Damage", "Note"] as const;
+
+export function validateImportRows(rows: Array<Record<string, unknown>>, approvedKeys: Set<string> = new Set()) {
+  const errors: string[] = []; const seen = new Set<string>();
+  rows.forEach((row, index) => { const key = `${String(row.Date ?? "")}|${String(row.Department ?? "")}|${String(row.Item ?? "")}`; if (!row.Date || !row.Department || !row.Item || !row.Unit) errors.push(`Row ${index + 2}: Date, Department, Item, and Unit are required`); if (seen.has(key)) errors.push(`Row ${index + 2}: duplicate row`); if (approvedKeys.has(key)) errors.push(`Row ${index + 2}: approved data cannot be overwritten`); seen.add(key); });
+  return { valid: errors.length === 0, errors };
+}
+
+export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) {
+  if (!snapshot || typeof snapshot !== "object") return { valid: false, error: "Backup must be an object" };
+  const record = snapshot as Record<string, unknown>;
+  if (record.schemaVersion !== supportedVersion) return { valid: false, error: `Unsupported schema version: ${String(record.schemaVersion)}` };
+  const collections = ["items", "purchases", "dailyStock", "orders", "sales", "shops", "recipes", "stockAdjustments"];
+  const missing = collections.filter(key => !Array.isArray(record[key]));
+  return missing.length ? { valid: false, error: `Missing collections: ${missing.join(", ")}` } : { valid: true as const };
+}
+
 export function normalizeDateRange(from: string, to: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) throw new Error("Dates must use YYYY-MM-DD");
   if (from > to) throw new Error("From date must not be after To date");

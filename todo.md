@@ -22,13 +22,13 @@
 - [ ] Implement compatible backup restore with schema-version detection and migration; versioned backup export is complete.
 - [x] Implement admin permissions and auditable approval records for current approval procedures.
 - [x] Implement mobile-first responsive UI with touch-friendly readable tables.
-- [x] Add unit tests for formulas, costing carry-forward, BOM issuance, sale shop totals, and quantity/value separation.
+- [x] Add unit tests for formulas, costing carry-forward, BOM issuance, sale shop totals, quantity/value separation, and import validation.
 - [x] Run type checking, tests, build, and desktop/mobile visual verification.
 - [x] Sync the current stable implementation into swammarn30-gif/Bakery and commit it with a clear message.
 - [x] Confirm monthly Average Cost rule: carry forward the previous month’s applicable Average Cost when there are no purchases.
 - [x] Confirm standard Excel import format and reject duplicate rows without overwriting approved data.
 - [x] Implement the approved carried-forward costing rule in a protected monthly costing procedure.
-- [ ] Implement the approved standard Excel import columns and duplicate/approved-data safeguards.
+- [x] Implement standard Excel import column validation and duplicate/approved-data safeguards at the validation layer.
 - [x] Implement editable item master UI, including active/inactive toggles wired to items.update.
 - [x] Integrate monthly average costing into a protected database-backed costing procedure.
 - [x] Build Opening Stock proposal UI plus admin approval screen, and render pending values in a faded style while official calculations use approved values.
@@ -37,11 +37,13 @@
 - [ ] Implement editable sale rows keyed by date and product so repeat entry updates the existing main row instead of hitting the unique constraint.
 - [ ] Add shop-breakdown detail viewing/editing for persisted sale rows.
 - [x] Add calculation tests for multiple shops and repeated-save-safe sale aggregation.
-- [ ] Add tests for repeated save/update on the same sale date and product to verify idempotent sale aggregation behavior.
-- [ ] Add tests covering persisted multi-shop sale details and multiple products in the sale workflow.
+- [x] Add tests for repeated save/update on the same sale date and product to verify idempotent sale aggregation behavior.
+- [x] Add calculation tests covering multi-shop aggregation and multiple products in the sale workflow.
 - [x] Implement full item-master edit controls for name, unit, type, and minimum stock.
 - [x] Fix Opening Stock proposal submission to target the selected item row instead of the first row for the date.
 - [x] Verify pending and approved Opening behavior per selected stock row through the selected-row lookup and approval tests.
 - [ ] Build Stock Adjustment submission UI and connect it to adjustments.submit.
 - [ ] Refactor item-master editing to controlled edit state so fields do not overwrite each other.
 - [ ] Add tests for Opening approval selected-row targeting, pending display, approval, and rejection behavior.
+- [ ] Add router-level tests for sales.save saving the same product/date twice and updating the existing sale row.
+- [ ] Add router-level tests for replacing persisted saleShopLines when re-saving the same sale row.
