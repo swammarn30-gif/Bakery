@@ -100,6 +100,14 @@ export function safeRecipeLinesUpdate<T>(existing: T[], payload: string, parse =
   return parsed.valid ? { valid: true as const, lines: parsed.lines } : { valid: false as const, lines: existing, error: parsed.error };
 }
 
+export function migrateBackupSnapshot(snapshot: unknown, currentVersion = 1) {
+  if (!snapshot || typeof snapshot !== "object") return { valid: false as const, error: "Backup must be an object" };
+  const record = snapshot as Record<string, unknown>;
+  if (record.schemaVersion === currentVersion) return { valid: true as const, snapshot: record };
+  if (record.schemaVersion === 0) return { valid: true as const, snapshot: { ...record, schemaVersion: currentVersion, approvals: record.approvals ?? [], importBatches: record.importBatches ?? [] } };
+  return { valid: false as const, error: `Unsupported schema version: ${String(record.schemaVersion)}` };
+}
+
 export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) {
   if (!snapshot || typeof snapshot !== "object") return { valid: false, error: "Backup must be an object" };
   const record = snapshot as Record<string, unknown>;
