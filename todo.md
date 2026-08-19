@@ -19,7 +19,7 @@
 - [ ] Implement item-by-item history report with quantity/value separation and totals.
 - [x] Implement one-workbook date-range Excel export for Production, Packaging, and Sale sheets.
 - [ ] Implement safe date-range Excel import with validation, duplicate handling, and approval rules.
-- [ ] Implement compatible backup and restore with schema-version detection and migration.
+- [ ] Implement compatible backup restore with schema-version detection and migration; versioned backup export is complete.
 - [x] Implement admin permissions and auditable approval records for current approval procedures.
 - [x] Implement mobile-first responsive UI with touch-friendly readable tables.
 - [x] Add unit tests for formulas, costing carry-forward, BOM issuance, sale shop totals, and quantity/value separation.

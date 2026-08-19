@@ -17,6 +17,9 @@ export const appRouter = router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => { const options = getSessionCookieOptions(ctx.req); ctx.res.clearCookie(COOKIE_NAME, { ...options, maxAge: -1 }); return { success: true } as const; }),
   }),
+  backup: router({
+    export: protectedProcedure.query(async () => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const [itemRows, purchaseRows, stockRows, orderRows, saleRows, shopRows, recipeRows, adjustmentRows] = await Promise.all([db.select().from(items), db.select().from(purchases), db.select().from(dailyStock), db.select().from(orders), db.select().from(sales), db.select().from(shops), db.select().from(recipes), db.select().from(stockAdjustments)]); return { schemaVersion: 1, exportedAt: new Date().toISOString(), items: itemRows, purchases: purchaseRows, dailyStock: stockRows, orders: orderRows, sales: saleRows, shops: shopRows, recipes: recipeRows, stockAdjustments: adjustmentRows }; }),
+  }),
   costing: router({
     average: protectedProcedure.input(z.object({ itemId: z.number().int(), month: z.string().regex(/^\\d{4}-\\d{2}$/), carriedCost: numeric.nonnegative().default(0) })).query(async ({ input }) => { const db = await getDb(); if (!db) return { averageCost: input.carriedCost, purchaseQuantity: 0, purchaseValue: 0 }; const from = `${input.month}-01`; const to = `${input.month}-31`; const rows = await db.select().from(purchases).where(and(eq(purchases.itemId, input.itemId), gte(purchases.purchaseDate, from), lte(purchases.purchaseDate, to))); const averageCost = weightedAverageCost(rows.map(row => ({ quantity: Number(row.quantity), unitCost: Number(row.unitCost) })), input.carriedCost); return { averageCost, purchaseQuantity: rows.reduce((sum, row) => sum + Number(row.quantity), 0), purchaseValue: rows.reduce((sum, row) => sum + Number(row.quantity) * Number(row.unitCost), 0) }; }),
   }),
