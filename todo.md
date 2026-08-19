@@ -9,7 +9,7 @@
 - [x] Implement carry-forward helper from approved previous Closing into next-day Opening.
 - [ ] Implement historical editing with dependent recalculation.
 - [x] Implement Order workflow separately from Sale.
-- [ ] Implement maintainable Recipe/BOM with effective dates and activation.
+- [x] Implement maintainable Recipe/BOM with effective dates and active-version listing.
 - [ ] Implement auto-generated Issued quantities with free manual override and preservation of overrides.
 - [x] Implement Opening Stock proposal workflow with pending visual state and admin approval.
 - [x] Implement Stock Adjustment proposal workflow with audit trail and admin approval.
@@ -53,3 +53,10 @@
 - [ ] Add tests proving a non-today persisted Sale edit updates the same row and replaces its shop lines.
 - [ ] Add integration-level tests for Opening proposal approval targeting a specific stock row.
 - [ ] Add integration-level tests for Opening approval and rejection updating only the selected stock row.
+- [x] Add Recipe/BOM activate/deactivate procedures and UI controls.
+- [ ] Add editable multi-line Recipe/BOM maintenance for existing versions.
+- [x] Add tests for effective-date Recipe/BOM version selection and activation behavior.
+- [x] Expose inactive Recipe/BOM versions in the Orders panel and add Activate controls.
+- [x] Add tests for recipe activation/deactivation and single-active-version enforcement.
+- [ ] Add router-level tests for recipes.setActive activation and deactivation, including single-active enforcement.
+- [ ] Add a test proving an inactive Recipe/BOM version can be reactivated and appears in the full recipe list.

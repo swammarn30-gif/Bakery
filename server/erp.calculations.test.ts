@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, openingApprovalPresentation, saleRowKey, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -28,6 +28,14 @@ describe("ERP calculations", () => {
 
   it("keeps quantity and value separate", () => {
     expect(valueOf(73, 2500)).toBe(182500);
+  });
+
+  it("selects the latest active Recipe/BOM effective on a date and enforces one active version", () => {
+    const rows = [{ id: 1, itemId: 7, effectiveFrom: "2026-01-01", active: true }, { id: 2, itemId: 7, effectiveFrom: "2026-03-01", active: true }, { id: 3, itemId: 9, effectiveFrom: "2026-02-01", active: true }];
+    expect(selectEffectiveRecipe(rows, 7, "2026-04-01")?.id).toBe(2);
+    expect(enforceSingleActiveRecipe(rows, 2).filter(row => row.itemId === 7 && row.active).map(row => row.id)).toEqual([2]);
+    expect(enforceSingleActiveRecipe(rows, 2, false).find(row => row.id === 2)?.active).toBe(false);
+    expect(enforceSingleActiveRecipe(rows, 2, true).find(row => row.id === 2)?.active).toBe(true);
   });
 
   it("targets the selected stock row for an Opening proposal", () => {

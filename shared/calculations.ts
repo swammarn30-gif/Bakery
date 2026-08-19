@@ -62,6 +62,16 @@ export function validateImportRows(rows: Array<Record<string, unknown>>, approve
   return { valid: errors.length === 0, errors };
 }
 
+export function selectEffectiveRecipe<T extends { itemId: number; effectiveFrom: string; active: boolean }>(rows: T[], itemId: number, asOf: string) {
+  return rows.filter(row => row.itemId === itemId && row.active && row.effectiveFrom <= asOf).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
+}
+
+export function enforceSingleActiveRecipe<T extends { id: number; itemId: number; active: boolean }>(rows: T[], recipeId: number, active = true) {
+  const selected = rows.find(row => row.id === recipeId);
+  if (!selected) return rows;
+  return rows.map(row => ({ ...row, active: row.id === recipeId ? active : active && row.itemId === selected.itemId ? false : row.active }));
+}
+
 export function selectStockRowByItem<T extends { itemId: number }>(rows: T[], itemId: number) {
   return rows.find(row => row.itemId === itemId);
 }
