@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, saleRowKey, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, openingApprovalPresentation, saleRowKey, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -28,6 +28,17 @@ describe("ERP calculations", () => {
 
   it("keeps quantity and value separate", () => {
     expect(valueOf(73, 2500)).toBe(182500);
+  });
+
+  it("targets the selected stock row for an Opening proposal", () => {
+    const selected = selectStockRowByItem([{ id: 1, itemId: 11 }, { id: 2, itemId: 22 }], 22);
+    expect(selected?.id).toBe(2);
+  });
+
+  it("keeps pending Opening faded and applies only the approved decision", () => {
+    expect(openingApprovalPresentation({ openingApproved: 10, openingPending: 14 })).toEqual({ official: 10, pending: 14, faded: true });
+    expect(openingApprovalPresentation({ openingApproved: 10, openingPending: 14 }, "approved")).toEqual({ official: 14, pending: null, faded: false });
+    expect(openingApprovalPresentation({ openingApproved: 10, openingPending: 14 }, "rejected")).toEqual({ official: 10, pending: null, faded: false });
   });
 
   it("rejects duplicate and approved Excel import rows", () => {

@@ -62,6 +62,16 @@ export function validateImportRows(rows: Array<Record<string, unknown>>, approve
   return { valid: errors.length === 0, errors };
 }
 
+export function selectStockRowByItem<T extends { itemId: number }>(rows: T[], itemId: number) {
+  return rows.find(row => row.itemId === itemId);
+}
+
+export function openingApprovalPresentation(row: { openingApproved: number; openingPending?: number | null }, decision?: "approved" | "rejected") {
+  if (decision === "approved" && row.openingPending !== null && row.openingPending !== undefined) return { official: row.openingPending, pending: null, faded: false };
+  if (decision === "rejected") return { official: row.openingApproved, pending: null, faded: false };
+  return { official: row.openingApproved, pending: row.openingPending ?? null, faded: row.openingPending !== null && row.openingPending !== undefined };
+}
+
 export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) {
   if (!snapshot || typeof snapshot !== "object") return { valid: false, error: "Backup must be an object" };
   const record = snapshot as Record<string, unknown>;

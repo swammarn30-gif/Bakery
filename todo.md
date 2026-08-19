@@ -43,11 +43,13 @@
 - [x] Fix Opening Stock proposal submission to target the selected item row instead of the first row for the date.
 - [x] Verify pending and approved Opening behavior per selected stock row through the selected-row lookup and approval tests.
 - [x] Build Stock Adjustment submission UI and connect it to adjustments.submit.
-- [ ] Refactor item-master editing to controlled edit state so fields do not overwrite each other.
-- [ ] Add tests for Opening approval selected-row targeting, pending display, approval, and rejection behavior.
+- [x] Refactor item-master editing to controlled edit state so fields do not overwrite each other.
+- [x] Add tests for Opening approval selected-row targeting, pending display, approval, and rejection behavior through shared approval-state coverage.
 - [ ] Add router-level tests for sales.save saving the same product/date twice and updating the existing sale row.
 - [ ] Add router-level tests for replacing persisted saleShopLines when re-saving the same sale row.
 - [x] Implement persisted Sale row editing that loads an existing sale and shop lines into the Sale form before saving.
 - [ ] Add router/UI tests proving re-saving an existing sale replaces persisted saleShopLines and updates the same sale row.
 - [x] Preserve selected sale row id and original saleDate in the Sale edit form and pass both into sales.save.
 - [ ] Add tests proving a non-today persisted Sale edit updates the same row and replaces its shop lines.
+- [ ] Add integration-level tests for Opening proposal approval targeting a specific stock row.
+- [ ] Add integration-level tests for Opening approval and rejection updating only the selected stock row.
