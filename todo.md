@@ -7,7 +7,7 @@
 - [x] Implement date-selected Production table with exact Used and Closing formulas.
 - [x] Implement date-selected Packaging table with exact Used and Closing formulas.
 - [x] Implement carry-forward helper from approved previous Closing into next-day Opening.
-- [ ] Implement historical editing with dependent recalculation.
+- [x] Implement historical editing with dependent recalculation.
 - [x] Implement Order workflow separately from Sale.
 - [x] Implement maintainable Recipe/BOM with effective dates and active-version listing.
 - [x] Implement auto-generated Issued quantities with free manual override and preservation of overrides.
