@@ -82,6 +82,20 @@ export function openingApprovalPresentation(row: { openingApproved: number; open
   return { official: row.openingApproved, pending: row.openingPending ?? null, faded: row.openingPending !== null && row.openingPending !== undefined };
 }
 
+export function parseRecipeLinesJson(value: string) {
+  let parsed: unknown;
+  try { parsed = JSON.parse(value); } catch { return { valid: false as const, error: "Recipe lines must be valid JSON" }; }
+  if (!Array.isArray(parsed) || parsed.length === 0) return { valid: false as const, error: "Recipe lines must be a non-empty array" };
+  const lines = parsed.map((line) => ({ materialItemId: Number((line as Record<string, unknown>).materialItemId), quantityPerBatch: Number((line as Record<string, unknown>).quantityPerBatch), unit: String((line as Record<string, unknown>).unit ?? "") }));
+  if (lines.some(line => !Number.isInteger(line.materialItemId) || line.materialItemId <= 0 || !Number.isFinite(line.quantityPerBatch) || line.quantityPerBatch <= 0 || !line.unit)) return { valid: false as const, error: "Each recipe line needs a material, positive quantity, and unit" };
+  return { valid: true as const, lines };
+}
+
+export function safeRecipeLinesUpdate<T>(existing: T[], payload: string, parse = parseRecipeLinesJson) {
+  const parsed = parse(payload);
+  return parsed.valid ? { valid: true as const, lines: parsed.lines } : { valid: false as const, lines: existing, error: parsed.error };
+}
+
 export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) {
   if (!snapshot || typeof snapshot !== "object") return { valid: false, error: "Backup must be an object" };
   const record = snapshot as Record<string, unknown>;

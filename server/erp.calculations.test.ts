@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -36,6 +36,35 @@ describe("ERP calculations", () => {
     expect(enforceSingleActiveRecipe(rows, 2).filter(row => row.itemId === 7 && row.active).map(row => row.id)).toEqual([2]);
     expect(enforceSingleActiveRecipe(rows, 2, false).find(row => row.id === 2)?.active).toBe(false);
     expect(enforceSingleActiveRecipe(rows, 2, true).find(row => row.id === 2)?.active).toBe(true);
+  });
+
+  it("validates Recipe/BOM line payloads without silently accepting malformed data", () => {
+    expect(parseRecipeLinesJson(JSON.stringify([{ materialItemId: 1, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 2, quantityPerBatch: 0.5, unit: "kg" }])).valid).toBe(true);
+    expect(parseRecipeLinesJson("not-json").valid).toBe(false);
+    expect(parseRecipeLinesJson("[]").valid).toBe(false);
+    expect(parseRecipeLinesJson(JSON.stringify([{ materialItemId: 0, quantityPerBatch: 1, unit: "kg" }])).valid).toBe(false);
+  });
+
+  it("replaces all Recipe/BOM lines from the authoritative valid payload", () => {
+    const existing = [{ materialItemId: 4, quantityPerBatch: 3, unit: "kg" }];
+    const result = safeRecipeLinesUpdate(existing, JSON.stringify([{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]));
+    expect(result.valid).toBe(true);
+    expect(result.lines).toEqual([{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]);
+  });
+
+  it("uses authoritative Recipe/BOM lines instead of duplicate visible fields", () => {
+    const authoritative = JSON.stringify([{ materialItemId: 8, quantityPerBatch: 4, unit: "kg" }, { materialItemId: 9, quantityPerBatch: 2, unit: "l" }]);
+    const duplicateFields = [{ materialItemId: 1, quantityPerBatch: 99, unit: "unit" }];
+    const result = safeRecipeLinesUpdate(duplicateFields, authoritative);
+    expect(result.valid).toBe(true);
+    expect(result.lines).toEqual([{ materialItemId: 8, quantityPerBatch: 4, unit: "kg" }, { materialItemId: 9, quantityPerBatch: 2, unit: "l" }]);
+  });
+
+  it("keeps existing Recipe/BOM lines unchanged when an edit payload is malformed", () => {
+    const existing = [{ materialItemId: 4, quantityPerBatch: 3, unit: "kg" }];
+    const result = safeRecipeLinesUpdate(existing, "{bad-json");
+    expect(result.valid).toBe(false);
+    expect(result.lines).toEqual(existing);
   });
 
   it("targets the selected stock row for an Opening proposal", () => {

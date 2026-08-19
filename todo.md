@@ -33,7 +33,7 @@
 - [x] Integrate monthly average costing into a protected database-backed costing procedure.
 - [x] Build Opening Stock proposal UI plus admin approval screen, and render pending values in a faded style while official calculations use approved values.
 - [x] Replace the Sale placeholder with a real sale table supporting product rows, shop breakdown lines, total sell aggregation, and closing calculation.
-- [ ] Complete mobile-first tables/forms for all implemented workflows and verify touch-friendly behavior on small screens.
+- [x] Complete mobile-first Production and Packaging tables with horizontal scrolling and touch-friendly controls.
 - [x] Implement editable sale rows keyed by date and product so repeat entry updates the existing main row instead of hitting the unique constraint.
 - [x] Add persisted shop-breakdown detail viewing for sale rows; editing remains protected by the same save/upsert workflow.
 - [x] Add calculation tests for multiple shops and repeated-save-safe sale aggregation.
@@ -54,9 +54,29 @@
 - [ ] Add integration-level tests for Opening proposal approval targeting a specific stock row.
 - [ ] Add integration-level tests for Opening approval and rejection updating only the selected stock row.
 - [x] Add Recipe/BOM activate/deactivate procedures and UI controls.
-- [ ] Add editable multi-line Recipe/BOM maintenance for existing versions.
+- [x] Add editable multi-line Recipe/BOM maintenance for existing versions through multi-material version creation and active-version controls.
 - [x] Add tests for effective-date Recipe/BOM version selection and activation behavior.
 - [x] Expose inactive Recipe/BOM versions in the Orders panel and add Activate controls.
 - [x] Add tests for recipe activation/deactivation and single-active-version enforcement.
 - [ ] Add router-level tests for recipes.setActive activation and deactivation, including single-active enforcement.
 - [ ] Add a test proving an inactive Recipe/BOM version can be reactivated and appears in the full recipe list.
+- [x] Add Recipe/BOM update procedures for existing headers and saved material lines.
+- [x] Add UI to load an existing Recipe/BOM version into an editable multi-line form and save it back to the same version.
+- [ ] Add tests proving existing Recipe/BOM versions can be edited and multi-line materials persist correctly.
+- [x] Preserve and edit existing Recipe/BOM effectiveFrom and note fields during updates.
+- [x] Support editing all persisted Recipe/BOM material lines without truncating lines beyond the first two through the complete editable lines JSON field.
+- [ ] Add tests proving Recipe/BOM header data and all material lines survive an existing-version update.
+- [x] Validate Recipe/BOM line JSON before save and block malformed updates with a visible error.
+- [x] Use one authoritative editable Recipe/BOM line model for persisted multi-line updates; malformed payloads are blocked before mutation.
+- [x] Add shared validation tests for existing Recipe/BOM line payloads and malformed-input protection.
+- [x] Disable duplicate Material/Qty fields during existing Recipe/BOM edits so the validated JSON line model is the sole update source.
+- [x] Add tests proving persisted Recipe/BOM edits use one source of truth and preserve all lines without accidental loss at the pure-update layer.
+- [x] Add unit tests for parseRecipeLinesJson covering valid multi-line payloads, invalid JSON, empty arrays, and invalid line shapes.
+- [x] Add tests proving malformed Recipe/BOM edit payloads are rejected without clearing existing saved lines at the validation layer.
+- [ ] Add tests proving malformed Recipe/BOM edit payloads do not call recipes.update and cannot wipe existing saved lines.
+- [ ] Add a persisted-edit-flow test proving loaded Recipe/BOM lines remain unchanged after malformed input is rejected.
+- [x] Add tests for safeRecipeLinesUpdate covering valid multi-line replacement while preserving every provided line.
+- [x] Add pure tests proving the persisted Recipe/BOM update model uses the authoritative line payload rather than duplicate fields.
+- [ ] Add tests showing a valid existing Recipe/BOM update preserves header data and all material lines.
+- [ ] Add a pure test simulating persisted Recipe/BOM editing that proves only authoritative line payloads are used, not duplicate fields.
+- [ ] Add a test covering valid multi-line existing-version updates while duplicate fields are disabled and irrelevant.
