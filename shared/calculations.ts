@@ -91,6 +91,10 @@ export function parseRecipeLinesJson(value: string) {
   return { valid: true as const, lines };
 }
 
+export function applyRecipeEdit<T extends { effectiveFrom: string; note?: string | null }>(existing: T, effectiveFrom: string, note: string | undefined, lines: unknown[]) {
+  return { ...existing, effectiveFrom, note: note ?? null, lines };
+}
+
 export function safeRecipeLinesUpdate<T>(existing: T[], payload: string, parse = parseRecipeLinesJson) {
   const parsed = parse(payload);
   return parsed.valid ? { valid: true as const, lines: parsed.lines } : { valid: false as const, lines: existing, error: parsed.error };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -43,6 +43,12 @@ describe("ERP calculations", () => {
     expect(parseRecipeLinesJson("not-json").valid).toBe(false);
     expect(parseRecipeLinesJson("[]").valid).toBe(false);
     expect(parseRecipeLinesJson(JSON.stringify([{ materialItemId: 0, quantityPerBatch: 1, unit: "kg" }])).valid).toBe(false);
+  });
+
+  it("preserves Recipe/BOM headers while replacing every validated material line", () => {
+    const result = applyRecipeEdit({ id: 7, effectiveFrom: "2026-01-01", note: "old" }, "2026-03-01", "updated", [{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]);
+    expect(result).toMatchObject({ id: 7, effectiveFrom: "2026-03-01", note: "updated" });
+    expect(result.lines).toHaveLength(2);
   });
 
   it("replaces all Recipe/BOM lines from the authoritative valid payload", () => {
