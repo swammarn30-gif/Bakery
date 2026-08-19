@@ -83,3 +83,6 @@
 
 - [x] Inspect swammarn30.netlify.com UI and adapt Bakery ERP visual direction without exact copying, including shell branding and component-level layout treatment.
 - [x] Verify the adapted design on desktop and mobile preview.
+
+- [x] Keep Production and Packaging Daily Ledger as full spreadsheet-style tables with one item per row and all formula columns in one header row; use horizontal scrolling on mobile instead of card conversion.
+- [x] Verify Production and Packaging ledger table structure, formulas, and responsive overflow behavior through code/tests without changing workflow or business logic; screenshots intentionally skipped per user request.
