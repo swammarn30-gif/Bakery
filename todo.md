@@ -10,13 +10,13 @@
 - [ ] Implement historical editing with dependent recalculation.
 - [x] Implement Order workflow separately from Sale.
 - [x] Implement maintainable Recipe/BOM with effective dates and active-version listing.
-- [ ] Implement auto-generated Issued quantities with free manual override and preservation of overrides.
+- [x] Implement auto-generated Issued quantities with free manual override and preservation of overrides.
 - [x] Implement Opening Stock proposal workflow with pending visual state and admin approval.
 - [x] Implement Stock Adjustment proposal workflow with audit trail and admin approval.
 - [x] Implement finished-goods Sale table with exact Opening + Produce - Sell formula.
 - [x] Implement multi-product, multi-shop Sale breakdown without duplicate main sale rows.
 - [ ] Implement reports for Production, Packaging, Sale, Purchase, Inventory, Costing, Item History, and date ranges.
-- [ ] Implement item-by-item history report with quantity/value separation and totals.
+- [x] Implement item-by-item history report with quantity/value separation and totals.
 - [x] Implement one-workbook date-range Excel export for Production, Packaging, and Sale sheets.
 - [ ] Implement safe date-range Excel import with validation, duplicate handling, and approval rules.
 - [ ] Implement compatible backup restore with schema-version detection and migration; versioned backup export is complete.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, recalculateSequentialOpenings, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -50,6 +50,11 @@ describe("ERP calculations", () => {
     const result = safeRecipeLinesUpdate(existing, JSON.stringify([{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]));
     expect(result.valid).toBe(true);
     expect(result.lines).toEqual([{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]);
+  });
+
+  it("preserves manual Issued overrides while allowing theoretical values to refresh", () => {
+    expect(resolveIssuedQuantity(12, 5, true)).toBe(5);
+    expect(resolveIssuedQuantity(12, 5, false)).toBe(12);
   });
 
   it("recalculates historical Opening values from each item’s previous Closing", () => {

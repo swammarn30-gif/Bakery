@@ -105,6 +105,10 @@ export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) 
   return missing.length ? { valid: false, error: `Missing collections: ${missing.join(", ")}` } : { valid: true as const };
 }
 
+export function resolveIssuedQuantity(autoIssued: number, savedIssued: number, manualIssued: boolean) {
+  return manualIssued ? savedIssued : autoIssued;
+}
+
 export function recalculateSequentialOpenings<T extends { itemId: number; date: string; opening: number; closing: number }>(rows: T[], fallbackOpening = 0) {
   const lastClosing = new Map<number, number>();
   return [...rows].sort((a, b) => a.date.localeCompare(b.date) || a.itemId - b.itemId).map(row => {

@@ -57,7 +57,40 @@ export const appRouter = router({
     create: protectedProcedure.input(z.object({ purchaseDate: z.string(), itemId: z.number().int(), quantity: numeric.positive(), unit: z.string().min(1), unitCost: numeric.nonnegative(), supplier: z.string().optional(), note: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const result = await db.insert(purchases).values({ ...input, quantity: String(input.quantity), unitCost: String(input.unitCost), createdBy: ctx.user.id }); await writeAudit(ctx.user.id, "create", "purchase", Number(result[0].insertId), null, input); return { id: Number(result[0].insertId) }; }),
   }),
   stock: router({
-    list: protectedProcedure.input(z.object({ department: z.enum(["production", "packaging"]), from: z.string(), to: z.string() })).query(({ input }) => listDailyStock(input.department, input.from, input.to)),
+    list: protectedProcedure.input(z.object({ department: z.enum(["production", "packaging"]), from: z.string(), to: z.string() })).query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+      const rows = await listDailyStock(input.department, input.from, input.to);
+      const [orderRows, recipeRows, lineRows] = await Promise.all([
+        db.select().from(orders).where(and(gte(orders.orderDate, input.from), lte(orders.orderDate, input.to))),
+        db.select().from(recipes).where(eq(recipes.active, true)),
+        db.select().from(recipeLines),
+      ]);
+      return rows.map(row => {
+        const dailyOrders = orderRows.filter(order => order.orderDate === row.stockDate);
+        const autoIssued = dailyOrders.reduce((sum, order) => {
+          const recipe = recipeRows.filter(recipe => recipe.itemId === order.itemId && recipe.effectiveFrom <= row.stockDate).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
+          const line = recipe ? lineRows.find(line => line.recipeId === recipe.id && line.materialItemId === row.itemId) : undefined;
+          return sum + (line ? Number(order.quantity) * Number(line.quantityPerBatch) : 0);
+        }, 0);
+        return { ...row, autoIssued: String(autoIssued) };
+      });
+    }),
+    autoIssued: protectedProcedure.input(z.object({ stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int() })).query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { autoIssued: 0 };
+      const [orderRows, recipeRows, lineRows] = await Promise.all([
+        db.select().from(orders).where(eq(orders.orderDate, input.stockDate)),
+        db.select().from(recipes).where(and(eq(recipes.active, true), lte(recipes.effectiveFrom, input.stockDate))),
+        db.select().from(recipeLines),
+      ]);
+      const total = orderRows.reduce((sum, order) => {
+        const recipe = recipeRows.filter(row => row.itemId === order.itemId).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
+        const line = recipe ? lineRows.find(row => row.recipeId === recipe.id && row.materialItemId === input.itemId) : undefined;
+        return sum + (line ? Number(order.quantity) * Number(line.quantityPerBatch) : 0);
+      }, 0);
+      return { autoIssued: total };
+    }),
     save: protectedProcedure.input(z.object({ id: z.number().int().optional(), stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int(), openingApproved: numeric, inQty: numeric, issued: numeric, returnQty: numeric, damage: numeric, note: z.string().optional(), autoIssued: numeric.optional(), manualIssued: z.boolean().default(false) })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const row = { stockDate: input.stockDate, department: input.department, itemId: input.itemId, openingApproved: String(input.openingApproved), inQty: String(input.inQty), issued: String(input.issued), returnQty: String(input.returnQty), damage: String(input.damage), note: input.note, autoIssued: input.autoIssued === undefined ? null : String(input.autoIssued), manualIssued: input.manualIssued, createdBy: ctx.user.id }; const existing = (await db.select().from(dailyStock).where(and(eq(dailyStock.stockDate, input.stockDate), eq(dailyStock.department, input.department), eq(dailyStock.itemId, input.itemId))).limit(1))[0]; if (existing) await db.update(dailyStock).set(row).where(eq(dailyStock.id, existing.id)); else await db.insert(dailyStock).values(row); return { used: calculateUsed({ opening: input.openingApproved, inQty: input.inQty, issued: input.issued, returnQty: input.returnQty, damage: input.damage }), closing: calculateClosing({ opening: input.openingApproved, inQty: input.inQty, issued: input.issued, returnQty: input.returnQty, damage: input.damage }) }; }),
     proposeOpening: protectedProcedure.input(z.object({ id: z.number().int(), proposedValue: numeric, reason: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const existing = (await db.select().from(dailyStock).where(eq(dailyStock.id, input.id)).limit(1))[0]; if (!existing) throw new Error("Stock row not found"); await db.update(dailyStock).set({ openingPending: String(input.proposedValue) }).where(eq(dailyStock.id, input.id)); await db.insert(approvals).values({ entityType: "opening", entityId: input.id, oldValue: existing.openingApproved, proposedValue: String(input.proposedValue), submittedBy: ctx.user.id, reason: input.reason }); return { status: "pending" as const }; }),
   }),
