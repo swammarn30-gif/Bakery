@@ -29,6 +29,8 @@ export const purchases = mysqlTable("purchases", {
   itemId: int("itemId").notNull(),
   quantity: decimal("quantity", { precision: 18, scale: 4 }).notNull(),
   unit: varchar("unit", { length: 32 }).notNull(),
+  purchaseUnit: varchar("purchaseUnit", { length: 16 }).default("g").notNull(),
+  totalValue: decimal("totalValue", { precision: 18, scale: 4 }).default("0").notNull(),
   unitCost: decimal("unitCost", { precision: 18, scale: 4 }).notNull(),
   supplier: varchar("supplier", { length: 255 }),
   note: text("note"),

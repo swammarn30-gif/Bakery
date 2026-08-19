@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -24,6 +24,32 @@ describe("ERP calculations", () => {
     expect(calculateDepartmentIssued(100, "production", production)).toBe(50);
     expect(calculateDepartmentIssued(100, "packaging", packaging)).toBe(200);
     expect(calculateDepartmentIssued(100, "production", packaging)).toBe(0);
+  });
+
+  it("normalizes Kg, g, Viss, and pcs into base quantities", () => {
+    expect(toBaseQuantity(1200, "kg")).toBe(1200000);
+    expect(toBaseQuantity(1, "viss")).toBe(1600);
+    expect(toBaseQuantity(250, "g")).toBe(250);
+    expect(toBaseQuantity(12, "pcs")).toBe(12);
+  });
+
+  it("derives base cost from total purchase value", () => {
+    const result = normalizePurchase(1200, "kg", 1500000);
+    expect(result.baseQuantity).toBe(1200000);
+    expect(result.baseUnit).toBe("g");
+    expect(result.baseUnitCost).toBe(1.25);
+  });
+
+  it("rejects incompatible source units for item base units", () => {
+    expect(() => normalizePurchase(1, "kg", 100, "pcs")).toThrow("pcs-base items");
+    expect(() => normalizePurchase(1, "pcs", 100, "g")).toThrow("g-base items");
+  });
+
+  it("calculates monthly weighted average from mixed normalized purchase units and carries forward", () => {
+    const kg = normalizePurchase(1, "kg", 1000, "g");
+    const grams = normalizePurchase(500, "g", 600, "g");
+    expect(weightedAverageCost([{ quantity: kg.baseQuantity, unitCost: kg.baseUnitCost }, { quantity: grams.baseQuantity, unitCost: grams.baseUnitCost }])).toBeCloseTo(1.0666666667);
+    expect(weightedAverageCost([], 1.0666666667)).toBeCloseTo(1.0666666667);
   });
 
   it("calculates quantity-weighted monthly average cost", () => {

@@ -26,6 +26,29 @@ export function calculateDepartmentIssued(orderQuantity: number, department: "pr
   return recipe.lines.reduce((total, line) => total + calculateIssuedFromBom(orderQuantity, line.quantityPerBatch, batchSize), 0);
 }
 
+export const PURCHASE_UNITS = ["kg", "g", "viss", "pcs"] as const;
+export type PurchaseUnit = typeof PURCHASE_UNITS[number];
+
+export function toBaseQuantity(quantity: number, unit: PurchaseUnit) {
+  if (!Number.isFinite(quantity) || quantity < 0) throw new Error("Quantity must be non-negative");
+  if (unit === "kg") return quantity * 1000;
+  if (unit === "viss") return quantity * 1600;
+  return quantity;
+}
+
+export function baseUnitFor(unit: PurchaseUnit) {
+  return unit === "pcs" ? "pcs" : "g";
+}
+
+export function normalizePurchase(quantity: number, unit: PurchaseUnit, totalValue: number, itemBaseUnit: "g" | "pcs" = baseUnitFor(unit)) {
+  if (!Number.isFinite(totalValue) || totalValue < 0) throw new Error("Total value must be non-negative");
+  if (itemBaseUnit === "pcs" && unit !== "pcs") throw new Error("pcs-base items must be purchased in pcs");
+  if (itemBaseUnit === "g" && unit === "pcs") throw new Error("g-base items must be purchased in kg, g, or viss");
+  const baseQuantity = toBaseQuantity(quantity, unit);
+  if (baseQuantity <= 0) throw new Error("Quantity must be greater than zero");
+  return { baseQuantity, baseUnit: itemBaseUnit, totalValue, baseUnitCost: totalValue / baseQuantity };
+}
+
 export function weightedAverageCost(purchases: Array<{ quantity: number; unitCost: number }>, carriedCost = 0) {
   const valid = purchases.filter(p => p.quantity > 0);
   const quantity = valid.reduce((sum, p) => sum + p.quantity, 0);

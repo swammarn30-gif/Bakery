@@ -96,3 +96,9 @@
 - [x] Clarify Recipe/BOM setup for a Spanish finished good with separate Production ingredients and Packaging materials.
 - [x] Verify or refine Auto Issued so Spanish demand drives Production flour/sugar quantities and Packaging box/sticker quantities separately, while manual overrides remain protected.
 - [x] Add tests for the Spanish-style split Production/Packaging recipe flow.
+
+- [x] Support standard units Kg, g, Viss, and pcs with explicit base-unit conversion rules; use g as the base for weight items and pcs as the base for count items, with server-side compatibility validation.
+- [x] Normalize Purchase quantities and total purchase values into base quantity and base unit cost, including Kg-to-g and Viss-to-g conversion.
+- [x] Recalculate monthly weighted average cost per base unit and use it for costing; preserve carried-forward cost when there are no purchases, with mixed normalized-unit test coverage.
+- [x] Add Purchase UI fields for quantity unit and total purchase value, with unit-per-price derived automatically instead of requiring a unit price.
+- [x] Add unit conversion, incompatible-unit rejection, mixed-unit monthly average, carry-forward, and 1200 Kg / 1,500,000 base-cost tests.

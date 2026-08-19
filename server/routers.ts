@@ -6,7 +6,7 @@ import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { approvals, dailyStock, items, purchases, saleShopLines, sales, shops, getDb, listDailyStock, listItems, listPendingApprovals, listPurchases, listSales, listShops, writeAudit } from "./db";
 import { orders, recipes, recipeLines, stockAdjustments, importBatches } from "../drizzle/schema";
 import { z } from "zod";
-import { calculateClosing, calculateUsed, migrateBackupSnapshot, normalizeDateRange, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations";
+import { calculateClosing, calculateUsed, migrateBackupSnapshot, normalizeDateRange, normalizePurchase, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations";
 
 const dateRange = z.object({ from: z.string(), to: z.string() }).transform(v => normalizeDateRange(v.from, v.to));
 const numeric = z.coerce.number().finite();
@@ -77,7 +77,7 @@ export const appRouter = router({
   }),
   purchases: router({
     list: protectedProcedure.input(dateRange).query(({ input }) => listPurchases(input.from, input.to)),
-    create: protectedProcedure.input(z.object({ purchaseDate: z.string(), itemId: z.number().int(), quantity: numeric.positive(), unit: z.string().min(1), unitCost: numeric.nonnegative(), supplier: z.string().optional(), note: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const result = await db.insert(purchases).values({ ...input, quantity: String(input.quantity), unitCost: String(input.unitCost), createdBy: ctx.user.id }); await writeAudit(ctx.user.id, "create", "purchase", Number(result[0].insertId), null, input); return { id: Number(result[0].insertId) }; }),
+    create: protectedProcedure.input(z.object({ purchaseDate: z.string(), itemId: z.number().int(), quantity: numeric.positive(), quantityUnit: z.enum(["kg", "g", "viss", "pcs"]), totalValue: numeric.nonnegative(), supplier: z.string().optional(), note: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const item = (await db.select().from(items).where(eq(items.id, input.itemId)).limit(1))[0]; if (!item) throw new Error("Item not found"); const itemBaseUnit = item.unit === "pcs" ? "pcs" : "g"; const normalized = normalizePurchase(input.quantity, input.quantityUnit, input.totalValue, itemBaseUnit); const result = await db.insert(purchases).values({ purchaseDate: input.purchaseDate, itemId: input.itemId, quantity: String(normalized.baseQuantity), unit: normalized.baseUnit, purchaseUnit: input.quantityUnit, totalValue: String(normalized.totalValue), unitCost: String(normalized.baseUnitCost), supplier: input.supplier, note: input.note, createdBy: ctx.user.id }); await writeAudit(ctx.user.id, "create", "purchase", Number(result[0].insertId), null, { ...input, ...normalized }); return { id: Number(result[0].insertId), baseQuantity: normalized.baseQuantity, baseUnit: normalized.baseUnit, baseUnitCost: normalized.baseUnitCost }; }),
   }),
   stock: router({
     list: protectedProcedure.input(z.object({ department: z.enum(["production", "packaging"]), from: z.string(), to: z.string() })).query(async ({ input }) => {
