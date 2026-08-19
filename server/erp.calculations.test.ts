@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -87,6 +87,13 @@ describe("ERP calculations", () => {
     expect(openingApprovalPresentation({ openingApproved: 10, openingPending: 14 })).toEqual({ official: 10, pending: 14, faded: true });
     expect(openingApprovalPresentation({ openingApproved: 10, openingPending: 14 }, "approved")).toEqual({ official: 14, pending: null, faded: false });
     expect(openingApprovalPresentation({ openingApproved: 10, openingPending: 14 }, "rejected")).toEqual({ official: 10, pending: null, faded: false });
+  });
+
+  it("validates backup schema versions and required collections", () => {
+    const valid = { schemaVersion: 1, items: [], purchases: [], dailyStock: [], orders: [], sales: [], shops: [], recipes: [], stockAdjustments: [] };
+    expect(validateBackupSnapshot(valid).valid).toBe(true);
+    expect(validateBackupSnapshot({ ...valid, schemaVersion: 2 }).valid).toBe(false);
+    expect(validateBackupSnapshot({ schemaVersion: 1, items: [] }).valid).toBe(false);
   });
 
   it("rejects duplicate and approved Excel import rows", () => {
