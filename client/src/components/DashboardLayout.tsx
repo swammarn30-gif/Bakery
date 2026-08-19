@@ -183,7 +183,7 @@ function DashboardLayoutContent({
               {menuItems.map(item => {
                 const isActive = location === item.path;
                 return (
-                  <SidebarMenuItem key={item.path}>
+                  <SidebarMenuItem key={`${item.label}-${item.path}`}>
                     <SidebarMenuButton
                       isActive={isActive}
                       onClick={() => setLocation(item.path)}

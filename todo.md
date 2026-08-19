@@ -89,3 +89,6 @@
 
 - [x] Make Production and Packaging navigation table-first by moving global KPI cards/summary content to Overview or Reports and keeping the Daily Ledger at the top of the operational view.
 - [x] Verify the table-first workflow preserves formulas, inline editing, horizontal scrolling, and existing navigation behavior.
+
+- [x] Fix React duplicate-key console error showing two children with key `/`.
+- [x] Verify dashboard rendering and the 38-test suite after the duplicate-key fix.
