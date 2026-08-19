@@ -80,3 +80,6 @@
 - [x] Add tests showing a valid existing Recipe/BOM update preserves header data and all material lines.
 - [x] Maintain pure Recipe/BOM authoritative-line-payload coverage so duplicate fields cannot replace the persisted line model.
 - [x] Verify the existing-version UI disables duplicate Material/Qty fields and routes valid multi-line updates through the authoritative line model.
+
+- [x] Inspect swammarn30.netlify.com UI and adapt Bakery ERP visual direction without exact copying, including shell branding and component-level layout treatment.
+- [x] Verify the adapted design on desktop and mobile preview.

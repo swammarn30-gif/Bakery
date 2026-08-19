@@ -168,11 +168,13 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    Navigation
-                  </span>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-400 text-sm font-black text-slate-950">B</span>
+                  <div className="min-w-0">
+                    <span className="block truncate font-semibold tracking-tight">Bakery ERP</span>
+                    <span className="block truncate text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Operations control</span>
+                  </div>
                 </div>
-              ) : null}
+              ) : <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400 text-sm font-black text-slate-950">B</span>}
             </div>
           </SidebarHeader>
 
@@ -255,7 +257,7 @@ function DashboardLayoutContent({
             </div>
           </div>
         )}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1 bg-background p-4 sm:p-5 lg:p-6">{children}</main>
       </SidebarInset>
     </>
   );
