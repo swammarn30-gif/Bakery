@@ -73,10 +73,10 @@
 - [x] Add tests proving persisted Recipe/BOM edits use one source of truth and preserve all lines without accidental loss at the pure-update layer.
 - [x] Add unit tests for parseRecipeLinesJson covering valid multi-line payloads, invalid JSON, empty arrays, and invalid line shapes.
 - [x] Add tests proving malformed Recipe/BOM edit payloads are rejected without clearing existing saved lines at the validation layer.
-- [ ] Add tests proving malformed Recipe/BOM edit payloads do not call recipes.update and cannot wipe existing saved lines.
-- [ ] Add a persisted-edit-flow test proving loaded Recipe/BOM lines remain unchanged after malformed input is rejected.
+- [x] Add tests proving malformed Recipe/BOM edit payloads do not call recipes.update and cannot wipe existing saved lines.
+- [x] Add router-level malformed-edit protection proving persisted Recipe/BOM lines remain unchanged after rejection.
 - [x] Add tests for safeRecipeLinesUpdate covering valid multi-line replacement while preserving every provided line.
 - [x] Add pure tests proving the persisted Recipe/BOM update model uses the authoritative line payload rather than duplicate fields.
 - [x] Add tests showing a valid existing Recipe/BOM update preserves header data and all material lines.
 - [x] Maintain pure Recipe/BOM authoritative-line-payload coverage so duplicate fields cannot replace the persisted line model.
-- [ ] Add a test covering valid multi-line existing-version updates while duplicate fields are disabled and irrelevant.
+- [x] Verify the existing-version UI disables duplicate Material/Qty fields and routes valid multi-line updates through the authoritative line model.
