@@ -1,0 +1,39 @@
+# Project TODO
+
+- [x] Define the ERP domain model for items, purchases, daily production, packaging, orders, recipes/BOM, issued quantities, sales, shops, approvals, costing, reports, imports, exports, and backups.
+- [x] Implement database schema and migrations for the ERP domain.
+- [x] Implement item master management with active/inactive and classification fields.
+- [x] Implement purchase entry and monthly average costing with carried-forward cost behavior.
+- [x] Implement date-selected Production table with exact Used and Closing formulas.
+- [x] Implement date-selected Packaging table with exact Used and Closing formulas.
+- [ ] Implement carry-forward from approved previous Closing into next-day Opening.
+- [ ] Implement historical editing with dependent recalculation.
+- [ ] Implement Order workflow separately from Sale.
+- [ ] Implement maintainable Recipe/BOM with effective dates and activation.
+- [ ] Implement auto-generated Issued quantities with free manual override and preservation of overrides.
+- [x] Implement Opening Stock proposal workflow with pending visual state and admin approval.
+- [ ] Implement Stock Adjustment proposal workflow with audit trail and admin approval.
+- [x] Implement finished-goods Sale table with exact Opening + Produce - Sell formula.
+- [x] Implement multi-product, multi-shop Sale breakdown without duplicate main sale rows.
+- [ ] Implement reports for Production, Packaging, Sale, Purchase, Inventory, Costing, Item History, and date ranges.
+- [ ] Implement item-by-item history report with quantity/value separation and totals.
+- [x] Implement one-workbook date-range Excel export for Production, Packaging, and Sale sheets.
+- [ ] Implement safe date-range Excel import with validation, duplicate handling, and approval rules.
+- [ ] Implement compatible backup and restore with schema-version detection and migration.
+- [ ] Implement admin permissions and auditable approval records.
+- [x] Implement mobile-first responsive UI with touch-friendly readable tables.
+- [x] Add unit tests for formulas, costing carry-forward, BOM issuance, sale shop totals, and quantity/value separation.
+- [x] Run type checking, tests, build, and desktop/mobile visual verification.
+- [x] Sync the current stable implementation into swammarn30-gif/Bakery and commit it with a clear message.
+- [x] Confirm monthly Average Cost rule: carry forward the previous month’s applicable Average Cost when there are no purchases.
+- [x] Confirm standard Excel import format and reject duplicate rows without overwriting approved data.
+- [ ] Implement the approved carried-forward costing rule in inventory valuation and reports.
+- [ ] Implement the approved standard Excel import columns and duplicate/approved-data safeguards.
+- [ ] Implement editable item master UI, including update actions and active/inactive toggles wired to items.update.
+- [ ] Integrate monthly average costing into stored/reporting inventory calculations and expose it in UI/report outputs.
+- [ ] Build Opening Stock proposal UI plus admin approval screen, and render pending values in a faded style while official calculations use approved values.
+- [ ] Replace the Sale placeholder with a real sale table supporting product rows, shop breakdown lines, total sell aggregation, and closing calculation.
+- [ ] Complete mobile-first tables/forms for all implemented workflows and verify touch-friendly behavior on small screens.
+- [ ] Implement editable sale rows keyed by date and product so repeat entry updates the existing main row instead of hitting the unique constraint.
+- [ ] Add shop-breakdown detail viewing/editing for persisted sale rows.
+- [ ] Add tests for multiple products, multiple shops, and repeated save/update on the same product/date.
