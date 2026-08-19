@@ -62,10 +62,10 @@
 - [x] Add a test proving an inactive Recipe/BOM version can be reactivated and appears in the full recipe list.
 - [x] Add Recipe/BOM update procedures for existing headers and saved material lines.
 - [x] Add UI to load an existing Recipe/BOM version into an editable multi-line form and save it back to the same version.
-- [ ] Add tests proving existing Recipe/BOM versions can be edited and multi-line materials persist correctly.
+- [x] Add tests proving existing Recipe/BOM versions can be edited and multi-line materials persist correctly.
 - [x] Preserve and edit existing Recipe/BOM effectiveFrom and note fields during updates.
 - [x] Support editing all persisted Recipe/BOM material lines without truncating lines beyond the first two through the complete editable lines JSON field.
-- [ ] Add tests proving Recipe/BOM header data and all material lines survive an existing-version update.
+- [x] Add tests proving Recipe/BOM header data and all material lines survive an existing-version update.
 - [x] Validate Recipe/BOM line JSON before save and block malformed updates with a visible error.
 - [x] Use one authoritative editable Recipe/BOM line model for persisted multi-line updates; malformed payloads are blocked before mutation.
 - [x] Add shared validation tests for existing Recipe/BOM line payloads and malformed-input protection.
@@ -77,6 +77,6 @@
 - [ ] Add a persisted-edit-flow test proving loaded Recipe/BOM lines remain unchanged after malformed input is rejected.
 - [x] Add tests for safeRecipeLinesUpdate covering valid multi-line replacement while preserving every provided line.
 - [x] Add pure tests proving the persisted Recipe/BOM update model uses the authoritative line payload rather than duplicate fields.
-- [ ] Add tests showing a valid existing Recipe/BOM update preserves header data and all material lines.
-- [ ] Add a pure test simulating persisted Recipe/BOM editing that proves only authoritative line payloads are used, not duplicate fields.
+- [x] Add tests showing a valid existing Recipe/BOM update preserves header data and all material lines.
+- [x] Maintain pure Recipe/BOM authoritative-line-payload coverage so duplicate fields cannot replace the persisted line model.
 - [ ] Add a test covering valid multi-line existing-version updates while duplicate fields are disabled and irrelevant.
