@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, parseRecipeLinesJson, recalculateSequentialOpenings, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -50,6 +50,12 @@ describe("ERP calculations", () => {
     const result = safeRecipeLinesUpdate(existing, JSON.stringify([{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]));
     expect(result.valid).toBe(true);
     expect(result.lines).toEqual([{ materialItemId: 5, quantityPerBatch: 2, unit: "kg" }, { materialItemId: 6, quantityPerBatch: 1, unit: "l" }]);
+  });
+
+  it("recalculates historical Opening values from each item’s previous Closing", () => {
+    const rows = recalculateSequentialOpenings([{ itemId: 2, date: "2026-01-02", opening: 0, closing: 7 }, { itemId: 1, date: "2026-01-02", opening: 0, closing: 4 }, { itemId: 1, date: "2026-01-01", opening: 10, closing: 4 }, { itemId: 2, date: "2026-01-01", opening: 3, closing: 7 }]);
+    expect(rows.find(row => row.itemId === 1 && row.date === "2026-01-02")?.opening).toBe(4);
+    expect(rows.find(row => row.itemId === 2 && row.date === "2026-01-02")?.opening).toBe(7);
   });
 
   it("uses authoritative Recipe/BOM lines instead of duplicate visible fields", () => {

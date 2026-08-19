@@ -29,6 +29,24 @@ export const appRouter = router({
     const [itemRows, approvalRows, purchaseRows, saleRows] = await Promise.all([db.select({ count: sql<number>`count(*)` }).from(items), db.select({ count: sql<number>`count(*)` }).from(approvals).where(eq(approvals.status, "pending")), db.select({ count: sql<number>`count(*)` }).from(purchases), db.select({ count: sql<number>`count(*)` }).from(sales)]);
     return { items: Number(itemRows[0]?.count ?? 0), pendingApprovals: Number(approvalRows[0]?.count ?? 0), purchases: Number(purchaseRows[0]?.count ?? 0), sales: Number(saleRows[0]?.count ?? 0) };
   }),
+  reports: router({
+    itemHistory: protectedProcedure.input(z.object({ itemId: z.number().int(), from: z.string(), to: z.string() }).transform(v => ({ ...v, ...normalizeDateRange(v.from, v.to) }))).query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { averageCost: 0, events: [], totals: { quantity: 0, value: 0 } };
+      const [purchaseRows, stockRows, saleRows] = await Promise.all([
+        db.select().from(purchases).where(and(eq(purchases.itemId, input.itemId), gte(purchases.purchaseDate, input.from), lte(purchases.purchaseDate, input.to))),
+        db.select().from(dailyStock).where(and(eq(dailyStock.itemId, input.itemId), gte(dailyStock.stockDate, input.from), lte(dailyStock.stockDate, input.to))),
+        db.select().from(sales).where(and(eq(sales.itemId, input.itemId), gte(sales.saleDate, input.from), lte(sales.saleDate, input.to))),
+      ]);
+      const averageCost = weightedAverageCost(purchaseRows.map(row => ({ quantity: Number(row.quantity), unitCost: Number(row.unitCost) })), 0);
+      const events = [
+        ...purchaseRows.map(row => ({ date: row.purchaseDate, type: "Purchase", quantity: Number(row.quantity), value: Number(row.quantity) * Number(row.unitCost) })),
+        ...stockRows.map(row => ({ date: row.stockDate, type: `${row.department} Closing`, quantity: Number(row.openingApproved) + Number(row.inQty) + Number(row.returnQty) - Number(row.issued), value: (Number(row.openingApproved) + Number(row.inQty) + Number(row.returnQty) - Number(row.issued)) * averageCost })),
+        ...saleRows.map(row => ({ date: row.saleDate, type: "Sale", quantity: -Number(row.sell), value: -Number(row.sell) * averageCost })),
+      ].sort((a, b) => a.date.localeCompare(b.date));
+      return { averageCost, events, totals: { quantity: events.reduce((sum, event) => sum + event.quantity, 0), value: events.reduce((sum, event) => sum + event.value, 0) } };
+    }),
+  }),
   items: router({
     list: protectedProcedure.query(() => listItems()),
     create: protectedProcedure.input(z.object({ name: z.string().min(1), itemType: z.enum(["raw_material", "packaging_material", "finished_good", "other"]), unit: z.string().min(1), minimumStock: numeric.default(0) })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const result = await db.insert(items).values({ ...input, minimumStock: String(input.minimumStock) }); await writeAudit(ctx.user.id, "create", "item", Number(result[0].insertId), null, input); return { id: Number(result[0].insertId) }; }),

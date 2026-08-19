@@ -105,6 +105,16 @@ export function validateBackupSnapshot(snapshot: unknown, supportedVersion = 1) 
   return missing.length ? { valid: false, error: `Missing collections: ${missing.join(", ")}` } : { valid: true as const };
 }
 
+export function recalculateSequentialOpenings<T extends { itemId: number; date: string; opening: number; closing: number }>(rows: T[], fallbackOpening = 0) {
+  const lastClosing = new Map<number, number>();
+  return [...rows].sort((a, b) => a.date.localeCompare(b.date) || a.itemId - b.itemId).map(row => {
+    const opening = lastClosing.has(row.itemId) ? lastClosing.get(row.itemId)! : row.opening ?? fallbackOpening;
+    const next = { ...row, opening };
+    lastClosing.set(row.itemId, row.closing);
+    return next;
+  });
+}
+
 export function normalizeDateRange(from: string, to: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) throw new Error("Dates must use YYYY-MM-DD");
   if (from > to) throw new Error("From date must not be after To date");
