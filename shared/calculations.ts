@@ -21,6 +21,11 @@ export function calculateIssuedFromBom(orderQuantity: number, quantityPerBatch: 
   return (orderQuantity / batchSize) * quantityPerBatch;
 }
 
+export function calculateDepartmentIssued(orderQuantity: number, department: "production" | "packaging", recipe: { department: "production" | "packaging"; lines: Array<{ quantityPerBatch: number }> }, batchSize = 1) {
+  if (recipe.department !== department) return 0;
+  return recipe.lines.reduce((total, line) => total + calculateIssuedFromBom(orderQuantity, line.quantityPerBatch, batchSize), 0);
+}
+
 export function weightedAverageCost(purchases: Array<{ quantity: number; unitCost: number }>, carriedCost = 0) {
   const valid = purchases.filter(p => p.quantity > 0);
   const quantity = valid.reduce((sum, p) => sum + p.quantity, 0);

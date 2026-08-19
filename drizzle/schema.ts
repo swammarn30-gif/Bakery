@@ -68,13 +68,14 @@ export const orders = mysqlTable("orders", {
 export const recipes = mysqlTable("recipes", {
   id: int("id").autoincrement().primaryKey(),
   itemId: int("itemId").notNull(),
+  department: mysqlEnum("department", ["production", "packaging"]).default("production").notNull(),
   version: int("version").default(1).notNull(),
   effectiveFrom: varchar("effectiveFrom", { length: 10 }).notNull(),
   active: boolean("active").default(true).notNull(),
   note: text("note"),
   createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-}, t => ({ itemVersionIdx: uniqueIndex("recipes_item_version_idx").on(t.itemId, t.version) }));
+}, t => ({ itemVersionIdx: uniqueIndex("recipes_item_version_idx").on(t.itemId, t.department, t.version) }));
 
 export const recipeLines = mysqlTable("recipeLines", {
   id: int("id").autoincrement().primaryKey(),

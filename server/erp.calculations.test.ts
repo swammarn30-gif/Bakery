@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -16,6 +16,14 @@ describe("ERP calculations", () => {
 
   it("generates BOM issuance from order quantity and preserves a separately editable value", () => {
     expect(calculateIssuedFromBom(100, 0.4, 1)).toBe(40);
+  });
+
+  it("splits Spanish BOM issuance between Production ingredients and Packaging materials", () => {
+    const production = { department: "production" as const, lines: [{ quantityPerBatch: 0.4 }, { quantityPerBatch: 0.1 }] };
+    const packaging = { department: "packaging" as const, lines: [{ quantityPerBatch: 1 }, { quantityPerBatch: 1 }] };
+    expect(calculateDepartmentIssued(100, "production", production)).toBe(50);
+    expect(calculateDepartmentIssued(100, "packaging", packaging)).toBe(200);
+    expect(calculateDepartmentIssued(100, "production", packaging)).toBe(0);
   });
 
   it("calculates quantity-weighted monthly average cost", () => {

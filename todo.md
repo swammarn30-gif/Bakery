@@ -92,3 +92,7 @@
 
 - [x] Fix React duplicate-key console error showing two children with key `/`.
 - [x] Verify dashboard rendering and the 38-test suite after the duplicate-key fix.
+
+- [x] Clarify Recipe/BOM setup for a Spanish finished good with separate Production ingredients and Packaging materials.
+- [x] Verify or refine Auto Issued so Spanish demand drives Production flour/sugar quantities and Packaging box/sticker quantities separately, while manual overrides remain protected.
+- [x] Add tests for the Spanish-style split Production/Packaging recipe flow.

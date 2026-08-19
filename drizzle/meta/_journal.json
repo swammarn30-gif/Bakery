@@ -15,6 +15,13 @@
       "when": 1787153652337,
       "tag": "0001_certain_gateway",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787163838452,
+      "tag": "0002_cool_boom_boom",
+      "breakpoints": true
     }
   ]
 }
