@@ -86,3 +86,6 @@
 
 - [x] Keep Production and Packaging Daily Ledger as full spreadsheet-style tables with one item per row and all formula columns in one header row; use horizontal scrolling on mobile instead of card conversion.
 - [x] Verify Production and Packaging ledger table structure, formulas, and responsive overflow behavior through code/tests without changing workflow or business logic; screenshots intentionally skipped per user request.
+
+- [x] Make Production and Packaging navigation table-first by moving global KPI cards/summary content to Overview or Reports and keeping the Daily Ledger at the top of the operational view.
+- [x] Verify the table-first workflow preserves formulas, inline editing, horizontal scrolling, and existing navigation behavior.
