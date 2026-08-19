@@ -102,3 +102,22 @@
 - [x] Recalculate monthly weighted average cost per base unit and use it for costing; preserve carried-forward cost when there are no purchases, with mixed normalized-unit test coverage.
 - [x] Add Purchase UI fields for quantity unit and total purchase value, with unit-per-price derived automatically instead of requiring a unit price.
 - [x] Add unit conversion, incompatible-unit rejection, mixed-unit monthly average, carry-forward, and 1200 Kg / 1,500,000 base-cost tests.
+
+- [x] Assess current GitHub/Manus MySQL architecture against Supabase PostgreSQL and identify required schema, ORM, auth, storage, and transaction changes; Express/Node runtime remains a Cloudflare Workers/Pages compatibility consideration.
+- [x] Prepare a Supabase migration design without changing ERP workflows, formulas, or UI behavior.
+- [x] Prepare Cloudflare-compatible build/runtime configuration and secret requirements; publishing remains intentionally gated.
+- [x] Validate migration readiness and document required Supabase/Cloudflare user actions and unresolved blockers; all local/remote checks pass, while actual Cloudflare publish and final OAuth-domain secret configuration remain user-gated.
+
+- [x] Create a new Supabase project for Bakery ERP only after confirming organization, region, and any creation cost. Created `Bakery ERP Production` in `swammarn30-gif's Org`, region `ap-southeast-1`, project ref `npiifxjxwvxetanhbugk`, status `ACTIVE_HEALTHY`.
+- [x] Migrate the Bakery ERP schema and database runtime from MySQL/Drizzle to Supabase PostgreSQL without changing workflows or formulas. Applied the reviewed bootstrap migration to project `npiifxjxwvxetanhbugk`; `SUPABASE_DATABASE_URL` is preferred by the server adapter; TypeScript, 45 Vitest tests, build, and a live `select 1` smoke test pass.
+- [x] Prepare Cloudflare deployment configuration and production secrets. Added `wrangler.toml`, Worker assets binding, Hyperdrive binding `9a951eeecff64bba8a98ab7029d4d876`, and explicit Node compatibility flags; production secrets remain managed outside GitHub.
+
+- [x] Audit and document Supabase/Cloudflare impacts for auth, storage, and transaction behavior in `docs/production-migration.md`.
+- [x] Restore PostgreSQL-equivalent updatedAt behavior for items, users, dailyStock, and sales without changing business workflows through verified production triggers.
+- [x] Restore a clean PostgreSQL Drizzle migration workflow with `drizzle.pg.config.ts` and the isolated `drizzle/pg/` output directory; generated SQL is reproducible without legacy malformed snapshots.
+
+- [x] Implement the approved Cloudflare Worker/Pages adapter with nodejs_compat and a Hyperdrive binding path, preserving existing Express/tRPC routes, OAuth cookies, storage, and ERP behavior; Wrangler dry-run passed without publishing.
+
+- [x] Add and verify Cloudflare SPA fallback so client-side ERP routes resolve to the built index instead of returning 404; `server/worker.routes.test.ts` executes full fetch-handler coverage.
+- [x] Document the exact Cloudflare production secret and binding inventory for JWT, OAuth, owner, storage, and Supabase/Hyperdrive runtime values in `docs/cloudflare-secrets.md`.
+- [x] Validate the Worker adapter against representative ERP, OAuth, storage, and deep-link paths through full fetch-handler tests and a Wrangler dry-run; final suite is 50 passing tests.

@@ -5,7 +5,7 @@ vi.mock("./db", () => ({
   items: "items", dailyStock: "dailyStock", importBatches: "importBatches",
   getDb: vi.fn(async () => ({
     select: () => ({ from: () => { const result = state.selectCalls++ === 0 ? state.items : state.stock; return { where: async () => result, then: (resolve: (value: unknown) => unknown) => Promise.resolve(resolve(result)) }; } }),
-    insert: (table: unknown) => ({ values: async (value: Record<string, unknown>) => { state.inserts.push({ table, ...value }); return [{ insertId: state.inserts.length }]; } }),
+    insert: (table: unknown) => ({ values: (value: Record<string, unknown>) => { state.inserts.push({ table, ...value }); const id = state.inserts.length; return { returning: async () => [{ id }] }; } }),
   })),
   writeAudit: vi.fn(async () => { state.audits += 1; }),
 }));

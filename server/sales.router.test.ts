@@ -17,11 +17,12 @@ vi.mock("./db", () => ({
       }),
     }),
     insert: () => ({
-      values: async (value: Record<string, unknown> | Array<Record<string, unknown>>) => {
+      values: (value: Record<string, unknown> | Array<Record<string, unknown>>) => {
         const rows = Array.isArray(value) ? value : [value];
-        if (rows[0] && "saleDate" in rows[0]) { const id = state.nextSaleId++; state.sales.push({ ...rows[0], id }); return [{ insertId: id }]; }
-        state.shopLines.push(...rows);
-        return [{ insertId: 1 }];
+        let insertedId = 1;
+        if (rows[0] && "saleDate" in rows[0]) { insertedId = state.nextSaleId++; state.sales.push({ ...rows[0], id: insertedId }); }
+        else state.shopLines.push(...rows);
+        return { returning: async () => [{ id: insertedId }] };
       },
     }),
     update: () => ({ set: (value: Record<string, unknown>) => ({ where: async () => { const row = state.sales[0]; if (row) Object.assign(row, value); } }) }),

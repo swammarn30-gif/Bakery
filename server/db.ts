@@ -1,13 +1,31 @@
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { approvals, auditLog, dailyStock, items, purchases, saleShopLines, sales, shops, InsertUser, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _client: ReturnType<typeof postgres> | null = null;
+let configuredConnectionString: string | undefined;
+
+export function configureDatabase(connectionString: string | undefined) {
+  if (!connectionString || configuredConnectionString === connectionString) return;
+  configuredConnectionString = connectionString;
+  _client = null;
+  _db = null;
+}
 
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
-    try { _db = drizzle(process.env.DATABASE_URL); } catch (error) { console.warn("[Database] Failed to connect:", error); _db = null; }
+  const connectionString = configuredConnectionString ?? process.env.SUPABASE_DATABASE_URL ?? process.env.DATABASE_URL;
+  if (!_db && connectionString) {
+    try {
+      _client = postgres(connectionString, { prepare: false });
+      _db = drizzle(_client);
+    } catch (error) {
+      console.warn("[Database] Failed to connect:", error);
+      _client = null;
+      _db = null;
+    }
   }
   return _db;
 }
@@ -17,7 +35,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   const db = await getDb();
   if (!db) return;
   const values: InsertUser = { openId: user.openId, name: user.name ?? null, email: user.email ?? null, loginMethod: user.loginMethod ?? null, lastSignedIn: user.lastSignedIn ?? new Date(), role: user.role ?? (user.openId === ENV.ownerOpenId ? "admin" : "user") };
-  await db.insert(users).values(values).onDuplicateKeyUpdate({ set: { ...values, updatedAt: new Date() } });
+  await db.insert(users).values(values).onConflictDoUpdate({ target: users.openId, set: { ...values, updatedAt: new Date() } });
 }
 
 export async function getUserByOpenId(openId: string) {
