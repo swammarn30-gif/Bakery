@@ -15,11 +15,11 @@
 - [x] Implement Stock Adjustment proposal workflow with audit trail and admin approval.
 - [x] Implement finished-goods Sale table with exact Opening + Produce - Sell formula.
 - [x] Implement multi-product, multi-shop Sale breakdown without duplicate main sale rows.
-- [ ] Implement reports for Production, Packaging, Sale, Purchase, Inventory, Costing, Item History, and date ranges.
+- [ ] Complete full date-range report views/API coverage for Production, Packaging, Sale, Purchase, Inventory, Costing, Item History, and summaries.
 - [x] Implement item-by-item history report with quantity/value separation and totals.
 - [x] Implement one-workbook date-range Excel export for Production, Packaging, and Sale sheets.
-- [ ] Implement safe date-range Excel import with validation, duplicate handling, and approval rules.
-- [ ] Implement compatible backup restore with schema-version detection and migration; versioned backup export is complete.
+- [ ] Add protected Excel import apply logic for validated rows, duplicate/approved-data protection, and import audit state.
+- [ ] Implement backup restore with schema-version compatibility, migration strategy, and safe transactional handling; versioned export/validation is complete.
 - [x] Implement admin permissions and auditable approval records for current approval procedures.
 - [x] Implement mobile-first responsive UI with touch-friendly readable tables.
 - [x] Add unit tests for formulas, costing carry-forward, BOM issuance, sale shop totals, quantity/value separation, and import validation.
