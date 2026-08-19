@@ -37,6 +37,23 @@ export function sumShopQuantities(lines: Array<{ quantity: number }>) {
   return lines.reduce((sum, line) => sum + line.quantity, 0);
 }
 
+export function saleRowKey(saleDate: string, itemId: number) {
+  return `${saleDate}:${itemId}`;
+}
+
+export function aggregateSaleRows(rows: Array<{ saleDate: string; itemId: number; opening: number; produce: number; shopLines: Array<{ quantity: number }> }>) {
+  const byKey = new Map<string, { saleDate: string; itemId: number; opening: number; produce: number; sell: number; closing: number }>();
+  for (const row of rows) {
+    const sell = sumShopQuantities(row.shopLines);
+    byKey.set(saleRowKey(row.saleDate, row.itemId), { saleDate: row.saleDate, itemId: row.itemId, opening: row.opening, produce: row.produce, sell, closing: row.opening + row.produce - sell });
+  }
+  return Array.from(byKey.values());
+}
+
+export function carryForwardOpening(previousApprovedClosing: number | null | undefined, fallback = 0) {
+  return previousApprovedClosing === null || previousApprovedClosing === undefined ? fallback : previousApprovedClosing;
+}
+
 export function normalizeDateRange(from: string, to: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) throw new Error("Dates must use YYYY-MM-DD");
   if (from > to) throw new Error("From date must not be after To date");
