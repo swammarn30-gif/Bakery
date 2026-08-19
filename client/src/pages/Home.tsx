@@ -29,6 +29,7 @@ function StockPanel({ department }: { department: "production" | "packaging" }) 
   const rows = trpc.stock.list.useQuery({ department, from: date, to: date });
   const save = trpc.stock.save.useMutation({ onSuccess: result => { toast.success(`Saved. Used ${result.used}, Closing ${result.closing}`); rows.refetch(); }, onError: e => toast.error(e.message) });
   const propose = trpc.stock.proposeOpening.useMutation({ onSuccess: () => { toast.success("Opening proposal submitted for admin approval"); rows.refetch(); }, onError: e => toast.error(e.message) });
+  useEffect(() => { setDrafts({}); }, [date, department]);
   const rowFor = (item: NonNullable<typeof items.data>[number]) => {
     const row = rows.data?.find(entry => entry.itemId === item.id);
     return drafts[item.id] ?? { opening: String(row?.openingApproved ?? 0), inQty: String(row?.inQty ?? 0), issued: String(row?.issued ?? 0), returnQty: String(row?.returnQty ?? 0), damage: String(row?.damage ?? 0), pendingOpening: String(row?.openingPending ?? "") };
