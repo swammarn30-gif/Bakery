@@ -121,3 +121,11 @@
 - [x] Add and verify Cloudflare SPA fallback so client-side ERP routes resolve to the built index instead of returning 404; `server/worker.routes.test.ts` executes full fetch-handler coverage.
 - [x] Document the exact Cloudflare production secret and binding inventory for JWT, OAuth, owner, storage, and Supabase/Hyperdrive runtime values in `docs/cloudflare-secrets.md`.
 - [x] Validate the Worker adapter against representative ERP, OAuth, storage, and deep-link paths through full fetch-handler tests and a Wrangler dry-run; final suite is 50 passing tests.
+
+- [x] Audit and replace the remaining Manus OAuth authentication flow with Supabase Auth email/password while preserving protected ERP procedures and admin role checks; legacy Manus fallback is disabled unless explicitly enabled.
+- [x] Configure Supabase Auth client/server secrets securely and synchronize Supabase Auth users with the ERP users table.
+- [x] Add the approved `swammarn30@gmail.com` account securely and promote it to admin without exposing the password in code, GitHub, or logs.
+- [x] Add authentication, admin authorization, and regression tests for the Supabase Auth flow; live sign-in resolves to ERP role `admin`, 53 Vitest tests pass, TypeScript passes, and production build passes.
+
+- [x] Fully retire remaining Manus OAuth runtime registration and fallback now that Supabase Auth is the selected production authentication system; the unused OAuth module was removed and the runtime no longer registers it.
+- [x] Add integration coverage proving a Supabase-authenticated admin can call an admin ERP procedure and a non-admin is denied; the final suite has 54 passing tests.
