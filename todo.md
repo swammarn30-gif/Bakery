@@ -131,7 +131,7 @@
 - [x] Add integration coverage proving a Supabase-authenticated admin can call an admin ERP procedure and a non-admin is denied; the final suite has 54 passing tests.
 
 - [x] Fix Cloudflare’s `pnpm exec wrangler deploy` failure after the build succeeds, using the repository-local `deploy:worker` script (`wrangler deploy`) invoked by `pnpm run`.
-- [ ] Re-run TypeScript, tests, production build, and Wrangler dry-run after the deploy-command fix, then provide the exact Cloudflare retry settings. TypeScript, 54 tests, and production build pass; local Wrangler dry-run is blocked by CLI OAuth timeout, while Cloudflare Dashboard authentication is already available.
+- [x] Re-run TypeScript, tests, production build, and Wrangler dry-run after the deploy-command fix; TypeScript, 54 tests, production build, and Wrangler 4.15.2 dry-run pass.
 
 - [ ] Sync the corrected `deploy:worker` package script and current Cloudflare configuration to the connected GitHub repository before retrying Cloudflare.
 - [ ] Confirm Cloudflare is building the updated commit and retry with deploy command `pnpm run deploy:worker`.
@@ -141,3 +141,13 @@
 
 - [x] Fix Cloudflare Worker runtime error `require_stream` / code 10021 caused by the current Express/Node adapter bundle by switching to Cloudflare’s documented `httpServerHandler` entrypoint.
 - [ ] Rebuild and verify the Cloudflare Worker runtime after replacing or isolating the incompatible Node request bridge. Local TypeScript, 54 tests, production build, and Wrangler dry-run pass; live Cloudflare retry remains pending.
+
+- [ ] Audit the connected Cloudflare Worker project `swammarm` and configure its production variables/secrets and Hyperdrive binding for Bakery ERP.
+- [ ] Validate `swammarm` after the secure configuration and confirm the Cloudflare retry/deployment result.
+
+- [ ] Configure the confirmed `swammarm` Worker with secure Supabase/Auth/JWT/runtime secrets and the existing Bakery ERP Hyperdrive binding.
+- [ ] Deploy `swammarm` after secret configuration and validate the live Worker URL, Supabase login, database access, and admin authorization.
+- [x] Fix the Cloudflare Workers deploy failure caused by `TypeError: require_streams(...) is not a function` by pinning Wrangler to the known-compatible 4.15.2 release; local build, tests, and dry-run pass.
+- [ ] Verify the deployed Worker serves the Bakery ERP application instead of Cloudflare’s placeholder page.
+- [ ] Complete production login and smoke-test verification after the Worker route is live.
+- [ ] Remove temporary admin-provisioning script only after production access is confirmed.
