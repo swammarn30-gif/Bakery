@@ -135,3 +135,6 @@
 
 - [ ] Sync the corrected `deploy:worker` package script and current Cloudflare configuration to the connected GitHub repository before retrying Cloudflare.
 - [ ] Confirm Cloudflare is building the updated commit and retry with deploy command `pnpm run deploy:worker`.
+
+- [ ] Replace the unrelated-history GitHub `main` branch with the approved verified local Bakery ERP source using the approved force-with-lease update.
+- [ ] Confirm GitHub contains `deploy:worker` and retry Cloudflare from the new commit with `pnpm run deploy:worker`.
