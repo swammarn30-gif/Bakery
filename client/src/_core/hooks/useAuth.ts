@@ -12,7 +12,7 @@ export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath } = options ?? {};
   const utils = trpc.useUtils();
   const [sessionReady, setSessionReady] = useState(!supabase);
-  const meQuery = trpc.auth.me.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
+  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady, retry: false, refetchOnWindowFocus: false });
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => utils.auth.me.setData(undefined, null),
   });
