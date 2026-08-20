@@ -36,7 +36,14 @@ export async function authenticateSupabaseBearer(authorization: string | undefin
   const token = authorization.slice("Bearer ".length).trim();
   if (!token) return null;
   const { data, error } = await adminClient.auth.getUser(token);
-  if (error || !data.user) return null;
+  if (error || !data.user) {
+    console.error("[Auth] Supabase token rejected", {
+      status: error?.status ?? null,
+      code: error?.code ?? null,
+      message: error?.message ?? "No user returned",
+    });
+    return null;
+  }
   const authUser = data.user;
   const isOwner = Boolean(config?.ownerOpenId && authUser.id === config.ownerOpenId);
   await upsertUser({

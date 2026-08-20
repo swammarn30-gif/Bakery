@@ -9,9 +9,17 @@ export type TrpcContext = {
 };
 
 async function authenticateAuthorization(authorization: string | undefined, config?: SupabaseRuntimeConfig) {
+  if (!authorization?.startsWith("Bearer ")) return null;
   try {
     return await authenticateSupabaseBearer(authorization, config);
-  } catch {
+  } catch (error: unknown) {
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error("[Auth] Supabase bearer context failed", {
+      detail,
+      hasSupabaseUrl: Boolean(config?.supabaseUrl),
+      hasServiceRoleKey: Boolean(config?.serviceRoleKey),
+      hasOwnerOpenId: Boolean(config?.ownerOpenId),
+    });
     return null;
   }
 }
