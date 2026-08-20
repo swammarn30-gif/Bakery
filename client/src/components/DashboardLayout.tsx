@@ -53,7 +53,13 @@ export function SupabaseLoginScreen() {
         supabase.auth.signInWithPassword({ email, password }),
         new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Sign in timed out. Check the production connection and try again.")), 15000)),
       ]);
-      if (signInResult.error) setError(signInResult.error.message);
+      if (signInResult.error) {
+        setError(signInResult.error.message);
+      } else {
+        // Re-bootstrap the app after Supabase persists the session. This prevents
+        // the initial auth.me query from remaining stuck in its unauthenticated state.
+        window.location.reload();
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");
     } finally {
