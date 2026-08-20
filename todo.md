@@ -133,25 +133,25 @@
 - [x] Fix Cloudflare’s `pnpm exec wrangler deploy` failure after the build succeeds, using the repository-local `deploy:worker` script (`wrangler deploy`) invoked by `pnpm run`.
 - [x] Re-run TypeScript, tests, production build, and Wrangler dry-run after the deploy-command fix; TypeScript, 54 tests, production build, and Wrangler 4.15.2 dry-run pass.
 
-- [ ] Sync the corrected `deploy:worker` package script and current Cloudflare configuration to the connected GitHub repository before retrying Cloudflare.
-- [ ] Confirm Cloudflare is building the updated commit and retry with deploy command `pnpm run deploy:worker`.
+- [x] Sync the corrected `deploy:worker` package script and current Cloudflare configuration to the connected GitHub repository; verified commits `7526fa6` and `adbe6f8` are on GitHub main.
+- [x] Confirm Cloudflare built the updated commit with `pnpm run deploy:worker`; build `c3b6b4ef-0e59-4af3-9bd6-2317bb5b9168` completed successfully.
 
-- [ ] Replace the unrelated-history GitHub `main` branch with the approved verified local Bakery ERP source using the approved force-with-lease update.
-- [ ] Confirm GitHub contains `deploy:worker` and retry Cloudflare from the new commit with `pnpm run deploy:worker`.
+- [ ] Replace the unrelated-history GitHub `main` branch with the approved verified local Bakery ERP source using an explicit history-replacement operation; current GitHub pushes are verified, but this specific operation is not evidenced.
+- [x] Confirm GitHub contains `deploy:worker`; Cloudflare successfully deployed from the synchronized repository.
 
-- [x] Fix Cloudflare Worker runtime error `require_stream` / code 10021 caused by the current Express/Node adapter bundle by switching to Cloudflare’s documented `httpServerHandler` entrypoint.
-- [ ] Rebuild and verify the Cloudflare Worker runtime after replacing or isolating the incompatible Node request bridge. Local TypeScript, 54 tests, production build, and Wrangler dry-run pass; live Cloudflare retry remains pending.
+- [x] Fix Cloudflare Worker runtime error `require_stream` / code 10021 caused by the incompatible Node HTTP adapter by replacing it with a Cloudflare Worker-native fetch entrypoint.
+- [x] Rebuild and verify the Cloudflare Worker runtime after replacing the incompatible Node request bridge; the Worker-native deployment completed successfully.
 
-- [ ] Audit the connected Cloudflare Worker project `swammarm` and configure its production variables/secrets and Hyperdrive binding for Bakery ERP.
-- [ ] Validate `swammarm` after the secure configuration and confirm the Cloudflare retry/deployment result.
+- [x] Audit the connected Cloudflare Worker project `swammarn` and configure its production variables/secrets and Hyperdrive binding for Bakery ERP.
+- [x] Validate `swammarn` after secure configuration; Cloudflare deployment succeeded and the live Worker serves the ERP sign-in page.
 
-- [ ] Configure the confirmed `swammarm` Worker with secure Supabase/Auth/JWT/runtime secrets and the existing Bakery ERP Hyperdrive binding.
-- [ ] Deploy `swammarm` after secret configuration and validate the live Worker URL, Supabase login, database access, and admin authorization.
+- [x] Configure the confirmed `swammarn` Worker with secure Supabase/Auth/JWT/runtime secrets and the existing Bakery ERP Hyperdrive binding.
+- [x] Deploy `swammarn` after secret configuration and validate the live Worker URL; Supabase login form and application assets are available, while credential-dependent login/database smoke testing remains pending.
 - [x] Fix the Cloudflare Workers deploy failure caused by `TypeError: require_streams(...) is not a function` by pinning Wrangler to the known-compatible 4.15.2 release; local build, tests, and dry-run pass.
-- [ ] Verify the deployed Worker serves the Bakery ERP application instead of Cloudflare’s placeholder page.
+- [x] Verify the deployed Worker serves the Bakery ERP application and Supabase email/password sign-in screen instead of Cloudflare’s placeholder page.
 - [ ] Complete production login and smoke-test verification after the Worker route is live.
 - [ ] Remove temporary admin-provisioning script only after production access is confirmed.
 - [x] Fix Cloudflare Worker name mismatch by changing repository `wrangler.toml` from `bakery-erp` to `swammarn`; TypeScript, 54 tests, production build, and Wrangler 4.15.2 dry-run pass.
 - [x] Fix Cloudflare deployment validation error `Unexpected error: http.createServer is not implemented yet` from `worker.ts:6` by using the explicit non-conflicting `nodejs_compat_v2` plus HTTP server compatibility flags; TypeScript, 54 tests, production build, and Wrangler dry-run pass. Cloudflare retry remains pending.
 - [x] Replace the unsupported `cloudflare:node` HTTP server bootstrap in `worker.ts` with a Worker-native fetch adapter for tRPC and asset fallback; preserve Supabase bearer auth, Hyperdrive, storage proxy, and business logic. Added focused Worker tests; TypeScript, 54 tests, production build, and Wrangler dry-run pass.
-- [x] Fix post-login redirect caused by the homepage’s obsolete `/api/oauth/login` link: the homepage now renders the existing Supabase email/password login screen and stays on the deployed hostname. TypeScript, 54 tests, and production build pass; Cloudflare rebuild and live login retest remain pending.
+- [x] Fix post-login redirect caused by the homepage’s obsolete `/api/oauth/login` link: the homepage now renders the existing Supabase email/password login screen and stays on the deployed hostname. TypeScript, 54 tests, production build, and Cloudflare build `c3b6b4ef-0e59-4af3-9bd6-2317bb5b9168` pass.
