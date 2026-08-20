@@ -152,3 +152,4 @@
 - [ ] Complete production login and smoke-test verification after the Worker route is live.
 - [ ] Remove temporary admin-provisioning script only after production access is confirmed.
 - [x] Fix Cloudflare Worker name mismatch by changing repository `wrangler.toml` from `bakery-erp` to `swammarn`; TypeScript, 54 tests, production build, and Wrangler 4.15.2 dry-run pass.
+- [x] Fix Cloudflare deployment validation error `Unexpected error: http.createServer is not implemented yet` from `worker.ts:6` by using the explicit non-conflicting `nodejs_compat_v2` plus HTTP server compatibility flags; TypeScript, 54 tests, production build, and Wrangler dry-run pass. Cloudflare retry remains pending.

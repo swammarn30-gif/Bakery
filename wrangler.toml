@@ -1,7 +1,7 @@
 name = "swammarn"
 main = "worker.ts"
 compatibility_date = "2026-08-20"
-compatibility_flags = ["nodejs_compat", "enable_nodejs_http_server_modules"]
+compatibility_flags = ["nodejs_compat_v2", "enable_nodejs_http_server_modules"]
 
 [assets]
 directory = "./dist/public"
