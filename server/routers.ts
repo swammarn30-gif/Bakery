@@ -15,7 +15,7 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => { const options = getSessionCookieOptions(ctx.req); ctx.res.clearCookie(COOKIE_NAME, { ...options, maxAge: -1 }); return { success: true } as const; }),
+    logout: publicProcedure.mutation(({ ctx }) => { const options = getSessionCookieOptions(ctx.req); const response = ctx.res as unknown as { clearCookie?: (name: string, options: Record<string, unknown>) => void }; response.clearCookie?.(COOKIE_NAME, { ...options, maxAge: -1 }); return { success: true } as const; }),
   }),
   imports: router({
     applyProduction: adminProcedure.input(z.object({ filename: z.string().min(1), rows: z.array(z.object({ Date: z.string(), Department: z.enum(["production", "packaging"]), Item: z.string().min(1), Unit: z.string().min(1), Opening: numeric, In: numeric, Issued: numeric, Return: numeric, Damage: numeric, Note: z.string().optional() })).min(1) })).mutation(async ({ input, ctx }) => {

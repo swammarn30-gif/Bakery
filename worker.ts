@@ -1,9 +1,5 @@
-import { createServer } from "node:http";
-// @ts-expect-error Cloudflare provides this module at Worker runtime.
-import { httpServerHandler } from "cloudflare:node";
-import { createExpressApp } from "./server/_core/app";
+import { createWorkerFetch } from "./worker-handler";
 
-const server = createServer(createExpressApp());
-server.listen(8080);
+const fetch = createWorkerFetch();
 
-export default httpServerHandler({ port: 8080 });
+export default { fetch };

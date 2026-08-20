@@ -1,0 +1,5 @@
+# Cloudflare HTTP runtime finding
+
+Cloudflare’s Node HTTP documentation states that `http.createServer`, `http.Server`, and `http.ServerResponse` require `nodejs_compat` plus `enable_nodejs_http_server_modules`, and documents `httpServerHandler` for Node HTTP servers: https://developers.cloudflare.com/workers/runtime-apis/nodejs/http/
+
+The connected Cloudflare build for commit `0cd8ae8` successfully installed dependencies and built the application, but failed during the Worker upload/version validation with `Unexpected error: [unenv] http.createServer is not implemented yet`, traced to `worker.ts:6` and Cloudflare validation error `10021`. The repository currently has `nodejs_compat_v2` and `enable_nodejs_http_server_modules`, and local Wrangler dry-run passes, so the connected runtime is not honoring the Node HTTP server bootstrap. The next implementation should use a Worker-native fetch adapter rather than `createServer`/`httpServerHandler` while preserving tRPC, Supabase bearer authentication, Hyperdrive, storage proxy behavior, and asset fallback.

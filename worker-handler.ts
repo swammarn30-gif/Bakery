@@ -1,4 +1,8 @@
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { appRouter } from "./server/routers";
 import { configureDatabase } from "./server/db";
+import { createWorkerContext } from "./server/_core/context";
+import { handleStorageProxyRequest } from "./server/_core/storageProxy";
 import { isServerRoute, shouldServeSpaFallback } from "./worker-routing";
 
 export interface WorkerEnv {
@@ -6,11 +10,24 @@ export interface WorkerEnv {
   ASSETS?: { fetch(request: Request): Promise<Response> };
 }
 
-export function createWorkerFetch(handleNodeRequest: (port: number, request: Request) => Promise<Response>) {
+export function createWorkerFetch() {
   return async function fetch(request: Request, env: WorkerEnv): Promise<Response> {
     configureDatabase(env.HYPERDRIVE?.connectionString);
     const pathname = new URL(request.url).pathname;
-    if (isServerRoute(pathname)) return handleNodeRequest(8080, request);
+
+    if (isServerRoute(pathname)) {
+      if (pathname.startsWith("/api/trpc")) {
+        return fetchRequestHandler({
+          endpoint: "/api/trpc",
+          req: request,
+          router: appRouter,
+          createContext: ({ req }) => createWorkerContext(req),
+        });
+      }
+      if (pathname.startsWith("/manus-storage/")) return handleStorageProxyRequest(request);
+      return new Response("Not found", { status: 404 });
+    }
+
     if (!env.ASSETS) return new Response("Asset binding is not configured", { status: 503 });
     const assetResponse = await env.ASSETS.fetch(request);
     if (!shouldServeSpaFallback(assetResponse.status, request.method, request.headers.get("Accept"))) return assetResponse;

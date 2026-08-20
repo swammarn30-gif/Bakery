@@ -8,14 +8,28 @@ export type TrpcContext = {
   user: User | null;
 };
 
+async function authenticateAuthorization(authorization: string | undefined) {
+  try {
+    return await authenticateSupabaseBearer(authorization);
+  } catch {
+    return null;
+  }
+}
+
 export async function createContext(
   opts: CreateExpressContextOptions
 ): Promise<TrpcContext> {
-  let user: User | null = null;
-  try {
-    user = await authenticateSupabaseBearer(opts.req.headers.authorization);
-  } catch {
-    user = null;
-  }
-  return { req: opts.req, res: opts.res, user };
+  return {
+    req: opts.req,
+    res: opts.res,
+    user: await authenticateAuthorization(opts.req.headers.authorization),
+  };
+}
+
+export async function createWorkerContext(req: Request): Promise<TrpcContext> {
+  return {
+    req: req as unknown as CreateExpressContextOptions["req"],
+    res: null as unknown as CreateExpressContextOptions["res"],
+    user: await authenticateAuthorization(req.headers.get("authorization") ?? undefined),
+  };
 }
