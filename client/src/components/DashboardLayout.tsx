@@ -37,7 +37,7 @@ const DEFAULT_WIDTH = 280;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
 
-function SupabaseLoginScreen() {
+export function SupabaseLoginScreen() {
   const [email, setEmail] = useState("swammarn30@gmail.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
