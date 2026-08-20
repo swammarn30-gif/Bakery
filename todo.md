@@ -138,3 +138,6 @@
 
 - [ ] Replace the unrelated-history GitHub `main` branch with the approved verified local Bakery ERP source using the approved force-with-lease update.
 - [ ] Confirm GitHub contains `deploy:worker` and retry Cloudflare from the new commit with `pnpm run deploy:worker`.
+
+- [x] Fix Cloudflare Worker runtime error `require_stream` / code 10021 caused by the current Express/Node adapter bundle by switching to Cloudflare’s documented `httpServerHandler` entrypoint.
+- [ ] Rebuild and verify the Cloudflare Worker runtime after replacing or isolating the incompatible Node request bridge. Local TypeScript, 54 tests, production build, and Wrangler dry-run pass; live Cloudflare retry remains pending.
