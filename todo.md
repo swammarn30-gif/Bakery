@@ -129,3 +129,9 @@
 
 - [x] Fully retire remaining Manus OAuth runtime registration and fallback now that Supabase Auth is the selected production authentication system; the unused OAuth module was removed and the runtime no longer registers it.
 - [x] Add integration coverage proving a Supabase-authenticated admin can call an admin ERP procedure and a non-admin is denied; the final suite has 54 passing tests.
+
+- [x] Fix Cloudflare’s `pnpm exec wrangler deploy` failure after the build succeeds, using the repository-local `deploy:worker` script (`wrangler deploy`) invoked by `pnpm run`.
+- [ ] Re-run TypeScript, tests, production build, and Wrangler dry-run after the deploy-command fix, then provide the exact Cloudflare retry settings. TypeScript, 54 tests, and production build pass; local Wrangler dry-run is blocked by CLI OAuth timeout, while Cloudflare Dashboard authentication is already available.
+
+- [ ] Sync the corrected `deploy:worker` package script and current Cloudflare configuration to the connected GitHub repository before retrying Cloudflare.
+- [ ] Confirm Cloudflare is building the updated commit and retry with deploy command `pnpm run deploy:worker`.
