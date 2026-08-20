@@ -136,7 +136,7 @@
 - [x] Sync the corrected `deploy:worker` package script and current Cloudflare configuration to the connected GitHub repository; verified commits `7526fa6` and `adbe6f8` are on GitHub main.
 - [x] Confirm Cloudflare built the updated commit with `pnpm run deploy:worker`; build `c3b6b4ef-0e59-4af3-9bd6-2317bb5b9168` completed successfully.
 
-- [ ] Replace the unrelated-history GitHub `main` branch with the approved verified local Bakery ERP source using an explicit history-replacement operation; this is not required for the successful normal GitHub synchronization and is intentionally not performed without explicit evidence or need.
+- [x] Not applicable for this deployment: no unrelated-history rewrite was performed. Normal authenticated synchronization succeeded, the approved final commit `a1a202a` is on `swammarn30-gif/Bakery` `main`, and destructive history replacement is unnecessary and unsafe.
 - [x] Verified GitHub `main` is synchronized through normal authenticated pushes, with commits `7526fa6` and `adbe6f8` present.
 - [x] Confirm GitHub contains `deploy:worker`; Cloudflare successfully deployed from the synchronized repository.
 
