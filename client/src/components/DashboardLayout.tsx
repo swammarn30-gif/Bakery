@@ -48,9 +48,17 @@ export function SupabaseLoginScreen() {
     if (!supabase) { setError("Supabase Auth is not configured."); return; }
     setPending(true);
     setError(null);
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    setPending(false);
-    if (signInError) setError(signInError.message);
+    try {
+      const signInResult = await Promise.race([
+        supabase.auth.signInWithPassword({ email, password }),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Sign in timed out. Check the production connection and try again.")), 15000)),
+      ]);
+      if (signInResult.error) setError(signInResult.error.message);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");
+    } finally {
+      setPending(false);
+    }
   }
 
   return (

@@ -8,6 +8,9 @@ import { isServerRoute, shouldServeSpaFallback } from "./worker-routing";
 export interface WorkerEnv {
   HYPERDRIVE?: { connectionString: string };
   ASSETS?: { fetch(request: Request): Promise<Response> };
+  VITE_SUPABASE_URL?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
+  OWNER_OPEN_ID?: string;
 }
 
 export function createWorkerFetch() {
@@ -21,7 +24,11 @@ export function createWorkerFetch() {
           endpoint: "/api/trpc",
           req: request,
           router: appRouter,
-          createContext: ({ req }) => createWorkerContext(req),
+          createContext: ({ req }) => createWorkerContext(req, {
+            supabaseUrl: env.VITE_SUPABASE_URL,
+            serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+            ownerOpenId: env.OWNER_OPEN_ID,
+          }),
         });
       }
       if (pathname.startsWith("/manus-storage/")) return handleStorageProxyRequest(request);
