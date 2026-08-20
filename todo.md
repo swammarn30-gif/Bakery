@@ -151,3 +151,4 @@
 - [ ] Verify the deployed Worker serves the Bakery ERP application instead of Cloudflare’s placeholder page.
 - [ ] Complete production login and smoke-test verification after the Worker route is live.
 - [ ] Remove temporary admin-provisioning script only after production access is confirmed.
+- [x] Fix Cloudflare Worker name mismatch by changing repository `wrangler.toml` from `bakery-erp` to `swammarn`; TypeScript, 54 tests, production build, and Wrangler 4.15.2 dry-run pass.
