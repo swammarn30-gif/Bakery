@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { supabase } from "@/lib/supabase";
+import { getPersistedSupabaseAccessToken, supabase } from "@/lib/supabase";
 import { TRPCClientError } from "@trpc/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -11,7 +11,7 @@ type UseAuthOptions = {
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath } = options ?? {};
   const utils = trpc.useUtils();
-  const [sessionReady, setSessionReady] = useState(!supabase);
+  const [sessionReady, setSessionReady] = useState(() => !supabase || Boolean(getPersistedSupabaseAccessToken()));
   const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady, retry: false, refetchOnWindowFocus: false, refetchOnMount: "always" });
   const meRefetch = meQuery.refetch;
   const logoutMutation = trpc.auth.logout.useMutation({
