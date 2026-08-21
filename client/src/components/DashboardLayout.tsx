@@ -56,9 +56,11 @@ export function SupabaseLoginScreen() {
       if (signInResult.error) {
         setError(signInResult.error.message);
       } else {
-        // The parent auth hook is already mounted while this screen is visible.
-        // Notify it to refetch after Supabase persists the session in local storage.
+        // Notify the mounted hook immediately, then give Supabase enough time to
+        // persist the session before a clean bootstrap on the next document load.
         window.dispatchEvent(new Event("supabase-auth-signed-in"));
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        window.location.reload();
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");
