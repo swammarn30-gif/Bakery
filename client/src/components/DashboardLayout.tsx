@@ -55,7 +55,11 @@ export function SupabaseLoginScreen({ onSignedIn }: { onSignedIn?: () => Promise
       else {
         const { data } = await client.auth.getSession();
         if (!data.session?.access_token) setError("Sign in succeeded but the session was not persisted. Please try again.");
-        else { window.dispatchEvent(new Event("supabase-auth-signed-in")); await onSignedIn?.(); }
+        else {
+          window.dispatchEvent(new Event("supabase-auth-signed-in"));
+          await onSignedIn?.();
+          window.location.reload();
+        }
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");
