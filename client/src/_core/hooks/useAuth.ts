@@ -11,7 +11,8 @@ type UseAuthOptions = {
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath } = options ?? {};
   const utils = trpc.useUtils();
-  const [sessionReady, setSessionReady] = useState(() => !supabase || Boolean(getPersistedSupabaseAccessToken()));
+  const hasPersistedSession = Boolean(getPersistedSupabaseAccessToken());
+  const [sessionReady, setSessionReady] = useState(() => !supabase || hasPersistedSession);
   const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady, retry: false, refetchOnWindowFocus: false, refetchOnMount: "always" });
   const meRefetch = meQuery.refetch;
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -53,10 +54,10 @@ export function useAuth(options?: UseAuthOptions) {
 
   const state = useMemo(() => ({
     user: meQuery.data ?? null,
-    loading: !sessionReady || meQuery.isLoading || logoutMutation.isPending,
+    loading: !sessionReady || meQuery.isLoading || logoutMutation.isPending || (hasPersistedSession && !meQuery.data && !meQuery.error),
     error: meQuery.error ?? logoutMutation.error ?? null,
     isAuthenticated: Boolean(meQuery.data),
-  }), [meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);
+  }), [hasPersistedSession, meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);
 
   useEffect(() => {
     if (!redirectOnUnauthenticated || state.loading || state.user || typeof window === "undefined") return;

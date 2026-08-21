@@ -172,3 +172,5 @@
 - [ ] Fix the verified live Cloudflare auth/runtime error so Supabase Admin bearer tokens resolve through `auth.me` and protected ERP procedures; run full validation, push the corrected code to GitHub `main`, republish Worker `swammarn`, and retest the unchanged production URL before claiming completion.
 
 - [ ] Fix and verify the confirmed mobile Chrome production error `Sign in timed out. Check the production connection and try again.` on `https://swammarn.swammarn30.workers.dev/`; trace the actual Supabase/Cloudflare request path, test the evidence-backed fix, redeploy through GitHub/Cloudflare, and do not mark complete until mobile login reaches the dashboard.
+
+- [ ] Reproduce and eliminate the repeated live production login failure reported after the `a7b1226` deployment; personally verify on the live browser that authorized sign-in transitions to the dashboard and no longer returns to Sign in or shows timeout.
