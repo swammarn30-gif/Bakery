@@ -217,3 +217,10 @@
 - [x] Remove Opening Proposal from the main workflow and support date-specific opening edits from Item Dashboard.
 - [x] Add regression coverage through the existing stock/export tests; TypeScript, full Vitest suite (70 tests), production build, and desktop/mobile preview checks pass.
 - [x] Push the latest Master Date, Example 2 grouped-date export, left-corner menu, carry-forward, autosave, and Item Dashboard opening changes to GitHub main, deploy to Cloudflare, and verify the live Worker URL.
+- [x] Fix Excel exports so downloaded Production and Packaging files include populated data rows, not headers only.
+- [x] Redesign Reports to select one Item and a Date Range instead of rendering an oversized all-date table.
+- [x] Remove the nonessential summary/description block above operational tables and make tables the primary mobile view.
+- [x] Move the compact menu into the B branding area, reduce Name/Item column width, and verify mobile fit.
+- [x] Split Order Table and BOM into separate pages/navigation destinations.
+- [x] Restrict Order Table Choose Item options to items available in Sale Table only.
+- [x] Add regression tests and responsive verification for all reported fixes before deployment.

@@ -9,6 +9,12 @@ export type ExportStockRow = {
   note?: string | null;
 };
 
+export type ExportItem = {
+  id: number;
+  name: string;
+  unit: string;
+};
+
 export type DateColumnExportRow = {
   Item: string;
   Field: string;
@@ -62,9 +68,12 @@ export function toDateColumnExportRows(rows: ExportStockRow[], nameOf: (itemId: 
   }));
 }
 
-export function toDateGroupedExport(rows: ExportStockRow[], nameOf: (itemId: number) => string, unitOf: (itemId: number) => string, from: string, to: string): GroupedDateExport {
+export function toDateGroupedExport(rows: ExportStockRow[], nameOf: (itemId: number) => string, unitOf: (itemId: number) => string, from: string, to: string, itemMaster: ExportItem[] = []): GroupedDateExport {
   const dates = dateColumnsBetween(from, to);
   const byItem = new Map<number, { item: string; unit: string; rows: Map<string, ExportStockRow> }>();
+  // Seed from Item Master so a workbook never contains only headers when stock
+  // rows are sparse, delayed, or temporarily unavailable from the query cache.
+  for (const item of itemMaster) byItem.set(item.id, { item: item.name, unit: item.unit, rows: new Map<string, ExportStockRow>() });
   for (const row of rows) {
     const existing = byItem.get(row.itemId) ?? { item: nameOf(row.itemId), unit: unitOf(row.itemId), rows: new Map<string, ExportStockRow>() };
     existing.rows.set(row.stockDate, row);

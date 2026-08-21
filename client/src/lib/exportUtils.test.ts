@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dateColumnsBetween, departmentExportFilename, toDateColumnExportRows } from "./exportUtils";
+import { dateColumnsBetween, departmentExportFilename, toDateColumnExportRows, toDateGroupedExport } from "./exportUtils";
 
 describe("department-specific date-column exports", () => {
   it("creates ordered date columns and preserves stock formulas", () => {
@@ -29,5 +29,19 @@ describe("department-specific date-column exports", () => {
     expect(dateColumnsBetween("2026-08-01", "2026-08-03")).toEqual(["2026-08-01", "2026-08-02", "2026-08-03"]);
     expect(departmentExportFilename("production", "2026-08-01", "2026-08-20")).toBe("Bakery_production_2026-08-01_to_2026-08-20.xlsx");
     expect(departmentExportFilename("packaging", "2026-08-01", "2026-08-20")).toBe("Bakery_packaging_2026-08-01_to_2026-08-20.xlsx");
+  });
+
+  it("seeds grouped export rows from item master and fills existing metrics", () => {
+    const grouped = toDateGroupedExport([
+      { stockDate: "2026-08-01", itemId: 1, openingApproved: 100, inQty: 25, issued: 40, returnQty: 3, damage: 2, note: "ok" },
+    ], id => id === 1 ? "Flour" : "Box", id => id === 1 ? "g" : "pcs", "2026-08-01", "2026-08-02", [
+      { id: 1, name: "Flour", unit: "g" },
+      { id: 2, name: "Box", unit: "pcs" },
+    ]);
+
+    expect(grouped.rows).toHaveLength(2);
+    expect(grouped.rows[0]?.values["2026-08-01|Closing"]).toBe(88);
+    expect(grouped.rows[1]?.item).toBe("Box");
+    expect(grouped.rows[1]?.values["2026-08-02|Opening"]).toBe("");
   });
 });

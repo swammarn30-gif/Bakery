@@ -126,7 +126,7 @@ export const appRouter = router({
   }),
   orders: router({
     list: protectedProcedure.input(dateRange).query(async ({ input }) => { const db = await getDb(); if (!db) return []; return db.select().from(orders).where(and(gte(orders.orderDate, input.from), lte(orders.orderDate, input.to))).orderBy(desc(orders.orderDate)); }),
-    create: protectedProcedure.input(z.object({ orderDate: z.string(), itemId: z.number().int(), quantity: numeric.positive(), note: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const result = await db.insert(orders).values({ ...input, quantity: String(input.quantity), createdBy: ctx.user.id }).returning({ id: orders.id }); return { id: result[0]?.id }; }),
+    create: protectedProcedure.input(z.object({ orderDate: z.string(), itemId: z.number().int(), quantity: numeric.positive(), note: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const item = (await db.select({ id: items.id, active: items.active, itemType: items.itemType }).from(items).where(eq(items.id, input.itemId)).limit(1))[0]; if (!item || !item.active || item.itemType !== "finished_good") throw new Error("Orders can only be created for active Sale items."); const result = await db.insert(orders).values({ ...input, quantity: String(input.quantity), createdBy: ctx.user.id }).returning({ id: orders.id }); return { id: result[0]?.id }; }),
   }),
   recipes: router({
     list: protectedProcedure.query(async () => { const db = await getDb(); if (!db) return []; return db.select().from(recipes).orderBy(desc(recipes.effectiveFrom)); }),
