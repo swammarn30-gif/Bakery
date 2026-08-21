@@ -201,3 +201,5 @@
 - [x] Add export-helper tests, full-suite verification, production build, and desktop/mobile preview checks for the separate export controls.
 - [x] Add separate export actions/files for Production and Packaging so each export contains only its own department data for the selected date range.
 - [x] Add regression coverage proving Production export excludes Packaging rows and Packaging export excludes Production rows.
+- [ ] Push the verified separate Production/Packaging export change to GitHub main.
+- [ ] Deploy the pushed commit to the existing Cloudflare Worker production hosting and verify the live URL responds with the updated build.
