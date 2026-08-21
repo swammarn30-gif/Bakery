@@ -184,3 +184,8 @@
 - [x] Complete and verify the live Cloudflare Sign In fix: Supabase password exchange returns 200 and the deployed Worker `auth.me` returns the admin ERP user with HTTP 200 after the anon-key fallback.
 - [x] Redesign the dashboard shell, navigation placement, and page spacing to follow the authenticated legacy Netlify reference with a dark header, pill navigation, compact content frame, and preserved table/workflow components.
 - [x] Verify the redesigned UI on desktop and mobile: desktop/mobile previews pass, the live post-fix sign-in reaches the dashboard with the reference-style header and pill navigation, prior Production/Packaging ledger checks remain valid, and TypeScript/Vitest/build validation passes.
+
+- [x] Measure the current live Sign In timeout and latency across Supabase password exchange, token persistence, Worker `auth.me`, and dashboard hydration.
+- [x] Fix the confirmed slow/timeout authentication path with bounded, evidence-backed retries and no unnecessary serial waits; deploy and verify fast live dashboard access.
+- [x] Fix Production and Packaging StockPanel item filtering so Production shows only production raw-material items in g and Packaging shows only packaging items in pcs; preserve migrated ledger rows and business formulas.
+- [x] Re-run live Production and Packaging smoke tests after the filtering fix.
