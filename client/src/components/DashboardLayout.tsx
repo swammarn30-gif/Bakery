@@ -81,10 +81,15 @@ export function SupabaseLoginScreen() {
       if (signInResult.error) {
         setError(signInResult.error.message);
       } else {
-        // Notify the mounted hook immediately, then give Supabase enough time to
-        // persist the session before a clean bootstrap on the next document load.
+        // Confirm Supabase has persisted the session before a clean bootstrap.
+        // This avoids the mobile race where reload runs before local storage is ready.
+        for (let attempt = 0; attempt < 8; attempt += 1) {
+          const { data } = await client.auth.getSession();
+          if (data.session?.access_token) break;
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
         window.dispatchEvent(new Event("supabase-auth-signed-in"));
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
         window.location.reload();
       }
     } catch (caught) {
