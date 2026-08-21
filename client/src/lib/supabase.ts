@@ -11,8 +11,10 @@ export function getPersistedSupabaseAccessToken(storage: Storage | undefined = t
     const projectRef = new URL(url).hostname.split(".")[0];
     const raw = storage.getItem(`sb-${projectRef}-auth-token`);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as { access_token?: unknown };
-    return typeof parsed.access_token === "string" && parsed.access_token ? parsed.access_token : null;
+    const parsed = JSON.parse(raw) as { access_token?: unknown; expires_at?: unknown };
+    if (typeof parsed.access_token !== "string" || !parsed.access_token) return null;
+    if (typeof parsed.expires_at === "number" && parsed.expires_at <= Math.floor(Date.now() / 1000) + 30) return null;
+    return parsed.access_token;
   } catch {
     return null;
   }
