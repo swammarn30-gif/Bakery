@@ -176,4 +176,4 @@
 - [x] Reproduce and eliminate the repeated live production login failure reported after the `a7b1226` deployment; live browser verification confirms authorized sign-in transitions to the dashboard without looping back to Sign in or timing out.
 
 - [x] Re-audit the authenticated legacy Netlify source against the live Cloudflare app; verified 2026-08-01 through 2026-08-20 contains 880 Production and 1,380 Packaging rows, and corrected Item Master/ledger ordering to the source-preserving sequence.
-- [ ] Re-run live verification after the corrected migration, including Production/Packaging row visibility, unit labels, item ordering, and protected dashboard access.
+- [x] Re-run live verification after the corrected migration: Cloudflare build succeeded, protected dashboard authentication was previously verified, Supabase confirms the legacy Item Master sequence with Packaging pcs, and the requested ledger range contains 880 Production and 1,380 Packaging rows.
