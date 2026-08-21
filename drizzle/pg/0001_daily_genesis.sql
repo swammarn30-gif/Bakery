@@ -1,0 +1,1 @@
+ALTER TABLE "items" ADD COLUMN "displayOrder" integer DEFAULT 100000 NOT NULL;
