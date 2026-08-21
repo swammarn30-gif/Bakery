@@ -13,7 +13,7 @@ export function useAuth(options?: UseAuthOptions) {
   const utils = trpc.useUtils();
   const hasPersistedSession = Boolean(getPersistedSupabaseAccessToken());
   const [sessionReady, setSessionReady] = useState(() => !supabase || hasPersistedSession);
-  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady && hasPersistedSession, retry: false, refetchOnWindowFocus: false, refetchOnMount: "always" });
+  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady && hasPersistedSession, retry: false, staleTime: 60_000, refetchOnWindowFocus: false, refetchOnMount: false });
   const meRefetch = meQuery.refetch;
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => utils.auth.me.setData(undefined, null),
@@ -30,16 +30,11 @@ export function useAuth(options?: UseAuthOptions) {
       if (mounted) setSessionReady(true);
       // The enabled auth.me query runs once after the persisted-session check; avoid a duplicate refetch here.
     }).catch(() => mounted && setSessionReady(true));
-    const handleSignedIn = () => {
-      window.setTimeout(() => void utils.auth.me.refetch(), 250);
-    };
-    window.addEventListener("supabase-auth-signed-in", handleSignedIn);
-    const { data } = supabase.auth.onAuthStateChange(() => {
-      void utils.auth.me.invalidate();
+    const { data } = supabase.auth.onAuthStateChange(event => {
+      if (event === "SIGNED_OUT") utils.auth.me.setData(undefined, null);
     });
     return () => {
       mounted = false;
-      window.removeEventListener("supabase-auth-signed-in", handleSignedIn);
       data.subscription.unsubscribe();
     };
   }, [meRefetch, utils]);
