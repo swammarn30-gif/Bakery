@@ -64,6 +64,24 @@ export function useAuth(options?: UseAuthOptions) {
   }), [meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);
 
   useEffect(() => {
+    if (!sessionReady || !hasPersistedSession || meQuery.data || meQuery.error) return;
+    let cancelled = false;
+    let attempts = 0;
+    let timer: number | undefined;
+    const recover = async () => {
+      if (cancelled || attempts >= 5) return;
+      attempts += 1;
+      const result = await meRefetch();
+      if (!cancelled && !result.data && !result.error) timer = window.setTimeout(recover, 500);
+    };
+    timer = window.setTimeout(recover, 300);
+    return () => {
+      cancelled = true;
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [hasPersistedSession, meQuery.data, meQuery.error, meRefetch, sessionReady]);
+
+  useEffect(() => {
     if (!redirectOnUnauthenticated || state.loading || state.user || typeof window === "undefined") return;
     if (redirectPath && window.location.pathname === redirectPath) return;
     window.dispatchEvent(new Event("supabase-auth-required"));
