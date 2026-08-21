@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getPersistedSupabaseAccessToken } from "@/lib/supabase";
 
 export function shouldEnableAuthQuery(sessionReady: boolean) {
   return sessionReady;
@@ -20,5 +21,12 @@ describe("Supabase auth query readiness", () => {
   it("reboots the app only after a successful password sign-in", () => {
     expect(shouldReloadAfterSignIn(false)).toBe(true);
     expect(shouldReloadAfterSignIn(true)).toBe(false);
+  });
+
+  it("can recover a persisted access token before Supabase session hydration finishes", () => {
+    const storage = {
+      getItem: (key: string) => key === "sb-npiifxjxwvxetanhbugk-auth-token" ? JSON.stringify({ access_token: "persisted-token" }) : null,
+    } as Storage;
+    expect(getPersistedSupabaseAccessToken(storage)).toBe("persisted-token");
   });
 });
