@@ -180,3 +180,7 @@
 
 - [ ] Reproduce the current live Cloudflare Sign In error with the provided Supabase admin account and capture the actual browser/network/runtime failure.
 - [ ] Fix the evidence-backed authentication failure, redeploy through GitHub/Cloudflare, and verify that Sign In reaches the protected dashboard without looping or timing out.
+
+- [x] Complete and verify the live Cloudflare Sign In fix: Supabase password exchange returns 200 and the deployed Worker `auth.me` returns the admin ERP user with HTTP 200 after the anon-key fallback.
+- [x] Redesign the dashboard shell, navigation placement, and page spacing to follow the authenticated legacy Netlify reference with a dark header, pill navigation, compact content frame, and preserved table/workflow components.
+- [ ] Verify the redesigned UI on desktop and mobile, including table-first Production/Packaging views, horizontal scrolling, migrated data visibility, and no browser/runtime errors.
