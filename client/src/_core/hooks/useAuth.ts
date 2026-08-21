@@ -13,7 +13,7 @@ export function useAuth(options?: UseAuthOptions) {
   const utils = trpc.useUtils();
   const hasPersistedSession = Boolean(getPersistedSupabaseAccessToken());
   const [sessionReady, setSessionReady] = useState(() => !supabase || hasPersistedSession);
-  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady, retry: false, refetchOnWindowFocus: false, refetchOnMount: "always" });
+  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady && hasPersistedSession, retry: false, refetchOnWindowFocus: false, refetchOnMount: "always" });
   const meRefetch = meQuery.refetch;
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => utils.auth.me.setData(undefined, null),
@@ -28,7 +28,7 @@ export function useAuth(options?: UseAuthOptions) {
     ]);
     sessionWithTimeout.then(({ data }) => {
       if (mounted) setSessionReady(true);
-      if (mounted && data.session?.access_token) void meRefetch();
+      // The enabled auth.me query runs once after the persisted-session check; avoid a duplicate refetch here.
     }).catch(() => mounted && setSessionReady(true));
     const handleSignedIn = () => {
       window.setTimeout(() => void utils.auth.me.refetch(), 250);
@@ -71,7 +71,10 @@ export function useAuth(options?: UseAuthOptions) {
     const recover = async () => {
       if (cancelled || attempts >= 5) return;
       attempts += 1;
-      if (attempts === 1 && supabase) await supabase.auth.refreshSession();
+      if (attempts === 1 && supabase) {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session?.access_token) await supabase.auth.refreshSession();
+      }
       const result = await meRefetch();
       if (!cancelled && !result.data && !result.error) timer = window.setTimeout(recover, 500);
     };

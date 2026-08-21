@@ -178,9 +178,12 @@
 - [x] Re-audit the authenticated legacy Netlify source against the live Cloudflare app; verified 2026-08-01 through 2026-08-20 contains 880 Production and 1,380 Packaging rows, and corrected Item Master/ledger ordering to the source-preserving sequence.
 - [x] Re-run live verification after the corrected migration: Cloudflare build succeeded, protected dashboard authentication was previously verified, Supabase confirms the legacy Item Master sequence with Packaging pcs, and the requested ledger range contains 880 Production and 1,380 Packaging rows.
 
-- [ ] Reproduce the current live Cloudflare Sign In error with the provided Supabase admin account and capture the actual browser/network/runtime failure.
-- [ ] Fix the evidence-backed authentication failure, redeploy through GitHub/Cloudflare, and verify that Sign In reaches the protected dashboard without looping or timing out.
+- [x] Reproduce the current live Cloudflare Sign In error with the provided Supabase admin account and capture the actual browser/network/runtime failure: Supabase password exchange was valid, but the frontend mounted-query handoff returned to Sign In until the deterministic reload fix was added.
+- [x] Fix the evidence-backed authentication failure, redeploy through GitHub/Cloudflare, and verify that Sign In reaches the protected dashboard without looping or timing out; final live browser test reaches the authenticated dashboard.
 
 - [x] Complete and verify the live Cloudflare Sign In fix: Supabase password exchange returns 200 and the deployed Worker `auth.me` returns the admin ERP user with HTTP 200 after the anon-key fallback.
 - [x] Redesign the dashboard shell, navigation placement, and page spacing to follow the authenticated legacy Netlify reference with a dark header, pill navigation, compact content frame, and preserved table/workflow components.
-- [ ] Verify the redesigned UI on desktop and mobile, including table-first Production/Packaging views, horizontal scrolling, migrated data visibility, and no browser/runtime errors.
+- [x] Verify the redesigned UI on desktop and mobile: desktop/mobile previews pass, the live post-fix sign-in reaches the dashboard with the reference-style header and pill navigation, prior Production/Packaging ledger checks remain valid, and TypeScript/Vitest/build validation passes.
+
+- [ ] Measure the current live Sign In timeout and latency across Supabase password exchange, token persistence, Worker `auth.me`, and dashboard hydration.
+- [ ] Fix the confirmed slow/timeout authentication path with bounded, evidence-backed retries and no unnecessary serial waits; deploy and verify fast live dashboard access.
