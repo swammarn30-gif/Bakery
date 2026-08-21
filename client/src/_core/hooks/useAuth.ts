@@ -88,5 +88,14 @@ export function useAuth(options?: UseAuthOptions) {
     window.dispatchEvent(new Event("supabase-auth-required"));
   }, [redirectOnUnauthenticated, redirectPath, state.loading, state.user]);
 
-  return { ...state, refresh: () => meQuery.refetch(), logout };
+  const refresh = useCallback(async () => {
+    let result = await meRefetch();
+    for (let attempt = 0; attempt < 5 && !result.data && !result.error; attempt += 1) {
+      await new Promise(resolve => window.setTimeout(resolve, 150 * (attempt + 1)));
+      result = await meRefetch();
+    }
+    return result;
+  }, [meRefetch]);
+
+  return { ...state, refresh, logout };
 }
