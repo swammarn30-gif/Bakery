@@ -8,6 +8,13 @@
       "when": 1787168295633,
       "tag": "0000_past_shadow_king",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787294658922,
+      "tag": "0001_daily_genesis",
+      "breakpoints": true
     }
   ]
 }

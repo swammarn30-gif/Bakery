@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { approvals, auditLog, dailyStock, items, purchases, saleShopLines, sales, shops, InsertUser, users } from "../drizzle/schema";
@@ -45,7 +45,11 @@ export async function getUserByOpenId(openId: string) {
   return result[0];
 }
 
-export async function listItems() { const db = await getDb(); return db ? db.select().from(items).orderBy(items.name) : []; }
+export function sortItemsByDisplayOrder<T extends { displayOrder: number; id: number }>(rows: T[]) {
+  return [...rows].sort((a, b) => a.displayOrder - b.displayOrder || a.id - b.id);
+}
+
+export async function listItems() { const db = await getDb(); return db ? db.select().from(items).orderBy(asc(items.displayOrder), asc(items.id)) : []; }
 export async function listShops() { const db = await getDb(); return db ? db.select().from(shops).where(eq(shops.active, true)).orderBy(shops.name) : []; }
 export async function listDailyStock(department: "production" | "packaging", from: string, to: string) { const db = await getDb(); return db ? db.select().from(dailyStock).where(and(eq(dailyStock.department, department), gte(dailyStock.stockDate, from), lte(dailyStock.stockDate, to))).orderBy(desc(dailyStock.stockDate)) : []; }
 export async function listSales(from: string, to: string) { const db = await getDb(); return db ? db.select().from(sales).where(and(gte(sales.saleDate, from), lte(sales.saleDate, to))).orderBy(desc(sales.saleDate)) : []; }

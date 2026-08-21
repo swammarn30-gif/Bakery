@@ -174,3 +174,6 @@
 - [x] Fix and verify the confirmed mobile Chrome production error `Sign in timed out. Check the production connection and try again.` on `https://swammarn.swammarn30.workers.dev/`; the evidence-backed auth hydration fix is deployed and live sign-in reaches the dashboard.
 
 - [x] Reproduce and eliminate the repeated live production login failure reported after the `a7b1226` deployment; live browser verification confirms authorized sign-in transitions to the dashboard without looping back to Sign in or timing out.
+
+- [x] Re-audit the authenticated legacy Netlify source against the live Cloudflare app; verified 2026-08-01 through 2026-08-20 contains 880 Production and 1,380 Packaging rows, and corrected Item Master/ledger ordering to the source-preserving sequence.
+- [ ] Re-run live verification after the corrected migration, including Production/Packaging row visibility, unit labels, item ordering, and protected dashboard access.

@@ -26,6 +26,7 @@ export const items = pgTable("items", {
   itemType: itemTypeEnum("itemType").default("raw_material").notNull(),
   unit: varchar("unit", { length: 32 }).notNull(),
   minimumStock: decimal("minimumStock", { precision: 18, scale: 4 }).default("0").notNull(),
+  displayOrder: integer("displayOrder").default(100000).notNull(),
   active: boolean("active").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
