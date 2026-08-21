@@ -22,7 +22,11 @@ export function useAuth(options?: UseAuthOptions) {
   useEffect(() => {
     if (!supabase) return;
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
+    const sessionWithTimeout = Promise.race([
+      supabase.auth.getSession(),
+      new Promise<{ data: { session: null } }>(resolve => window.setTimeout(() => resolve({ data: { session: null } }), 5000)),
+    ]);
+    sessionWithTimeout.then(({ data }) => {
       if (mounted) setSessionReady(true);
       if (mounted && data.session?.access_token) void meRefetch();
     }).catch(() => mounted && setSessionReady(true));
