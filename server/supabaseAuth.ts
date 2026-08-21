@@ -4,6 +4,7 @@ import { getUserByOpenId, upsertUser } from "./db";
 type SupabaseRuntimeConfig = {
   supabaseUrl?: string;
   serviceRoleKey?: string;
+  anonKey?: string;
   ownerOpenId?: string;
 };
 
@@ -21,10 +22,12 @@ let runtimeClientKey = "";
 function getAdminClient(config?: SupabaseRuntimeConfig) {
   const supabaseUrl = config?.supabaseUrl || process.env.VITE_SUPABASE_URL || "";
   const serviceRoleKey = config?.serviceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-  if (!supabaseUrl || !serviceRoleKey) return buildTimeClient;
-  const clientKey = `${supabaseUrl}|${serviceRoleKey}`;
+  const anonKey = config?.anonKey || process.env.VITE_SUPABASE_ANON_KEY || "";
+  const key = serviceRoleKey || anonKey;
+  if (!supabaseUrl || !key) return buildTimeClient;
+  const clientKey = `${supabaseUrl}|${key}`;
   if (!runtimeClient || runtimeClientKey !== clientKey) {
-    runtimeClient = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    runtimeClient = createClient(supabaseUrl, key, { auth: { autoRefreshToken: false, persistSession: false } });
     runtimeClientKey = clientKey;
   }
   return runtimeClient;
