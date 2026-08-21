@@ -189,3 +189,5 @@
 - [x] Fix the confirmed slow/timeout authentication path with bounded, evidence-backed retries and no unnecessary serial waits; deploy and verify fast live dashboard access.
 - [x] Fix Production and Packaging StockPanel item filtering so Production shows only production raw-material items in g and Packaging shows only packaging items in pcs; preserve migrated ledger rows and business formulas.
 - [x] Re-run live Production and Packaging smoke tests after the filtering fix.
+- [x] Investigate why Aug 20 migrated dailyStock rows are not populating the visible ledger inputs even though the database migration counts are present; fix only the data-display path if confirmed.
+- [x] Re-run Aug 20 live data-value verification for Production and Packaging after the visibility investigation.
