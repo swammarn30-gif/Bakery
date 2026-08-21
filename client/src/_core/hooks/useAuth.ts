@@ -71,6 +71,7 @@ export function useAuth(options?: UseAuthOptions) {
     const recover = async () => {
       if (cancelled || attempts >= 5) return;
       attempts += 1;
+      if (attempts === 1 && supabase) await supabase.auth.refreshSession();
       const result = await meRefetch();
       if (!cancelled && !result.data && !result.error) timer = window.setTimeout(recover, 500);
     };
