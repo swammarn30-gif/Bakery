@@ -216,3 +216,4 @@
 - [x] Replace manual row-by-row save with 800ms debounced autosave and visible save status.
 - [x] Remove Opening Proposal from the main workflow and support date-specific opening edits from Item Dashboard.
 - [x] Add regression coverage through the existing stock/export tests; TypeScript, full Vitest suite (70 tests), production build, and desktop/mobile preview checks pass.
+- [ ] Push the latest Master Date, Example 2 grouped-date export, left-corner menu, carry-forward, autosave, and Item Dashboard opening changes to GitHub main, deploy to Cloudflare, and verify the live Worker URL.
