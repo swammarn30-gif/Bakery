@@ -21,11 +21,16 @@ export function useAuth(options?: UseAuthOptions) {
     if (!supabase) return;
     let mounted = true;
     supabase.auth.getSession().finally(() => mounted && setSessionReady(true));
+    const handleSignedIn = () => {
+      window.setTimeout(() => void utils.auth.me.refetch(), 250);
+    };
+    window.addEventListener("supabase-auth-signed-in", handleSignedIn);
     const { data } = supabase.auth.onAuthStateChange(() => {
       void utils.auth.me.invalidate();
     });
     return () => {
       mounted = false;
+      window.removeEventListener("supabase-auth-signed-in", handleSignedIn);
       data.subscription.unsubscribe();
     };
   }, [utils]);

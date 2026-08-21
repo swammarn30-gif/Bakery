@@ -56,10 +56,9 @@ export function SupabaseLoginScreen() {
       if (signInResult.error) {
         setError(signInResult.error.message);
       } else {
-        // Let Supabase finish persisting the session before re-bootstrapping the app.
-        // Without this small handoff, the first auth.me request can race local storage.
-        await new Promise(resolve => setTimeout(resolve, 250));
-        window.location.reload();
+        // The parent auth hook is already mounted while this screen is visible.
+        // Notify it to refetch after Supabase persists the session in local storage.
+        window.dispatchEvent(new Event("supabase-auth-signed-in"));
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");

@@ -9,6 +9,10 @@ export function shouldReloadAfterSignIn(hasError: boolean) {
   return !hasError;
 }
 
+export function shouldNotifyAuthHookAfterSignIn(hasError: boolean) {
+  return !hasError;
+}
+
 describe("Supabase auth query readiness", () => {
   it("does not enable auth.me before the browser session is initialized", () => {
     expect(shouldEnableAuthQuery(false)).toBe(false);
@@ -28,5 +32,10 @@ describe("Supabase auth query readiness", () => {
       getItem: (key: string) => key === "sb-npiifxjxwvxetanhbugk-auth-token" ? JSON.stringify({ access_token: "persisted-token" }) : null,
     } as Storage;
     expect(getPersistedSupabaseAccessToken(storage)).toBe("persisted-token");
+  });
+
+  it("notifies the mounted auth hook only after a successful sign-in", () => {
+    expect(shouldNotifyAuthHookAfterSignIn(false)).toBe(true);
+    expect(shouldNotifyAuthHookAfterSignIn(true)).toBe(false);
   });
 });
