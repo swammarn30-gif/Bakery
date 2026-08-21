@@ -196,3 +196,8 @@
 - [x] Close the superseded June-range import request; the approved Aug 1–20 range was used instead.
 - [x] Export legacy Production and Packaging data specifically for 2026-08-01 through 2026-08-20 after user date-range confirmation.
 - [x] Transform, import, and verify the confirmed Aug 1–20 Production and Packaging records in the current ERP without duplicating existing rows; corrected 24 source-parity differences and confirmed 2,260 current rows match the export row-by-row.
+- [x] Keep the existing Production/Packaging page date selectors and date-specific spreadsheet tables as-is; the clarified requirement was separate exports rather than a report-page redesign.
+- [x] Update Excel export so Production Daily and Packaging Daily are separate department-specific files for the selected date range.
+- [x] Add export-helper tests, full-suite verification, production build, and desktop/mobile preview checks for the separate export controls.
+- [x] Add separate export actions/files for Production and Packaging so each export contains only its own department data for the selected date range.
+- [x] Add regression coverage proving Production export excludes Packaging rows and Packaging export excludes Production rows.
