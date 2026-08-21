@@ -81,16 +81,13 @@ export function SupabaseLoginScreen() {
       if (signInResult.error) {
         setError(signInResult.error.message);
       } else {
-        // Confirm Supabase has persisted the session before a clean bootstrap.
-        // This avoids the mobile race where reload runs before local storage is ready.
-        for (let attempt = 0; attempt < 8; attempt += 1) {
-          const { data } = await client.auth.getSession();
-          if (data.session?.access_token) break;
-          await new Promise(resolve => setTimeout(resolve, 500));
+        // Keep the mounted app alive and let useAuth refetch with the now-persisted token.
+        const { data } = await client.auth.getSession();
+        if (!data.session?.access_token) {
+          setError("Sign in succeeded but the session was not persisted. Please try again.");
+          return;
         }
         window.dispatchEvent(new Event("supabase-auth-signed-in"));
-        await new Promise(resolve => setTimeout(resolve, 500));
-        window.location.reload();
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");

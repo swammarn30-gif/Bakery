@@ -43,9 +43,10 @@ const trpcClient = trpc.createClient({
       url: "/api/trpc",
       transformer: superjson,
       async headers() {
+        const persistedToken = getPersistedSupabaseAccessToken();
+        if (persistedToken) return { Authorization: `Bearer ${persistedToken}` };
         const { data } = await supabase?.auth.getSession() ?? { data: { session: null } };
-        const accessToken = data.session?.access_token ?? getPersistedSupabaseAccessToken();
-        return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+        return data.session?.access_token ? { Authorization: `Bearer ${data.session.access_token}` } : {};
       },
       fetch(input, init) {
         return globalThis.fetch(input, {
