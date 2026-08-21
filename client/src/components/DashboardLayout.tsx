@@ -37,6 +37,33 @@ const DEFAULT_WIDTH = 280;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
 
+const SIGN_IN_ATTEMPT_TIMEOUT_MS = 30000;
+
+export async function signInWithPasswordRetry(
+  signIn: () => Promise<{ error: { message: string } | null }>,
+) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const signInPromise = signIn();
+      void signInPromise.catch(() => undefined);
+      return await Promise.race([
+        signInPromise,
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error("Sign in timed out. Check the production connection and try again.")), SIGN_IN_ATTEMPT_TIMEOUT_MS);
+        }),
+      ]);
+    } catch (error) {
+      lastError = error;
+      if (attempt === 1) throw error;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("Sign in failed. Check the production connection and try again.");
+}
+
 export function SupabaseLoginScreen() {
   const [email, setEmail] = useState("swammarn30@gmail.com");
   const [password, setPassword] = useState("");
@@ -45,14 +72,12 @@ export function SupabaseLoginScreen() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!supabase) { setError("Supabase Auth is not configured."); return; }
+    const client = supabase;
+    if (!client) { setError("Supabase Auth is not configured."); return; }
     setPending(true);
     setError(null);
     try {
-      const signInResult = await Promise.race([
-        supabase.auth.signInWithPassword({ email, password }),
-        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Sign in timed out. Check the production connection and try again.")), 15000)),
-      ]);
+      const signInResult = await signInWithPasswordRetry(() => client.auth.signInWithPassword({ email, password }));
       if (signInResult.error) {
         setError(signInResult.error.message);
       } else {
