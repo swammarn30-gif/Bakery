@@ -205,3 +205,5 @@
 - [x] Deploy the pushed commit to the existing Cloudflare Worker production hosting and verify the live URL responds with the updated build.
 - [x] Redesign separate Production and Packaging export workbooks so each selected date is a distinct column, with Item and Field retained at the left and stock values pivoted under each date.
 - [x] Add regression tests for date-column ordering, date values, formula rows, and department isolation in the revised export layout; full suite remains 70 tests passing.
+- [ ] Push the verified date-as-columns Production/Packaging export change to GitHub main if it is not already present.
+- [ ] Deploy the date-column export build to Cloudflare production and verify the live Worker URL.
