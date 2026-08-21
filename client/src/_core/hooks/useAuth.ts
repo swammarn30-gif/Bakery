@@ -12,7 +12,8 @@ export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath } = options ?? {};
   const utils = trpc.useUtils();
   const [sessionReady, setSessionReady] = useState(!supabase);
-  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady, retry: false, refetchOnWindowFocus: false });
+  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady, retry: false, refetchOnWindowFocus: false, refetchOnMount: "always" });
+  const meRefetch = meQuery.refetch;
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => utils.auth.me.setData(undefined, null),
   });
@@ -20,7 +21,10 @@ export function useAuth(options?: UseAuthOptions) {
   useEffect(() => {
     if (!supabase) return;
     let mounted = true;
-    supabase.auth.getSession().finally(() => mounted && setSessionReady(true));
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setSessionReady(true);
+      if (mounted && data.session?.access_token) void meRefetch();
+    }).catch(() => mounted && setSessionReady(true));
     const handleSignedIn = () => {
       window.setTimeout(() => void utils.auth.me.refetch(), 250);
     };
@@ -33,7 +37,7 @@ export function useAuth(options?: UseAuthOptions) {
       window.removeEventListener("supabase-auth-signed-in", handleSignedIn);
       data.subscription.unsubscribe();
     };
-  }, [utils]);
+  }, [meRefetch, utils]);
 
   const logout = useCallback(async () => {
     if (supabase) await supabase.auth.signOut();
