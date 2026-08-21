@@ -88,6 +88,8 @@ export function SupabaseLoginScreen() {
           return;
         }
         window.dispatchEvent(new Event("supabase-auth-signed-in"));
+        await new Promise(resolve => setTimeout(resolve, 300));
+        window.location.reload();
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");
