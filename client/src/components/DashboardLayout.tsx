@@ -56,8 +56,9 @@ export function SupabaseLoginScreen() {
       if (signInResult.error) {
         setError(signInResult.error.message);
       } else {
-        // Re-bootstrap the app after Supabase persists the session. This prevents
-        // the initial auth.me query from remaining stuck in its unauthenticated state.
+        // Let Supabase finish persisting the session before re-bootstrapping the app.
+        // Without this small handoff, the first auth.me request can race local storage.
+        await new Promise(resolve => setTimeout(resolve, 250));
         window.location.reload();
       }
     } catch (caught) {
