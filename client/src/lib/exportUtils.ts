@@ -15,7 +15,15 @@ export type DateColumnExportRow = {
   [date: string]: string | number;
 };
 
+export type GroupedDateExport = {
+  dates: string[];
+  fields: string[];
+  rows: Array<{ item: string; unit: string; values: Record<string, string | number> }>;
+};
+
 type ExportMetric = "Opening" | "In" | "Issued" | "Return" | "Damage" | "Used" | "Closing" | "Note";
+
+const fields: ExportMetric[] = ["Opening", "In", "Issued", "Return", "Damage", "Used", "Closing", "Note"];
 
 function metricValue(row: ExportStockRow, field: ExportMetric): number | string {
   if (field === "Opening") return Number(row.openingApproved);
@@ -47,12 +55,30 @@ export function toDateColumnExportRows(rows: ExportStockRow[], nameOf: (itemId: 
     item.rows.set(row.stockDate, row);
     byItem.set(row.itemId, item);
   }
-  const fields: ExportMetric[] = ["Opening", "In", "Issued", "Return", "Damage", "Used", "Closing", "Note"];
   return Array.from(byItem.values()).flatMap(item => fields.map(field => {
     const result: DateColumnExportRow = { Item: item.name, Field: field };
     for (const date of dates) result[date] = item.rows.has(date) ? metricValue(item.rows.get(date)!, field) : "";
     return result;
   }));
+}
+
+export function toDateGroupedExport(rows: ExportStockRow[], nameOf: (itemId: number) => string, unitOf: (itemId: number) => string, from: string, to: string): GroupedDateExport {
+  const dates = dateColumnsBetween(from, to);
+  const byItem = new Map<number, { item: string; unit: string; rows: Map<string, ExportStockRow> }>();
+  for (const row of rows) {
+    const existing = byItem.get(row.itemId) ?? { item: nameOf(row.itemId), unit: unitOf(row.itemId), rows: new Map<string, ExportStockRow>() };
+    existing.rows.set(row.stockDate, row);
+    byItem.set(row.itemId, existing);
+  }
+  return {
+    dates,
+    fields,
+    rows: Array.from(byItem.values()).map(item => {
+      const values: Record<string, string | number> = {};
+      for (const date of dates) for (const field of fields) values[`${date}|${field}`] = item.rows.has(date) ? metricValue(item.rows.get(date)!, field) : "";
+      return { item: item.item, unit: item.unit, values };
+    }),
+  };
 }
 
 export function departmentExportFilename(department: "production" | "packaging", from: string, to: string) {

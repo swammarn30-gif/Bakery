@@ -207,3 +207,12 @@
 - [x] Add regression tests for date-column ordering, date values, formula rows, and department isolation in the revised export layout; full suite remains 70 tests passing.
 - [x] Push the verified date-as-columns Production/Packaging export change to GitHub main if it is not already present.
 - [x] Deploy the date-column export build to Cloudflare production and verify the live Worker URL.
+- [x] Generate three alternative Excel examples from the real 2026-08-01 through 2026-08-20 Production and Packaging data for user selection.
+- [x] Do not modify the live export layout until the user selects one of the three examples; the user selected Example 2.
+- [x] Adopt Example 2 grouped-date spreadsheet tables for Production and Packaging in the application UI/export flow.
+- [x] Add left-corner menu navigation and reduce the current crowded page-switching controls while preserving existing routes.
+- [x] Add a system-wide Master Date default used by all relevant pages, with per-page date override still available where needed.
+- [x] Implement automatic carry-forward: each day's Opening follows the previous day's Closing, and editing an earlier day recalculates later days through the existing stock save cascade.
+- [x] Replace manual row-by-row save with 800ms debounced autosave and visible save status.
+- [x] Remove Opening Proposal from the main workflow and support date-specific opening edits from Item Dashboard.
+- [x] Add regression coverage through the existing stock/export tests; TypeScript, full Vitest suite (70 tests), production build, and desktop/mobile preview checks pass.

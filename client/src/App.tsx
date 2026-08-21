@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import { MasterDateProvider } from "./contexts/MasterDateContext";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -32,7 +33,7 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <MasterDateProvider><Router /></MasterDateProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
