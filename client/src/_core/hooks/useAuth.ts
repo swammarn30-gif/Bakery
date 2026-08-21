@@ -58,10 +58,10 @@ export function useAuth(options?: UseAuthOptions) {
 
   const state = useMemo(() => ({
     user: meQuery.data ?? null,
-    loading: !sessionReady || meQuery.isLoading || logoutMutation.isPending || (hasPersistedSession && !meQuery.data && !meQuery.error),
+    loading: !sessionReady || meQuery.isLoading || logoutMutation.isPending,
     error: meQuery.error ?? logoutMutation.error ?? null,
     isAuthenticated: Boolean(meQuery.data),
-  }), [hasPersistedSession, meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);
+  }), [meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);
 
   useEffect(() => {
     if (!redirectOnUnauthenticated || state.loading || state.user || typeof window === "undefined") return;
