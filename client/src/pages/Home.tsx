@@ -15,7 +15,7 @@ import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
 import * as XLSX from "xlsx";
 import { parseRecipeLinesJson, validateImportRows } from "../../../shared/calculations";
-import { departmentExportFilename, toDepartmentExportRows } from "@/lib/exportUtils";
+import { departmentExportFilename, toDateColumnExportRows } from "@/lib/exportUtils";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -82,7 +82,7 @@ function ExportPanel() {
     setImportMessage(result.valid ? `Validated ${rows.length} row(s). No approved rows would be overwritten.` : result.errors.join(" "));
   };
   const nameOf = (id: number) => items.data?.find(item => item.id === id)?.name ?? `Item #${id}`;
-  const stockRowsForExport = (rows: typeof production.data) => toDepartmentExportRows(rows ?? [], nameOf);
+  const stockRowsForExport = (rows: typeof production.data) => toDateColumnExportRows(rows ?? [], nameOf, from, to);
   const exportDepartmentWorkbook = (department: "production" | "packaging") => {
     const rows = department === "production" ? stockRowsForExport(production.data) : stockRowsForExport(packaging.data);
     const workbook = XLSX.utils.book_new();

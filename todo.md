@@ -203,3 +203,5 @@
 - [x] Add regression coverage proving Production export excludes Packaging rows and Packaging export excludes Production rows.
 - [x] Push the verified separate Production/Packaging export change to GitHub main.
 - [x] Deploy the pushed commit to the existing Cloudflare Worker production hosting and verify the live URL responds with the updated build.
+- [x] Redesign separate Production and Packaging export workbooks so each selected date is a distinct column, with Item and Field retained at the left and stock values pivoted under each date.
+- [x] Add regression tests for date-column ordering, date values, formula rows, and department isolation in the revised export layout; full suite remains 70 tests passing.
