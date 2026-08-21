@@ -191,3 +191,8 @@
 - [x] Re-run live Production and Packaging smoke tests after the filtering fix.
 - [x] Investigate why Aug 20 migrated dailyStock rows are not populating the visible ledger inputs even though the database migration counts are present; fix only the data-display path if confirmed.
 - [x] Re-run Aug 20 live data-value verification for Production and Packaging after the visibility investigation.
+- [x] Close the initially ambiguous 2026-01-08 through 2026-06-20 request after the user clarified the intended range is 2026-08-01 through 2026-08-20.
+- [x] Transform and validate the authenticated legacy export into the current Bakery ERP import format without changing units or formulas.
+- [x] Close the superseded June-range import request; the approved Aug 1–20 range was used instead.
+- [x] Export legacy Production and Packaging data specifically for 2026-08-01 through 2026-08-20 after user date-range confirmation.
+- [x] Transform, import, and verify the confirmed Aug 1–20 Production and Packaging records in the current ERP without duplicating existing rows; corrected 24 source-parity differences and confirmed 2,260 current rows match the export row-by-row.
