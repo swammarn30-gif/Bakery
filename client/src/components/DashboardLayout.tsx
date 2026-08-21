@@ -64,7 +64,7 @@ export async function signInWithPasswordRetry(
   throw lastError instanceof Error ? lastError : new Error("Sign in failed. Check the production connection and try again.");
 }
 
-export function SupabaseLoginScreen() {
+export function SupabaseLoginScreen({ onSignedIn }: { onSignedIn?: () => Promise<unknown> | unknown }) {
   const [email, setEmail] = useState("swammarn30@gmail.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -88,8 +88,7 @@ export function SupabaseLoginScreen() {
           return;
         }
         window.dispatchEvent(new Event("supabase-auth-signed-in"));
-        await new Promise(resolve => setTimeout(resolve, 300));
-        window.location.reload();
+        await onSignedIn?.();
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Sign in failed. Check the production connection and try again.");
@@ -124,7 +123,7 @@ export default function DashboardLayout({
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
-  const { loading, user } = useAuth();
+  const { loading, user, refresh } = useAuth();
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
@@ -134,7 +133,7 @@ export default function DashboardLayout({
     return <DashboardLayoutSkeleton />
   }
 
-  if (!user) return <SupabaseLoginScreen />;
+  if (!user) return <SupabaseLoginScreen onSignedIn={refresh} />;
 
   return (
     <SidebarProvider
