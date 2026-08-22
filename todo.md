@@ -237,5 +237,5 @@
 - [x] Diagnose and fix the remaining mobile `Signing in…` hang at the exact Supabase password-request or client network layer; verify live sign-in without removing authentication.
 - [x] Resolve the still-unverified mobile Sign In hang with captured production browser evidence, or document the exact blocker instead of claiming success.
 - [x] Replace mobile Supabase JS sign-in with a direct bounded Auth REST flow, preserve secure session handling, add regression tests, and verify live deployment.
-- [ ] Resolve the confirmed mobile Supabase Auth REST timeout shown in the latest screenshot, verify the production browser login end to end, and keep authentication enabled.
-- [ ] Complete an end-to-end audit of frontend, Supabase, tRPC, Worker/server, database, environment, build, and deployment code to identify the mobile Login timeout root cause.
+- [x] Resolve the confirmed mobile Supabase Auth REST timeout shown in the latest screenshot, verify the production browser login end to end, and keep authentication enabled.
+- [x] Complete an end-to-end audit of frontend, Supabase, tRPC, Worker/server, database, environment, build, and deployment code to identify the mobile Login timeout root cause.
