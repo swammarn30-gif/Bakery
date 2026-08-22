@@ -224,4 +224,4 @@
 - [x] Split Order Table and BOM into separate pages/navigation destinations.
 - [x] Restrict Order Table Choose Item options to items available in Sale Table only.
 - [x] Add regression tests and responsive verification for all reported fixes before deployment.
-- [ ] Sync checkpoint 24819382 to GitHub main and deploy the existing swammarn Cloudflare Worker; verify the unchanged live URL after deployment.
+- [x] Sync checkpoint 24819382 to GitHub main and deploy the existing swammarn Cloudflare Worker; verify the unchanged live URL after deployment.
