@@ -14,6 +14,11 @@ describe("signInWithPasswordRetry", () => {
     vi.useRealTimers();
   });
 
+  it("preserves the successful Supabase session payload", async () => {
+    const session = { access_token: "token" };
+    await expect(signInWithPasswordRetry(async () => ({ error: null, data: { session } }))).resolves.toEqual({ error: null, data: { session } });
+  });
+
   it("fails after two bounded attempts", async () => {
     vi.useFakeTimers();
     const signIn = vi.fn().mockImplementation(() => new Promise<never>(() => undefined));

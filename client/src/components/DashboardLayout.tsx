@@ -15,7 +15,7 @@ const menuItems = [
 
 const SIGN_IN_ATTEMPT_TIMEOUT_MS = 30000;
 
-export async function signInWithPasswordRetry(signIn: () => Promise<{ error: { message: string } | null }>) {
+export async function signInWithPasswordRetry<T extends { error: { message: string } | null }>(signIn: () => Promise<T>) {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -53,11 +53,10 @@ export function SupabaseLoginScreen({ onSignedIn }: { onSignedIn?: () => Promise
       const result = await signInWithPasswordRetry(() => client.auth.signInWithPassword({ email, password }));
       if (result.error) setError(result.error.message);
       else {
-        const { data } = await client.auth.getSession();
-        if (!data.session?.access_token) setError("Sign in succeeded but the session was not persisted. Please try again.");
+        if (!result.data?.session?.access_token) setError("Sign in succeeded but the session was not persisted. Please try again.");
         else {
           window.dispatchEvent(new Event("supabase-auth-signed-in"));
-          window.location.reload();
+          await onSignedIn?.();
         }
       }
     } catch (caught) {
