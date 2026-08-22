@@ -37,8 +37,9 @@ export const appRouter = router({
   dashboard: protectedProcedure.query(async () => {
     const db = await getDb();
     if (!db) return { items: 0, pendingApprovals: 0, purchases: 0, sales: 0 };
-    const [itemRows, approvalRows, purchaseRows, saleRows] = await Promise.all([db.select({ count: sql<number>`count(*)` }).from(items), db.select({ count: sql<number>`count(*)` }).from(approvals).where(eq(approvals.status, "pending")), db.select({ count: sql<number>`count(*)` }).from(purchases), db.select({ count: sql<number>`count(*)` }).from(sales)]);
-    return { items: Number(itemRows[0]?.count ?? 0), pendingApprovals: Number(approvalRows[0]?.count ?? 0), purchases: Number(purchaseRows[0]?.count ?? 0), sales: Number(saleRows[0]?.count ?? 0) };
+    const result = await db.execute(sql`SELECT (SELECT count(*)::int FROM ${items}) AS items, (SELECT count(*)::int FROM ${approvals} WHERE ${approvals.status} = 'pending') AS pending_approvals, (SELECT count(*)::int FROM ${purchases}) AS purchases, (SELECT count(*)::int FROM ${sales}) AS sales`);
+    const row = result[0] as { items?: number; pending_approvals?: number; purchases?: number; sales?: number } | undefined;
+    return { items: Number(row?.items ?? 0), pendingApprovals: Number(row?.pending_approvals ?? 0), purchases: Number(row?.purchases ?? 0), sales: Number(row?.sales ?? 0) };
   }),
   reports: router({
     itemHistory: protectedProcedure.input(z.object({ itemId: z.number().int(), from: z.string(), to: z.string() }).transform(v => ({ ...v, ...normalizeDateRange(v.from, v.to) }))).query(async ({ input }) => {
