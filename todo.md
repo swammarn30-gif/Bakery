@@ -239,3 +239,4 @@
 - [x] Replace mobile Supabase JS sign-in with a direct bounded Auth REST flow, preserve secure session handling, add regression tests, and verify live deployment.
 - [x] Resolve the confirmed mobile Supabase Auth REST timeout shown in the latest screenshot, verify the production browser login end to end, and keep authentication enabled.
 - [x] Complete an end-to-end audit of frontend, Supabase, tRPC, Worker/server, database, environment, build, and deployment code to identify the mobile Login timeout root cause.
+- [x] Redesign the confirmed ledger workflow: remove excess shell space, match the reference spreadsheet table, normalize `400.000` display, keep Issued manually editable after auto-fill, restore Order-to-Issued automation, and restore cascading Closing-to-Opening carry-forward; added synthesized daily rows for unsaved order-driven materials and 3 formatting regression tests.

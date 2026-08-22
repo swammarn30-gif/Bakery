@@ -1,0 +1,3 @@
+# Reference UI Findings
+
+The authenticated reference site at `https://swammarn30.netlify.app/` renders a compact dark navy branded header with the Bakery ERP B mark and title on the left, operational subtitle below, a Business date control on the right, and a sign-out control. Directly below is a single compact horizontal pill navigation row: Dashboard, Item Dashboard, Purchase, Production, Packaging, Sale, Reports, and More. The content starts immediately below navigation; there is no oversized duplicate branding/breadcrumb block between the header and the working area. The reference uses concise page titles and a table-first operational layout, with horizontal overflow acceptable on narrow screens.

@@ -85,20 +85,21 @@ export const appRouter = router({
       const db = await getDb();
       if (!db) return [];
       const rows = await listDailyStock(input.department, input.from, input.to);
-      const [orderRows, recipeRows, lineRows] = await Promise.all([
+      const [orderRows, recipeRows, lineRows, itemRows] = await Promise.all([
         db.select().from(orders).where(and(gte(orders.orderDate, input.from), lte(orders.orderDate, input.to))),
         db.select().from(recipes).where(eq(recipes.active, true)),
         db.select().from(recipeLines),
+        db.select().from(items),
       ]);
-      return rows.map(row => {
-        const dailyOrders = orderRows.filter(order => order.orderDate === row.stockDate);
-        const autoIssued = dailyOrders.reduce((sum, order) => {
-          const recipe = recipeRows.filter(recipe => recipe.itemId === order.itemId && recipe.department === input.department && recipe.effectiveFrom <= row.stockDate).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
-          const line = recipe ? lineRows.find(line => line.recipeId === recipe.id && line.materialItemId === row.itemId) : undefined;
-          return sum + (line ? Number(order.quantity) * Number(line.quantityPerBatch) : 0);
-        }, 0);
-        return { ...row, autoIssued: String(autoIssued) };
-      });
+      const isLedgerItem = (item: typeof itemRows[number]) => item.active && (input.department === "production" ? item.itemType === "raw_material" : item.itemType === "packaging_material");
+      const autoFor = (stockDate: string, itemId: number) => orderRows.filter(order => order.orderDate === stockDate).reduce((sum, order) => {
+        const recipe = recipeRows.filter(candidate => candidate.itemId === order.itemId && candidate.department === input.department && candidate.effectiveFrom <= stockDate).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
+        const line = recipe ? lineRows.find(candidate => candidate.recipeId === recipe.id && candidate.materialItemId === itemId) : undefined;
+        return sum + (line ? Number(order.quantity) * Number(line.quantityPerBatch) : 0);
+      }, 0);
+      const existingByItem = new Map(rows.map(row => [row.itemId, row]));
+      const baseRows = input.from === input.to ? itemRows.filter(isLedgerItem).map(item => existingByItem.get(item.id) ?? ({ stockDate: input.from, department: input.department, itemId: item.id, openingApproved: "0", inQty: "0", issued: "0", returnQty: "0", damage: "0", note: null, autoIssued: null, manualIssued: false } as const)) : rows;
+      return baseRows.map(row => ({ ...row, autoIssued: String(autoFor(row.stockDate, row.itemId)) }));
     }),
     autoIssued: protectedProcedure.input(z.object({ stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int() })).query(async ({ input }) => {
       const db = await getDb();
