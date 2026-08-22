@@ -24,8 +24,8 @@ describe("Cloudflare Worker fetch adapter", () => {
     vi.stubGlobal("fetch", upstream);
     const fetch = createWorkerFetch();
     const response = await fetch(
-      new Request("https://bakery.example/api/auth/sign-in", { method: "POST", body: JSON.stringify({ email: "user@example.com", password: "secret" }), headers: { "Content-Type": "application/json" } }),
-      { VITE_SUPABASE_URL: "https://supabase.example", VITE_SUPABASE_ANON_KEY: "anon", ASSETS: makeAssets().binding },
+      new Request("https://bakery.example/api/auth/sign-in", { method: "POST", body: JSON.stringify({ email: "user@example.com", password: "secret" }), headers: { "Content-Type": "application/json", "x-supabase-url": "https://supabase.example", apikey: "anon" } }),
+      { ASSETS: makeAssets().binding },
     );
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({ access_token: "access", refresh_token: "refresh" });

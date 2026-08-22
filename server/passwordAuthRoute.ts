@@ -4,8 +4,8 @@ type PasswordAuthConfig = Pick<SupabaseRuntimeConfig, "supabaseUrl" | "anonKey">
 
 export async function handlePasswordAuthRequest(request: Request, config: PasswordAuthConfig = {}): Promise<Response> {
   if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "POST" } });
-  const supabaseUrl = config.supabaseUrl || process.env.VITE_SUPABASE_URL;
-  const anonKey = config.anonKey || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = config.supabaseUrl || process.env.VITE_SUPABASE_URL || request.headers.get("x-supabase-url") || undefined;
+  const anonKey = config.anonKey || process.env.VITE_SUPABASE_ANON_KEY || request.headers.get("apikey") || undefined;
   if (!supabaseUrl || !anonKey) return Response.json({ error: "Supabase Auth is not configured." }, { status: 503 });
 
   let input: { email?: unknown; password?: unknown };

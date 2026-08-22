@@ -27,7 +27,11 @@ export async function signInWithPasswordRest(email: string, password: string, ti
     const endpoint = typeof window !== "undefined" ? "/api/auth/sign-in" : `${url}/auth/v1/token?grant_type=password`;
     const response = await fetchImpl(endpoint, {
       method: "POST",
-      headers: { ...(typeof window === "undefined" && anonKey ? { apikey: anonKey } : {}), "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(typeof window === "undefined" && anonKey ? { apikey: anonKey } : {}),
+        ...(typeof window !== "undefined" && url && anonKey ? { "x-supabase-url": url, apikey: anonKey } : {}),
+      },
       body: JSON.stringify({ email: email.trim(), password }),
       signal: controller.signal,
     });
