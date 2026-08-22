@@ -230,3 +230,4 @@
 - [x] Measure and optimize data loading across Production, Packaging, Purchase, Sale, Item Master, Orders/BOM, Reports, and Approvals without changing formulas or workflows.
 - [x] Add visible loading animation and skeleton states for fresh data loads and refreshes across data-driven ERP pages.
 - [x] Sync checkpoint 51ead928 to GitHub main, deploy Cloudflare Worker swammarn, and verify the live URL with the new loading feedback.
+- [x] Fix mobile login stuck at Signing in after the latest deployment; verify auth.me, dashboard access, and timeout handling without weakening security.
