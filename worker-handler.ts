@@ -4,6 +4,7 @@ import { configureDatabase } from "./server/db";
 import { createWorkerContext } from "./server/_core/context";
 import { handleStorageProxyRequest } from "./server/_core/storageProxy";
 import { isServerRoute, shouldServeSpaFallback } from "./worker-routing";
+import { handlePasswordAuthRequest } from "./server/passwordAuthRoute";
 
 export interface WorkerEnv {
   HYPERDRIVE?: { connectionString: string };
@@ -20,6 +21,7 @@ export function createWorkerFetch() {
     const pathname = new URL(request.url).pathname;
 
     if (isServerRoute(pathname)) {
+      if (pathname === "/api/auth/sign-in") return handlePasswordAuthRequest(request, { supabaseUrl: env.VITE_SUPABASE_URL, anonKey: env.VITE_SUPABASE_ANON_KEY });
       if (pathname.startsWith("/api/trpc")) {
         return fetchRequestHandler({
           endpoint: "/api/trpc",

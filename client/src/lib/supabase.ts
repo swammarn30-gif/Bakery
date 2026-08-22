@@ -20,13 +20,14 @@ function getAuthStorageKey() {
 }
 
 export async function signInWithPasswordRest(email: string, password: string, timeoutMs = 15000, fetchImpl: typeof fetch = globalThis.fetch): Promise<DirectSignInResult> {
-  if (!url || !anonKey) return { data: null, error: { message: "Supabase Auth is not configured." } };
+  if (typeof window !== "undefined" && !url) return { data: null, error: { message: "Supabase Auth is not configured." } };
   const controller = new AbortController();
   const timer = globalThis.setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetchImpl(`${url}/auth/v1/token?grant_type=password`, {
+    const endpoint = typeof window !== "undefined" ? "/api/auth/sign-in" : `${url}/auth/v1/token?grant_type=password`;
+    const response = await fetchImpl(endpoint, {
       method: "POST",
-      headers: { apikey: anonKey, "Content-Type": "application/json" },
+      headers: { ...(typeof window === "undefined" && anonKey ? { apikey: anonKey } : {}), "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.trim(), password }),
       signal: controller.signal,
     });
