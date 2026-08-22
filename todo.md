@@ -227,3 +227,4 @@
 - [x] Sync checkpoint 24819382 to GitHub main and deploy the existing swammarn Cloudflare Worker; verify the unchanged live URL after deployment.
 - [x] Measure and optimize slow login flow across Supabase sign-in, Cloudflare Worker auth.me, and dashboard hydration without weakening security.
 - [x] Measure and optimize Dashboard data loading so summary and operational records appear faster without changing ERP formulas or workflows.
+- [x] Measure and optimize data loading across Production, Packaging, Purchase, Sale, Item Master, Orders/BOM, Reports, and Approvals without changing formulas or workflows.
