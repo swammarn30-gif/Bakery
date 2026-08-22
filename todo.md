@@ -233,3 +233,4 @@
 - [x] Fix mobile login stuck at Signing in after the latest deployment; verify auth.me, dashboard access, and timeout handling without weakening security.
 - [x] Verify latest login-fix commit is on GitHub main, confirm Cloudflare Worker hosting is deployed, and validate the live URL.
 - [x] Identify and document the confirmed root cause of the live Sign In flow stuck at Signing in using runtime, network, client, Worker, and Supabase evidence.
+- [x] Fix the production Login flow so it no longer hangs or becomes unusably slow; keep authentication secure, and only consider removing it after explicit confirmation if the fix fails.
