@@ -56,7 +56,7 @@ export function SupabaseLoginScreen({ onSignedIn }: { onSignedIn?: () => Promise
         if (!result.data?.session?.access_token) setError("Sign in succeeded but the session was not persisted. Please try again.");
         else {
           window.dispatchEvent(new Event("supabase-auth-signed-in"));
-          await onSignedIn?.();
+          void onSignedIn?.();
         }
       }
     } catch (caught) {

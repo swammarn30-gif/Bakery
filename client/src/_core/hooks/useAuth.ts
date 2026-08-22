@@ -11,9 +11,9 @@ type UseAuthOptions = {
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath } = options ?? {};
   const utils = trpc.useUtils();
-  const hasPersistedSession = Boolean(getPersistedSupabaseAccessToken());
-  const [sessionReady, setSessionReady] = useState(() => !supabase || hasPersistedSession);
-  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady && hasPersistedSession, retry: false, staleTime: 60_000, refetchOnWindowFocus: false, refetchOnMount: false });
+  const [hasSession, setHasSession] = useState(() => Boolean(getPersistedSupabaseAccessToken()));
+  const [sessionReady, setSessionReady] = useState(() => !supabase || hasSession);
+  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: sessionReady && hasSession, retry: false, staleTime: 60_000, refetchOnWindowFocus: false, refetchOnMount: false });
   const meRefetch = meQuery.refetch;
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => utils.auth.me.setData(undefined, null),
@@ -27,11 +27,12 @@ export function useAuth(options?: UseAuthOptions) {
       new Promise<{ data: { session: null } }>(resolve => window.setTimeout(() => resolve({ data: { session: null } }), 5000)),
     ]);
     sessionWithTimeout.then(({ data }) => {
-      if (mounted) setSessionReady(true);
+      if (mounted) { setHasSession(Boolean(data.session?.access_token)); setSessionReady(true); }
       // The enabled auth.me query runs once after the persisted-session check; avoid a duplicate refetch here.
     }).catch(() => mounted && setSessionReady(true));
     const { data } = supabase.auth.onAuthStateChange(event => {
-      if (event === "SIGNED_OUT") utils.auth.me.setData(undefined, null);
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") setHasSession(true);
+      if (event === "SIGNED_OUT") { setHasSession(false); utils.auth.me.setData(undefined, null); }
     });
     return () => {
       mounted = false;
@@ -59,7 +60,7 @@ export function useAuth(options?: UseAuthOptions) {
   }), [meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);
 
   useEffect(() => {
-    if (!sessionReady || !hasPersistedSession || meQuery.data || meQuery.error) return;
+    if (!sessionReady || !hasSession || meQuery.data || meQuery.error) return;
     let cancelled = false;
     let attempts = 0;
     let timer: number | undefined;
@@ -78,7 +79,7 @@ export function useAuth(options?: UseAuthOptions) {
       cancelled = true;
       if (timer) window.clearTimeout(timer);
     };
-  }, [hasPersistedSession, meQuery.data, meQuery.error, meRefetch, sessionReady]);
+  }, [hasSession, meQuery.data, meQuery.error, meRefetch, sessionReady]);
 
   useEffect(() => {
     if (!redirectOnUnauthenticated || state.loading || state.user || typeof window === "undefined") return;
