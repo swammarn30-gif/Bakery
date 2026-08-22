@@ -232,3 +232,4 @@
 - [x] Sync checkpoint 51ead928 to GitHub main, deploy Cloudflare Worker swammarn, and verify the live URL with the new loading feedback.
 - [x] Fix mobile login stuck at Signing in after the latest deployment; verify auth.me, dashboard access, and timeout handling without weakening security.
 - [x] Verify latest login-fix commit is on GitHub main, confirm Cloudflare Worker hosting is deployed, and validate the live URL.
+- [x] Identify and document the confirmed root cause of the live Sign In flow stuck at Signing in using runtime, network, client, Worker, and Supabase evidence.
