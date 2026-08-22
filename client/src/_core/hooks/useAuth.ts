@@ -30,12 +30,15 @@ export function useAuth(options?: UseAuthOptions) {
       if (mounted) { setHasSession(Boolean(data.session?.access_token)); setSessionReady(true); }
       // The enabled auth.me query runs once after the persisted-session check; avoid a duplicate refetch here.
     }).catch(() => mounted && setSessionReady(true));
+    const handleDirectSignIn = () => { setHasSession(true); setSessionReady(true); };
+    window.addEventListener("supabase-auth-signed-in", handleDirectSignIn);
     const { data } = supabase.auth.onAuthStateChange(event => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") { setHasSession(true); setSessionReady(true); }
       if (event === "SIGNED_OUT") { setHasSession(false); utils.auth.me.setData(undefined, null); }
     });
     return () => {
       mounted = false;
+      window.removeEventListener("supabase-auth-signed-in", handleDirectSignIn);
       data.subscription.unsubscribe();
     };
   }, [meRefetch, utils]);

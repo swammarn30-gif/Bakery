@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { supabase } from "@/lib/supabase";
+import { signInWithPasswordRest } from "@/lib/supabase";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LogOut, LayoutDashboard, ClipboardList, ChevronRight } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
@@ -13,7 +13,7 @@ const menuItems = [
   { icon: ClipboardList, label: "Workflows", path: "/" },
 ];
 
-const SIGN_IN_ATTEMPT_TIMEOUT_MS = 30000;
+const SIGN_IN_ATTEMPT_TIMEOUT_MS = 15000;
 
 export async function signInWithPasswordRetry<T extends { error: { message: string } | null }>(signIn: () => Promise<T>) {
   let lastError: unknown;
@@ -46,14 +46,12 @@ export function SupabaseLoginScreen({ onSignedIn }: { onSignedIn?: () => Promise
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const client = supabase;
-    if (!client) { setError("Supabase Auth is not configured."); return; }
     setPending(true); setError(null);
     try {
-      const result = await signInWithPasswordRetry(() => client.auth.signInWithPassword({ email, password }));
+      const result = await signInWithPasswordRetry(() => signInWithPasswordRest(email, password, SIGN_IN_ATTEMPT_TIMEOUT_MS));
       if (result.error) setError(result.error.message);
       else {
-        if (!result.data?.session?.access_token) setError("Sign in succeeded but the session was not persisted. Please try again.");
+        if (!result.data?.access_token) setError("Sign in succeeded but the session was not persisted. Please try again.");
         else {
           window.dispatchEvent(new Event("supabase-auth-signed-in"));
           void onSignedIn?.();
