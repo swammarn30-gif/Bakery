@@ -234,3 +234,6 @@
 - [x] Verify latest login-fix commit is on GitHub main, confirm Cloudflare Worker hosting is deployed, and validate the live URL.
 - [x] Identify and document the confirmed root cause of the live Sign In flow stuck at Signing in using runtime, network, client, Worker, and Supabase evidence.
 - [x] Fix the production Login flow so it no longer hangs or becomes unusably slow; keep authentication secure, and only consider removing it after explicit confirmation if the fix fails.
+- [x] Diagnose and fix the remaining mobile `Signing in…` hang at the exact Supabase password-request or client network layer; verify live sign-in without removing authentication.
+- [ ] Resolve the still-unverified mobile Sign In hang with captured production browser evidence, or document the exact blocker instead of claiming success.
+- [x] Replace mobile Supabase JS sign-in with a direct bounded Auth REST flow, preserve secure session handling, add regression tests, and verify live deployment.
