@@ -5,6 +5,10 @@ export function shouldEnableAuthQuery(sessionReady: boolean) {
   return sessionReady;
 }
 
+export function shouldEnableAuthQueryAfterSignIn(sessionReady: boolean, signedIn: boolean) {
+  return sessionReady || signedIn;
+}
+
 export function shouldReloadAfterSignIn(hasError: boolean) {
   return !hasError;
 }
@@ -20,6 +24,10 @@ describe("Supabase auth query readiness", () => {
 
   it("enables auth.me after the browser session is initialized", () => {
     expect(shouldEnableAuthQuery(true)).toBe(true);
+  });
+
+  it("enables auth.me immediately after a fresh sign-in event", () => {
+    expect(shouldEnableAuthQueryAfterSignIn(false, true)).toBe(true);
   });
 
   it("reboots the app only after a successful password sign-in", () => {

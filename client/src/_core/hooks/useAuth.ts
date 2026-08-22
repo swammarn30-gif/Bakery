@@ -31,7 +31,7 @@ export function useAuth(options?: UseAuthOptions) {
       // The enabled auth.me query runs once after the persisted-session check; avoid a duplicate refetch here.
     }).catch(() => mounted && setSessionReady(true));
     const { data } = supabase.auth.onAuthStateChange(event => {
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") setHasSession(true);
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") { setHasSession(true); setSessionReady(true); }
       if (event === "SIGNED_OUT") { setHasSession(false); utils.auth.me.setData(undefined, null); }
     });
     return () => {
