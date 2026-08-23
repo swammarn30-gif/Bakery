@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isMobilePrimaryTab, mobileNavigationItems } from "./mobileNavigation";
+import { getMobileMoreItems, isMobilePrimaryTab, mobileNavigationItems } from "./mobileNavigation";
 
 describe("mobileNavigationItems", () => {
   it("keeps the four most frequent ERP destinations in the bottom navigation", () => {
@@ -11,5 +11,11 @@ describe("mobileNavigationItems", () => {
     expect(isMobilePrimaryTab("purchase")).toBe(true);
     expect(isMobilePrimaryTab("overview")).toBe(false);
     expect(isMobilePrimaryTab("approvals")).toBe(false);
+  });
+
+  it("removes Overview and every liquid primary destination from More", () => {
+    expect(getMobileMoreItems([
+      { value: "overview" }, { value: "purchase" }, { value: "production" }, { value: "packaging" }, { value: "reports" }, { value: "items" }, { value: "low-stock" },
+    ]).map(item => item.value)).toEqual(["items", "low-stock"]);
   });
 });

@@ -15,7 +15,7 @@ import { ArrowDownToLine, Boxes, ClipboardCheck, Factory, Loader2, Menu, Package
 import { trpc } from "@/lib/trpc";
 import { mergeLedgerDraft, type LedgerDraft } from "@/lib/ledgerDraft";
 import { getLedgerRangeTotals } from "@/lib/ledgerReport";
-import { isMobilePrimaryTab, mobileNavigationItems } from "@/lib/mobileNavigation";
+import { getMobileMoreItems, isMobilePrimaryTab, mobileNavigationItems } from "@/lib/mobileNavigation";
 import { useEffect } from "react";
 import * as XLSX from "xlsx";
 import { parseRecipeLinesJson, resolveIssuedQuantity, validateImportRows } from "../../../shared/calculations";
@@ -205,7 +205,7 @@ export default function Home() {
   const dashboard = trpc.dashboard.useQuery(undefined, { enabled: isAuthenticated });
   const [tab, setTab] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches ? "purchase" : "overview");
   const [menuOpen, setMenuOpen] = useState(false);
-  const nav = useMemo(() => { const all = [{ value: "overview", label: "Overview", icon: Boxes }, { value: "production", label: "Production", icon: Factory }, { value: "packaging", label: "Packaging", icon: PackageCheck }, { value: "purchase", label: "Purchase", icon: ArrowDownToLine }, { value: "sale", label: "Sale", icon: Store }, { value: "orders", label: "Orders", icon: Receipt }, { value: "bom", label: "BOM / Recipes", icon: Boxes }, { value: "items", label: "Item master", icon: Boxes }, { value: "low-stock", label: "Low stock", icon: Boxes }, { value: "reports", label: "Report", icon: Upload }, { value: "transfer", label: "Export / Import", icon: ArrowDownToLine }, { value: "approvals", label: "Approvals", icon: ClipboardCheck }]; return typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches ? all.filter(item => item.value !== "overview" && !isMobilePrimaryTab(item.value)) : all; }, []);
+  const nav = useMemo(() => { const all = [{ value: "overview", label: "Overview", icon: Boxes }, { value: "production", label: "Production", icon: Factory }, { value: "packaging", label: "Packaging", icon: PackageCheck }, { value: "purchase", label: "Purchase", icon: ArrowDownToLine }, { value: "sale", label: "Sale", icon: Store }, { value: "orders", label: "Orders", icon: Receipt }, { value: "bom", label: "BOM / Recipes", icon: Boxes }, { value: "items", label: "Item master", icon: Boxes }, { value: "low-stock", label: "Low stock", icon: Boxes }, { value: "reports", label: "Report", icon: Upload }, { value: "transfer", label: "Export / Import", icon: ArrowDownToLine }, { value: "approvals", label: "Approvals", icon: ClipboardCheck }]; return typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches ? getMobileMoreItems(all) : all; }, []);
   const moreNav = nav.filter(item => !isMobilePrimaryTab(item.value) && item.value !== "overview");
   if (loading) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Loading Bakery ERP…</div>;
   if (!isAuthenticated) return <SupabaseLoginScreen />;
