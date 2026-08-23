@@ -1,5 +1,5 @@
 export const mobileNavigationItems = [
-  { value: "overview", label: "Home" },
+  { value: "purchase", label: "Purchase" },
   { value: "production", label: "Production" },
   { value: "packaging", label: "Packaging" },
   { value: "reports", label: "Report" },

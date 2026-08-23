@@ -7,6 +7,7 @@ import { approvals, dailyStock, items, purchases, saleShopLines, sales, shops, g
 import { orders, recipes, recipeLines, stockAdjustments, importBatches } from "../drizzle/schema.js";
 import { z } from "zod";
 import { calculateClosing, calculateUsed, deriveSequentialStockRows, migrateBackupSnapshot, normalizeDateRange, normalizePurchase, resolveIssuedQuantity, resolveOpeningQuantity, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations.js";
+import { getLowStockItems } from "../shared/lowStock.js";
 
 const dateRange = z.object({ from: z.string(), to: z.string() }).transform(v => normalizeDateRange(v.from, v.to));
 const numeric = z.coerce.number().finite();
@@ -88,6 +89,12 @@ export const appRouter = router({
     create: protectedProcedure.input(z.object({ purchaseDate: z.string(), itemId: z.number().int(), quantity: numeric.positive(), quantityUnit: z.enum(["kg", "g", "viss", "pcs"]), totalValue: numeric.nonnegative(), supplier: z.string().optional(), note: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const item = (await db.select().from(items).where(eq(items.id, input.itemId)).limit(1))[0]; if (!item) throw new Error("Item not found"); const itemBaseUnit = item.unit === "pcs" ? "pcs" : "g"; const normalized = normalizePurchase(input.quantity, input.quantityUnit, input.totalValue, itemBaseUnit); const result = await db.insert(purchases).values({ purchaseDate: input.purchaseDate, itemId: input.itemId, quantity: String(normalized.baseQuantity), unit: normalized.baseUnit, purchaseUnit: input.quantityUnit, totalValue: String(normalized.totalValue), unitCost: String(normalized.baseUnitCost), supplier: input.supplier, note: input.note, createdBy: ctx.user.id }).returning({ id: purchases.id }); const purchaseId = result[0]?.id; if (!purchaseId) throw new Error("Failed to create purchase"); await writeAudit(ctx.user.id, "create", "purchase", purchaseId, null, { ...input, ...normalized }); return { id: purchaseId, baseQuantity: normalized.baseQuantity, baseUnit: normalized.baseUnit, baseUnitCost: normalized.baseUnitCost }; }),
   }),
   stock: router({
+    lowStock: protectedProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      const [itemRows, stockRows] = await Promise.all([db.select().from(items), db.select().from(dailyStock)]);
+      return getLowStockItems(itemRows, stockRows);
+    }),
     list: protectedProcedure.input(z.object({ department: z.enum(["production", "packaging"]), from: z.string(), to: z.string() })).query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
