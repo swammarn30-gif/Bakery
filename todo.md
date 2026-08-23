@@ -286,11 +286,11 @@
 - [ ] Reconcile every source In value against the corresponding Supabase dailyStock row and identify the exact missing/display-mismatch rows.
 - [ ] Verify the corrected In values through the router/UI path without deleting data until the defect is proven.
 
-- [ ] Use the source and destination website UIs only for the confirmed Production and Packaging data correction; do not use direct Supabase writes.
-- [ ] Inspect, delete, re-enter, and verify the confirmed 2026-08-01 to 2026-08-20 ledger rows through the website UI.
+- [x] Use the source and destination website UIs only for the confirmed Production and Packaging data correction; do not use direct Supabase writes. Verified source movements were applied through authenticated Website UI inputs and native autosave paths only.
+- [x] Inspect, delete, re-enter, and verify the confirmed 2026-08-01 to 2026-08-20 ledger rows through the website UI. The completed approved scope additionally extends Packaging through Aug 21.
 
-- [ ] Correct the website-only replacement scope to Production through 2026-08-09 and Packaging through 2026-08-21.
-- [ ] Verify Aug 1 Opening and later In, Issued, Return, and Damage entries for both revised ranges through the website UI.
+- [x] Correct the website-only replacement scope to Production through 2026-08-09 and Packaging through 2026-08-21. Every date was executed one at a time through the authenticated destination Website UI and each runner reported zero missing-row errors.
+- [x] Verify Aug 1 Opening and later In, Issued, Return, and Damage entries for both revised ranges through the website UI. Source Aug 1/Aug 2 Production samples, final-date persistence reruns, and Production/Packaging Report histories were verified; later Opening follows the approved automatic formula.
 - [ ] Add a protected, admin-only Website UI clear action limited to one department and an explicit date range, with confirmation before deletion.
 - [x] Diagnose and correct the live Vercel runtime timeout and missing Supabase runtime-configuration path without changing ledger data directly. Reused existing ERP users instead of issuing an upsert on every bearer-authenticated request, added a short-lived authenticated-user cache, indexed stock-list BOM issuance once per request, and deployed GitHub commit d5d4358 to Vercel production.
 - [x] Verify live Vercel sign-in plus Production and Packaging ledger date changes load reliably before resuming Website-only data correction. Live Administrator login loaded; Production and Packaging each returned their full data rows after Aug 1 → Aug 2 native date transitions, with no browser-console errors or recent Vercel runtime errors.
