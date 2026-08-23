@@ -278,3 +278,7 @@
 - [x] Add regression tests and verify the report on desktop and mobile layouts.
 - [x] Correct all Production and Packaging calculation paths to use Closing = Opening + In + Return - Issued and Used = Issued - Return - Damage, including carry-forward and reports.
 - [x] Preserve imported Issued quantities as manualIssued=true so stock.list and carry-forward do not replace source values with BOM auto-issued quantities.
+
+- [x] Replace only Production and Packaging ledger rows dated 2026-08-01 through 2026-08-20 from the verified source dataset.
+- [x] Import Opening only for 2026-08-01; import In, Issued, Return, and Damage for every requested date; leave Used and Closing derived.
+- [x] Verify all expected rows and In values, manual Issued flags, formulas, and automatic Opening carry-forward after replacement.
