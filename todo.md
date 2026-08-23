@@ -261,4 +261,4 @@
 - [x] Add regression coverage for locked ledger Opening behavior and run TypeScript, tests, production build, and mobile/desktop visual verification.
 
 - [x] Render zero-valued Production and Packaging ledger quantities as blank without changing stored values or formulas.
-- [ ] Add blank-zero formatting regression coverage, run TypeScript/tests/build, verify the live UI, and sync the release to GitHub/Vercel.
+- [x] Add blank-zero formatting regression coverage, run TypeScript/tests/build, verify the live UI, and sync the release to GitHub/Vercel.
