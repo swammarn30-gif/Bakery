@@ -262,3 +262,6 @@
 
 - [x] Render zero-valued Production and Packaging ledger quantities as blank without changing stored values or formulas.
 - [x] Add blank-zero formatting regression coverage, run TypeScript/tests/build, verify the live UI, and sync the release to GitHub/Vercel.
+
+- [x] Copy only source Production and Packaging ledger data from 2026-08-01 through 2026-08-20; include Opening only for 2026-08-01 and include In, Issued, Return, and Damage for every date.
+- [x] Validate item mapping, import the real source rows without fabricated values, verify automatic Opening carry-forward, and report any missing or ambiguous source data.
