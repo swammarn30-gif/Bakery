@@ -21,9 +21,12 @@ describe("Vercel deployment configuration", () => {
     expect(spaRewrite?.source).toContain("?!");
   });
 
-  it("exposes the Vercel serverless entrypoint", () => {
-    const entrypoint = readFileSync(resolve(process.cwd(), "api/[...path].ts"), "utf8");
-    expect(entrypoint).toContain("createExpressApp");
-    expect(entrypoint).toContain("export default app");
+  it("exposes explicit Vercel auth and tRPC serverless entrypoints", () => {
+    const authEntrypoint = readFileSync(resolve(process.cwd(), "api/auth/sign-in.ts"), "utf8");
+    const trpcEntrypoint = readFileSync(resolve(process.cwd(), "api/trpc/[...path].ts"), "utf8");
+    expect(authEntrypoint).toContain("signInWithSupabaseCredentials");
+    expect(authEntrypoint).toContain("export default async function handler");
+    expect(trpcEntrypoint).toContain("createExpressApp");
+    expect(trpcEntrypoint).toContain("export default createExpressApp()");
   });
 });
