@@ -317,8 +317,8 @@
 - [x] Repair the discovered Website-UI history-export readiness defect: the Aug 1–22 Production and Packaging workbooks initially contained headers/items but blank data values because the transfer-page range queries were still loading. The Export buttons now remain disabled until the relevant department data and Item Master are ready; focused tests, TypeScript, and Vercel build pass.
 - [x] Push and deploy the verified export-readiness fix to GitHub and Vercel, then confirm the live UI blocks premature downloads and exports populated history workbooks after loading completes. GitHub commit `c68a1f2` is live in Vercel deployment `dpl_86F7midfyTJvvGKf5MujeCi7p9PB` (READY); the live Aug 1–22 page reports both export controls ready only after its data load completed.
 
-- [ ] Replace the mobile Home/Overview bottom-navigation destination with Purchase while preserving desktop navigation.
-- [ ] Convert Item Master from card/list presentation to a horizontally scrollable, directly editable spreadsheet-style table with a Minimum Stock field.
-- [ ] Add a Low Stock page showing items whose current calculated stock is at or below their saved Minimum Stock, with item, unit, current stock, minimum stock, and status.
-- [ ] Remove from More every workflow already represented by the liquid mobile primary navigation, leaving only secondary pages.
-- [ ] Add regression coverage, responsive verification, GitHub sync, and Vercel production deployment for the requested inventory-navigation changes.
+- [x] Replace the mobile Home/Overview bottom-navigation destination with Purchase while preserving desktop navigation.
+- [x] Convert Item Master from card/list presentation to a horizontally scrollable, directly editable spreadsheet-style table with a Minimum Stock field.
+- [x] Add a Low Stock page showing items whose current calculated stock is at or below their saved Minimum Stock, with item, unit, current stock, minimum stock, shortfall, and status.
+- [x] Remove from More every workflow already represented by the liquid mobile primary navigation, leaving only secondary pages.
+- [x] Add regression coverage, responsive verification, GitHub sync, and Vercel production deployment for the requested inventory-navigation changes. Low-stock calculations and More-menu filtering have 5 focused passing tests; TypeScript and Vercel build pass; GitHub commit `a08c6ed` is live in Vercel deployment `dpl_9Ykr2aA2KhMCQUzx6S7Cp7hvKjCu` (READY).
