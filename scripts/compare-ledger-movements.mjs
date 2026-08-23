@@ -15,7 +15,7 @@ const unwrap = path => {
 };
 const normalizeName = value => String(value).replace(/\s+(?:g|pcs)$/i, "").trim();
 const toNumber = value => Number(value ?? 0);
-const closing = (opening, row) => opening + toNumber(row.inQty) - toNumber(row.issued) + toNumber(row.returnQty) - toNumber(row.damage);
+const closing = (opening, row) => opening + toNumber(row.inQty) - toNumber(row.issued) + toNumber(row.returnQty);
 const sources = { production: parseJson(prodSourcePath), packaging: parseJson(packSourcePath) };
 const destinationRows = unwrap(destStockPath);
 const items = unwrap(destItemsPath);

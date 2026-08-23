@@ -18,8 +18,8 @@ const unwrapResult = path => {
   if (start < 0 || end < 0) throw new Error(`Could not locate result array in ${path}`);
   return JSON.parse(text.slice(start + 1, end));
 };
-const closing = ({ opening, inQty, issued, returnQty, damage }) =>
-  Number(opening) + Number(inQty) - Number(issued) + Number(returnQty) - Number(damage);
+const closing = ({ opening, inQty, issued, returnQty }) =>
+  Number(opening) + Number(inQty) - Number(issued) + Number(returnQty);
 const sources = {
   production: readSource(productionPath),
   packaging: readSource(packagingPath),

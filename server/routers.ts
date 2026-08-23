@@ -42,6 +42,13 @@ export const appRouter = router({
     return { items: Number(row?.items ?? 0), pendingApprovals: Number(row?.pending_approvals ?? 0), purchases: Number(row?.purchases ?? 0), sales: Number(row?.sales ?? 0) };
   }),
   reports: router({
+    itemLedger: protectedProcedure.input(z.object({ itemId: z.number().int(), department: z.enum(["production", "packaging"]), from: z.string(), to: z.string() }).transform(v => ({ ...v, ...normalizeDateRange(v.from, v.to) }))).query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+      const rows = await db.select().from(dailyStock).where(and(eq(dailyStock.itemId, input.itemId), eq(dailyStock.department, input.department), lte(dailyStock.stockDate, input.to))).orderBy(asc(dailyStock.stockDate));
+      const effectiveRows = rows.map(row => ({ ...row, issued: row.manualIssued ? row.issued : row.autoIssued ?? row.issued }));
+      return deriveSequentialStockRows(effectiveRows).filter(entry => entry.row.stockDate >= input.from && entry.row.stockDate <= input.to).map(entry => ({ date: entry.row.stockDate, opening: entry.opening, inQty: Number(entry.row.inQty ?? 0), issued: Number(entry.row.issued ?? 0), returnQty: Number(entry.row.returnQty ?? 0), damage: Number(entry.row.damage ?? 0), used: calculateUsed({ opening: entry.opening, inQty: Number(entry.row.inQty ?? 0), issued: Number(entry.row.issued ?? 0), returnQty: Number(entry.row.returnQty ?? 0), damage: Number(entry.row.damage ?? 0) }), closing: entry.closing, note: entry.row.note ?? "" }));
+    }),
     itemHistory: protectedProcedure.input(z.object({ itemId: z.number().int(), from: z.string(), to: z.string() }).transform(v => ({ ...v, ...normalizeDateRange(v.from, v.to) }))).query(async ({ input }) => {
       const db = await getDb();
       if (!db) return { averageCost: 0, events: [], totals: { quantity: 0, value: 0 } };

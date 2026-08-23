@@ -268,3 +268,12 @@
 
 - [x] Audit every imported Production and Packaging movement row from 2026-08-01 through 2026-08-20 against the source site and identify negative Closing values.
 - [x] Verify each negative Closing with the ledger formula and correct only confirmed import or mapping mismatches; re-run counts and live checks.
+
+- [ ] Re-audit the reported negative Closing values as a confirmed defect; trace source field semantics, destination formulas, and automatic carry-forward rather than assuming the source values are correct.
+- [ ] Reproduce the defect with exact Production and Packaging rows, correct the proven logic or mapping, and reverify all affected dates before reporting completion.
+
+- [x] Separate Report UI/data flow from Export/Import UI/data transfer flow.
+- [x] Add item selector and date-range report table showing Opening, In, Issued, Return, Damage, Used, Closing, and Note by date.
+- [x] Preserve the approved Closing and Used formulas in the new item-by-date report.
+- [x] Add regression tests and verify the report on desktop and mobile layouts.
+- [x] Correct all Production and Packaging calculation paths to use Closing = Opening + In + Return - Issued and Used = Issued - Return - Damage, including carry-forward and reports.
