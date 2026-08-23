@@ -220,3 +220,8 @@
     border-radius: 0.65rem;
   }
 }
+
+/* Daily ledgers use the compact reference-style shell; keep the dashboard shell for overview and admin pages. */
+.compact-ledger-shell > header,
+.compact-ledger-shell > header + div { display: none; }
+.compact-ledger-shell > main { max-width: none; padding: 0; }

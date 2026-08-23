@@ -149,6 +149,11 @@ export function resolveIssuedQuantity(autoIssued: number, savedIssued: number, m
   return manualIssued ? savedIssued : autoIssued;
 }
 
+/** Keep ledger Opening values authoritative unless an Item Master edit is explicit. */
+export function resolveOpeningQuantity(inputOpening: number, existingOpening: number | null | undefined, openingMode: "automatic" | "manual" = "automatic") {
+  return openingMode === "manual" || existingOpening === null || existingOpening === undefined ? inputOpening : existingOpening;
+}
+
 type SequentialStockRow = {
   itemId: number;
   stockDate: string;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, deriveSequentialStockRows, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, deriveSequentialStockRows, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, resolveOpeningQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -113,6 +113,13 @@ describe("ERP calculations", () => {
   it("keeps a manual Issued value while automatic Issued can refresh independently", () => {
     expect(resolveIssuedQuantity(40, 17, true)).toBe(17);
     expect(resolveIssuedQuantity(55, 17, false)).toBe(55);
+  });
+  it("protects an existing Opening from automatic ledger overwrite", () => {
+    expect(resolveOpeningQuantity(0, 125, "automatic")).toBe(125);
+  });
+  it("allows Item Master to set a date-specific Opening explicitly", () => {
+    expect(resolveOpeningQuantity(250, 125, "manual")).toBe(250);
+    expect(resolveOpeningQuantity(250, undefined, "automatic")).toBe(250);
   });
 
   it("uses authoritative Recipe/BOM lines instead of duplicate visible fields", () => {
