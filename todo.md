@@ -292,5 +292,5 @@
 - [ ] Correct the website-only replacement scope to Production through 2026-08-09 and Packaging through 2026-08-21.
 - [ ] Verify Aug 1 Opening and later In, Issued, Return, and Damage entries for both revised ranges through the website UI.
 - [ ] Add a protected, admin-only Website UI clear action limited to one department and an explicit date range, with confirmation before deletion.
-- [ ] Diagnose and correct the live Vercel runtime timeout and missing Supabase runtime-configuration path without changing ledger data directly.
-- [ ] Verify live Vercel sign-in plus Production and Packaging ledger date changes load reliably before resuming Website-only data correction.
+- [x] Diagnose and correct the live Vercel runtime timeout and missing Supabase runtime-configuration path without changing ledger data directly. Reused existing ERP users instead of issuing an upsert on every bearer-authenticated request, added a short-lived authenticated-user cache, indexed stock-list BOM issuance once per request, and deployed GitHub commit d5d4358 to Vercel production.
+- [x] Verify live Vercel sign-in plus Production and Packaging ledger date changes load reliably before resuming Website-only data correction. Live Administrator login loaded; Production and Packaging each returned their full data rows after Aug 1 → Aug 2 native date transitions, with no browser-console errors or recent Vercel runtime errors.
