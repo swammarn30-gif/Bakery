@@ -306,4 +306,4 @@
 
 - [x] Remove both upper navigation bars on mobile—the `B Bakery ERP` brand header and the `B / menu / current page` bar—while retaining the liquid bottom navigation and all desktop navigation behavior. Authenticated 375px live verification confirmed both upper bars are hidden, the Packaging ledger and bottom navigation remain visible, More opens secondary workflows, and the desktop header/menu remain available.
 
-- [ ] Change the active mobile bottom-navigation circle to Bakery ERP’s amber/gold brand color, with a readable high-contrast active icon and label.
+- [x] Change the active mobile bottom-navigation circle to Bakery ERP’s amber/gold brand color, with a readable high-contrast active icon and label. Live authenticated mobile verification measured amber active-circle color `oklch(0.828 0.189 84.429)` with a dark slate icon and confirmed the Packaging ledger plus More navigation remain usable.
