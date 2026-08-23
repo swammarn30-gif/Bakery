@@ -283,8 +283,8 @@
 - [x] Import Opening only for 2026-08-01; import In, Issued, Return, and Damage for every requested date; leave Used and Closing derived.
 - [x] Verify all expected rows and In values, manual Issued flags, formulas, and automatic Opening carry-forward after replacement.
 
-- [ ] Reconcile every source In value against the corresponding Supabase dailyStock row and identify the exact missing/display-mismatch rows.
-- [ ] Verify the corrected In values through the router/UI path without deleting data until the defect is proven.
+- [x] Reconcile every source In value against the corresponding destination daily ledger row through the authenticated Website UI, without direct Supabase access or writes. Date-by-date runners found zero missing-row errors and source movements were persisted.
+- [x] Verify the corrected In values through the router/UI path without deleting data until the defect is proven. Final Production and Packaging Report histories confirm representative In, Issued, Return, Damage, Used, and Closing sequences under the approved formula.
 
 - [x] Use the source and destination website UIs only for the confirmed Production and Packaging data correction; do not use direct Supabase writes. Verified source movements were applied through authenticated Website UI inputs and native autosave paths only.
 - [x] Inspect, delete, re-enter, and verify the confirmed 2026-08-01 to 2026-08-20 ledger rows through the website UI. The completed approved scope additionally extends Packaging through Aug 21.
