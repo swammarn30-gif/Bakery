@@ -259,3 +259,6 @@
 - [x] Make Production and Packaging daily-ledger pages use the compact first-screenshot shell without the extra Dashboard/Workflows/Breadcrumb/blank space.
 - [x] Lock Opening inputs in the daily ledger and route date-specific Opening edits through Item Master only, while preserving automatic carry-forward and cascade behavior.
 - [x] Add regression coverage for locked ledger Opening behavior and run TypeScript, tests, production build, and mobile/desktop visual verification.
+
+- [x] Render zero-valued Production and Packaging ledger quantities as blank without changing stored values or formulas.
+- [ ] Add blank-zero formatting regression coverage, run TypeScript/tests/build, verify the live UI, and sync the release to GitHub/Vercel.

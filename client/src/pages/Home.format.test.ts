@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { formatQuantity } from "./Home";
+import { formatLedgerQuantity, formatQuantity } from "./Home";
 
 describe("formatQuantity", () => {
+  it("renders ledger zero values as blank without changing nonzero formatting", () => {
+    expect(formatLedgerQuantity(0)).toBe("");
+    expect(formatLedgerQuantity("0.000")).toBe("");
+    expect(formatLedgerQuantity(400)).toBe("400");
+    expect(formatLedgerQuantity("12.500")).toBe("12.5");
+  });
   it("removes trailing zeroes from whole quantities", () => {
     expect(formatQuantity("400.000")).toBe("400");
   });
