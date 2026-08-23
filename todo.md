@@ -322,3 +322,5 @@
 - [x] Add a Low Stock page showing items whose current calculated stock is at or below their saved Minimum Stock, with item, unit, current stock, minimum stock, shortfall, and status.
 - [x] Remove from More every workflow already represented by the liquid mobile primary navigation, leaving only secondary pages.
 - [x] Add regression coverage, responsive verification, GitHub sync, and Vercel production deployment for the requested inventory-navigation changes. Low-stock calculations and More-menu filtering have 5 focused passing tests; TypeScript and Vercel build pass; GitHub commit `a08c6ed` is live in Vercel deployment `dpl_9Ykr2aA2KhMCQUzx6S7Cp7hvKjCu` (READY).
+
+- [ ] Replace manual Minimum Stock thresholding in Low Stock with a department-specific dynamic threshold: from the first recorded ledger date through the item’s latest date, calculate average daily Used and mark Low Stock only when Current Closing is below Average Used × 3.
