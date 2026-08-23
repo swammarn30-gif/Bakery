@@ -1,8 +1,8 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./server/routers";
 import { configureDatabase } from "./server/db";
-import { createWorkerContext } from "./server/_core/context";
-import { handleStorageProxyRequest } from "./server/_core/storageProxy";
+import { createWorkerContext } from "./server/_core/workerContext";
+import { handleStorageProxyRequest } from "./server/_core/workerStorageProxy";
 import { isServerRoute, shouldServeSpaFallback } from "./worker-routing";
 import { handlePasswordAuthRequest } from "./server/passwordAuthRoute";
 

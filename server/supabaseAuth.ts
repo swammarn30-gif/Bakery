@@ -38,7 +38,15 @@ export async function authenticateSupabaseBearer(authorization: string | undefin
   if (!adminClient || !authorization?.startsWith("Bearer ")) return null;
   const token = authorization.slice("Bearer ".length).trim();
   if (!token) return null;
-  const { data, error } = await adminClient.auth.getUser(token);
+  const authClient = adminClient as unknown as {
+    auth: {
+      getUser: (accessToken: string) => Promise<{
+        data: { user: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null };
+        error: { status?: number; code?: string; message?: string } | null;
+      }>;
+    };
+  };
+  const { data, error } = await authClient.auth.getUser(token);
   if (error || !data.user) {
     console.error("[Auth] Supabase token rejected", {
       status: error?.status ?? null,
@@ -48,10 +56,16 @@ export async function authenticateSupabaseBearer(authorization: string | undefin
     return null;
   }
   const authUser = data.user;
+  const metadata = authUser.user_metadata ?? {};
+  const displayName =
+    (typeof metadata.name === "string" && metadata.name) ||
+    (typeof metadata.full_name === "string" && metadata.full_name) ||
+    authUser.email ||
+    null;
   const isOwner = Boolean(config?.ownerOpenId && authUser.id === config.ownerOpenId);
   await upsertUser({
     openId: authUser.id,
-    name: authUser.user_metadata?.name ?? authUser.user_metadata?.full_name ?? authUser.email ?? null,
+    name: displayName,
     email: authUser.email ?? null,
     loginMethod: "supabase-password",
     lastSignedIn: new Date(),

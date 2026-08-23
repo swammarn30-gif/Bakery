@@ -1,13 +1,14 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
-import type { Request as ExpressRequest, Response as ExpressResponse } from "express";
-import type { User } from "../../drizzle/schema";
+import type { TrpcContext } from "./context";
 import { authenticateSupabaseBearer, type SupabaseRuntimeConfig } from "../supabaseAuth";
 
-export type TrpcContext = {
-  req: ExpressRequest;
-  res: ExpressResponse;
-  user: User | null;
-};
+export async function createWorkerContext(req: Request, config?: SupabaseRuntimeConfig): Promise<TrpcContext> {
+  return {
+    req: req as unknown as CreateExpressContextOptions["req"],
+    res: null as unknown as CreateExpressContextOptions["res"],
+    user: await authenticateAuthorization(req.headers.get("authorization") ?? undefined, config),
+  };
+}
 
 async function authenticateAuthorization(authorization: string | undefined, config?: SupabaseRuntimeConfig) {
   if (!authorization?.startsWith("Bearer ")) return null;
@@ -23,14 +24,4 @@ async function authenticateAuthorization(authorization: string | undefined, conf
     });
     return null;
   }
-}
-
-export async function createContext(opts: CreateExpressContextOptions): Promise<TrpcContext> {
-  const req = opts.req as ExpressRequest;
-  const res = opts.res as ExpressResponse;
-  return {
-    req,
-    res,
-    user: await authenticateAuthorization(req.headers.authorization),
-  };
 }
