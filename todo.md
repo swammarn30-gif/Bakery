@@ -282,3 +282,15 @@
 - [x] Replace only Production and Packaging ledger rows dated 2026-08-01 through 2026-08-20 from the verified source dataset.
 - [x] Import Opening only for 2026-08-01; import In, Issued, Return, and Damage for every requested date; leave Used and Closing derived.
 - [x] Verify all expected rows and In values, manual Issued flags, formulas, and automatic Opening carry-forward after replacement.
+
+- [ ] Reconcile every source In value against the corresponding Supabase dailyStock row and identify the exact missing/display-mismatch rows.
+- [ ] Verify the corrected In values through the router/UI path without deleting data until the defect is proven.
+
+- [ ] Use the source and destination website UIs only for the confirmed Production and Packaging data correction; do not use direct Supabase writes.
+- [ ] Inspect, delete, re-enter, and verify the confirmed 2026-08-01 to 2026-08-20 ledger rows through the website UI.
+
+- [ ] Correct the website-only replacement scope to Production through 2026-08-09 and Packaging through 2026-08-21.
+- [ ] Verify Aug 1 Opening and later In, Issued, Return, and Damage entries for both revised ranges through the website UI.
+- [ ] Add a protected, admin-only Website UI clear action limited to one department and an explicit date range, with confirmation before deletion.
+- [ ] Diagnose and correct the live Vercel runtime timeout and missing Supabase runtime-configuration path without changing ledger data directly.
+- [ ] Verify live Vercel sign-in plus Production and Packaging ledger date changes load reliably before resuming Website-only data correction.

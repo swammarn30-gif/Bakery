@@ -104,11 +104,30 @@ export const appRouter = router({
           : Promise.resolve([] as typeof rows),
       ]);
       const isLedgerItem = (item: typeof itemRows[number]) => item.active && (input.department === "production" ? item.itemType === "raw_material" : item.itemType === "packaging_material");
-      const autoFor = (stockDate: string, itemId: number) => orderRows.filter(order => order.orderDate === stockDate).reduce((sum, order) => {
-        const recipe = recipeRows.filter(candidate => candidate.itemId === order.itemId && candidate.department === input.department && candidate.effectiveFrom <= stockDate).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
-        const line = recipe ? lineRows.find(candidate => candidate.recipeId === recipe.id && candidate.materialItemId === itemId) : undefined;
-        return sum + (line ? Number(order.quantity) * Number(line.quantityPerBatch) : 0);
-      }, 0);
+      const recipesByFinishedItem = new Map<number, typeof recipeRows>();
+      for (const recipe of recipeRows) {
+        if (recipe.department !== input.department) continue;
+        const bucket = recipesByFinishedItem.get(recipe.itemId) ?? [];
+        bucket.push(recipe);
+        recipesByFinishedItem.set(recipe.itemId, bucket);
+      }
+      Array.from(recipesByFinishedItem.values()).forEach(bucket => bucket.sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom)));
+      const linesByRecipe = new Map<number, typeof lineRows>();
+      for (const line of lineRows) {
+        const bucket = linesByRecipe.get(line.recipeId) ?? [];
+        bucket.push(line);
+        linesByRecipe.set(line.recipeId, bucket);
+      }
+      const autoIssuedByDateAndItem = new Map<string, number>();
+      for (const order of orderRows) {
+        const recipe = recipesByFinishedItem.get(order.itemId)?.find(candidate => candidate.effectiveFrom <= order.orderDate);
+        if (!recipe) continue;
+        for (const line of linesByRecipe.get(recipe.id) ?? []) {
+          const key = `${order.orderDate}:${line.materialItemId}`;
+          autoIssuedByDateAndItem.set(key, (autoIssuedByDateAndItem.get(key) ?? 0) + Number(order.quantity) * Number(line.quantityPerBatch));
+        }
+      }
+      const autoFor = (stockDate: string, itemId: number) => autoIssuedByDateAndItem.get(`${stockDate}:${itemId}`) ?? 0;
       const effectiveHistory = historyRows.map(row => ({ ...row, issued: row.manualIssued ? row.issued : String(autoFor(row.stockDate, row.itemId)) }));
       const derivedHistory = input.from === input.to ? deriveSequentialStockRows(effectiveHistory) : [];
       const derivedByKey = new Map(derivedHistory.map(entry => [`${entry.row.stockDate}:${entry.row.itemId}`, entry]));

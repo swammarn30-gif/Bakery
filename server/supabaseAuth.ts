@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { User } from "../drizzle/schema.js";
 import { getUserByOpenId, upsertUser } from "./db.js";
 
 type SupabaseRuntimeConfig = {
@@ -18,6 +19,22 @@ const buildTimeClient = (() => {
 
 let runtimeClient: SupabaseClient | null = null;
 let runtimeClientKey = "";
+const authenticatedUserCache = new Map<string, { user: User; expiresAt: number }>();
+const AUTHENTICATED_USER_CACHE_MS = 60_000;
+
+function cachedUser(token: string) {
+  const cached = authenticatedUserCache.get(token);
+  if (!cached) return null;
+  if (cached.expiresAt <= Date.now()) {
+    authenticatedUserCache.delete(token);
+    return null;
+  }
+  return cached.user;
+}
+
+function cacheUser(token: string, user: User) {
+  authenticatedUserCache.set(token, { user, expiresAt: Date.now() + AUTHENTICATED_USER_CACHE_MS });
+}
 
 function getAdminClient(config?: SupabaseRuntimeConfig) {
   const supabaseUrl = config?.supabaseUrl || process.env.VITE_SUPABASE_URL || "";
@@ -38,6 +55,8 @@ export async function authenticateSupabaseBearer(authorization: string | undefin
   if (!adminClient || !authorization?.startsWith("Bearer ")) return null;
   const token = authorization.slice("Bearer ".length).trim();
   if (!token) return null;
+  const cached = cachedUser(token);
+  if (cached) return cached;
   const authClient = adminClient as unknown as {
     auth: {
       getUser: (accessToken: string) => Promise<{
@@ -62,6 +81,11 @@ export async function authenticateSupabaseBearer(authorization: string | undefin
     (typeof metadata.full_name === "string" && metadata.full_name) ||
     authUser.email ||
     null;
+  const existingUser = await getUserByOpenId(authUser.id);
+  if (existingUser) {
+    cacheUser(token, existingUser);
+    return existingUser;
+  }
   const isOwner = Boolean(config?.ownerOpenId && authUser.id === config.ownerOpenId);
   await upsertUser({
     openId: authUser.id,
@@ -71,7 +95,9 @@ export async function authenticateSupabaseBearer(authorization: string | undefin
     lastSignedIn: new Date(),
     ...(isOwner ? { role: "admin" as const } : {}),
   });
-  return (await getUserByOpenId(authUser.id)) ?? null;
+  const createdUser = await getUserByOpenId(authUser.id);
+  if (createdUser) cacheUser(token, createdUser);
+  return createdUser ?? null;
 }
 
 export { buildTimeClient as adminClient };
