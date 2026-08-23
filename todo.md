@@ -300,6 +300,6 @@
 
 - [x] Diagnose and fix the mobile Packaging ledger remaining on the loading skeleton after selecting a date, and verify that real rows render reliably on the live Vercel site. Commit e56d5c2 is deployed on Vercel; live Packaging loads and the Aug 2 to Aug 22 date transition resolved to real rows without the false empty-item state.
 
-- [ ] Inspect the user-provided TikTok reference and, if appropriate, adapt its lower mobile navigation or interaction pattern for Bakery ERP without changing ledger workflows.
+- [x] Inspect the user-provided TikTok reference and adapt its lower mobile navigation pattern for Bakery ERP without changing ledger workflows. Mobile navigation now provides liquid-style Home, Production, Packaging, Report, and More actions; desktop navigation remains unchanged.
 
-- [ ] Update Report so one selected item displays one row per date in the chosen range with Date, Opening, In, Issued, Return, Damage, Used, Closing, and Note columns, plus footer totals for In, Damage, and Used.
+- [x] Update Report so one selected item displays one row per date in the chosen range with Date, Opening, In, Issued, Return, Damage, Used, Closing, and Note columns, plus footer totals for In, Damage, and Used. Live Production flour Aug 1–9 verification showed In 320000, Damage 1, and Used 331871.
