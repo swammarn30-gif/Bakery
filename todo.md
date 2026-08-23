@@ -299,3 +299,7 @@
 - [x] Fix the daily-ledger multi-field autosave path so a Website UI row edit persists the complete latest draft rather than reverting on a date reload. Deployed GitHub commit b204161 with a complete-draft ref-backed save queue and regression test; live Packaging Aug 1 and Aug 2 data persisted across a clean deployment reload.
 
 - [x] Diagnose and fix the mobile Packaging ledger remaining on the loading skeleton after selecting a date, and verify that real rows render reliably on the live Vercel site. Commit e56d5c2 is deployed on Vercel; live Packaging loads and the Aug 2 to Aug 22 date transition resolved to real rows without the false empty-item state.
+
+- [ ] Inspect the user-provided TikTok reference and, if appropriate, adapt its lower mobile navigation or interaction pattern for Bakery ERP without changing ledger workflows.
+
+- [ ] Update Report so one selected item displays one row per date in the chosen range with Date, Opening, In, Issued, Return, Damage, Used, Closing, and Note columns, plus footer totals for In, Damage, and Used.
