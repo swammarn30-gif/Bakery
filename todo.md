@@ -333,5 +333,5 @@
 - [x] Add a Liquid Glass transfer control beside that search bar with Import and Export actions scoped only to the active Daily Ledger department and selected date.
 - [x] Add regression coverage, responsive validation, GitHub sync, and Vercel deployment for the Daily Ledger search and date-scoped transfer controls. Seven focused search/export tests, TypeScript, and Vercel build pass; GitHub commit `8b9609b` is deployed in Vercel deployment `dpl_7HZiobxjQRNeNzKi2r42ZPxPEZjy` (READY).
 
-- [ ] Diagnose and repair the reported live Vercel Supabase Sign In failure before proceeding with the approved Liquid Glass UI redesign.
+- [x] Diagnose and repair the reported live Vercel Supabase Sign In failure before proceeding with the approved Liquid Glass UI redesign. Vercel production logs identified an ESM module-resolution crash in `shared/lowStock`; GitHub commit `2852cb7` / deployment `dpl_Hq49azB8DDJhSpTosbkUmq8M1k6c` is READY, and a clean production password-sign-in test reached the Administrator dashboard.
 - [ ] After stable live sign-in is verified, apply the user-approved iPhone-inspired Liquid Glass style to the mobile ERP shell while preserving the spreadsheet-style Production and Packaging ledgers.
