@@ -304,4 +304,4 @@
 
 - [x] Update Report so one selected item displays one row per date in the chosen range with Date, Opening, In, Issued, Return, Damage, Used, Closing, and Note columns, plus footer totals for In, Damage, and Used. Live Production flour Aug 1–9 verification showed In 320000, Damage 1, and Used 331871.
 
-- [ ] Remove both upper navigation bars on mobile—the `B Bakery ERP` brand header and the `B / menu / current page` bar—while retaining the liquid bottom navigation and all desktop navigation behavior.
+- [x] Remove both upper navigation bars on mobile—the `B Bakery ERP` brand header and the `B / menu / current page` bar—while retaining the liquid bottom navigation and all desktop navigation behavior. Authenticated 375px live verification confirmed both upper bars are hidden, the Packaging ledger and bottom navigation remain visible, More opens secondary workflows, and the desktop header/menu remain available.
