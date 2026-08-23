@@ -265,3 +265,6 @@
 
 - [x] Copy only source Production and Packaging ledger data from 2026-08-01 through 2026-08-20; include Opening only for 2026-08-01 and include In, Issued, Return, and Damage for every date.
 - [x] Validate item mapping, import the real source rows without fabricated values, verify automatic Opening carry-forward, and report any missing or ambiguous source data.
+
+- [x] Audit every imported Production and Packaging movement row from 2026-08-01 through 2026-08-20 against the source site and identify negative Closing values.
+- [x] Verify each negative Closing with the ledger formula and correct only confirmed import or mapping mismatches; re-run counts and live checks.
