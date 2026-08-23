@@ -2,11 +2,11 @@ import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies.js";
 import { systemRouter } from "./_core/systemRouter.js";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc.js";
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { approvals, dailyStock, items, purchases, saleShopLines, sales, shops, getDb, listDailyStock, listItems, listPendingApprovals, listPurchases, listSales, listShops, writeAudit } from "./db.js";
 import { orders, recipes, recipeLines, stockAdjustments, importBatches } from "../drizzle/schema.js";
 import { z } from "zod";
-import { calculateClosing, calculateUsed, migrateBackupSnapshot, normalizeDateRange, normalizePurchase, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations.js";
+import { calculateClosing, calculateUsed, deriveSequentialStockRows, migrateBackupSnapshot, normalizeDateRange, normalizePurchase, resolveIssuedQuantity, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations.js";
 
 const dateRange = z.object({ from: z.string(), to: z.string() }).transform(v => normalizeDateRange(v.from, v.to));
 const numeric = z.coerce.number().finite();
@@ -85,11 +85,16 @@ export const appRouter = router({
       const db = await getDb();
       if (!db) return [];
       const rows = await listDailyStock(input.department, input.from, input.to);
-      const [orderRows, recipeRows, lineRows, itemRows] = await Promise.all([
-        db.select().from(orders).where(and(gte(orders.orderDate, input.from), lte(orders.orderDate, input.to))),
+      const [orderRows, recipeRows, lineRows, itemRows, historyRows] = await Promise.all([
+        input.from === input.to
+          ? db.select().from(orders).where(lte(orders.orderDate, input.to))
+          : db.select().from(orders).where(and(gte(orders.orderDate, input.from), lte(orders.orderDate, input.to))),
         db.select().from(recipes).where(eq(recipes.active, true)),
         db.select().from(recipeLines),
         db.select().from(items),
+        input.from === input.to
+          ? db.select().from(dailyStock).where(and(eq(dailyStock.department, input.department), lte(dailyStock.stockDate, input.to))).orderBy(asc(dailyStock.stockDate))
+          : Promise.resolve([] as typeof rows),
       ]);
       const isLedgerItem = (item: typeof itemRows[number]) => item.active && (input.department === "production" ? item.itemType === "raw_material" : item.itemType === "packaging_material");
       const autoFor = (stockDate: string, itemId: number) => orderRows.filter(order => order.orderDate === stockDate).reduce((sum, order) => {
@@ -97,8 +102,17 @@ export const appRouter = router({
         const line = recipe ? lineRows.find(candidate => candidate.recipeId === recipe.id && candidate.materialItemId === itemId) : undefined;
         return sum + (line ? Number(order.quantity) * Number(line.quantityPerBatch) : 0);
       }, 0);
+      const effectiveHistory = historyRows.map(row => ({ ...row, issued: row.manualIssued ? row.issued : String(autoFor(row.stockDate, row.itemId)) }));
+      const derivedHistory = input.from === input.to ? deriveSequentialStockRows(effectiveHistory) : [];
+      const derivedByKey = new Map(derivedHistory.map(entry => [`${entry.row.stockDate}:${entry.row.itemId}`, entry]));
+      const previousClosing = (itemId: number) => [...derivedHistory].reverse().find(entry => entry.row.itemId === itemId && entry.row.stockDate < input.from)?.closing ?? 0;
       const existingByItem = new Map(rows.map(row => [row.itemId, row]));
-      const baseRows = input.from === input.to ? itemRows.filter(isLedgerItem).map(item => existingByItem.get(item.id) ?? ({ stockDate: input.from, department: input.department, itemId: item.id, openingApproved: "0", inQty: "0", issued: "0", returnQty: "0", damage: "0", note: null, autoIssued: null, manualIssued: false } as const)) : rows;
+      const baseRows = input.from === input.to ? itemRows.filter(isLedgerItem).map(item => {
+        const existing = existingByItem.get(item.id);
+        const derived = derivedByKey.get(`${input.from}:${item.id}`);
+        if (existing) return derived ? { ...existing, openingApproved: String(derived.opening) } : existing;
+        return { stockDate: input.from, department: input.department, itemId: item.id, openingApproved: String(previousClosing(item.id)), inQty: "0", issued: "0", returnQty: "0", damage: "0", note: null, autoIssued: null, manualIssued: false } as const;
+      }) : rows;
       return baseRows.map(row => ({ ...row, autoIssued: String(autoFor(row.stockDate, row.itemId)) }));
     }),
     autoIssued: protectedProcedure.input(z.object({ stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int() })).query(async ({ input }) => {
@@ -116,7 +130,7 @@ export const appRouter = router({
       }, 0);
       return { autoIssued: total };
     }),
-    save: protectedProcedure.input(z.object({ id: z.number().int().optional(), stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int(), openingApproved: numeric, inQty: numeric, issued: numeric, returnQty: numeric, damage: numeric, note: z.string().optional(), autoIssued: numeric.optional(), manualIssued: z.boolean().default(false) })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const row = { stockDate: input.stockDate, department: input.department, itemId: input.itemId, openingApproved: String(input.openingApproved), inQty: String(input.inQty), issued: String(input.issued), returnQty: String(input.returnQty), damage: String(input.damage), note: input.note, autoIssued: input.autoIssued === undefined ? null : String(input.autoIssued), manualIssued: input.manualIssued, createdBy: ctx.user.id }; const existing = (await db.select().from(dailyStock).where(and(eq(dailyStock.stockDate, input.stockDate), eq(dailyStock.department, input.department), eq(dailyStock.itemId, input.itemId))).limit(1))[0]; if (existing) await db.update(dailyStock).set(row).where(eq(dailyStock.id, existing.id)); else await db.insert(dailyStock).values(row); const futureRows = await db.select().from(dailyStock).where(and(eq(dailyStock.department, input.department), eq(dailyStock.itemId, input.itemId), gte(dailyStock.stockDate, input.stockDate))).orderBy(dailyStock.stockDate); let previousClosing: number | null = null; for (const future of futureRows) { const opening = future.stockDate === input.stockDate ? input.openingApproved : previousClosing ?? Number(future.openingApproved); if (future.stockDate !== input.stockDate && Number(future.openingApproved) !== opening) await db.update(dailyStock).set({ openingApproved: String(opening) }).where(eq(dailyStock.id, future.id)); previousClosing = calculateClosing({ opening, inQty: future.stockDate === input.stockDate ? input.inQty : Number(future.inQty), issued: future.stockDate === input.stockDate ? input.issued : Number(future.issued), returnQty: future.stockDate === input.stockDate ? input.returnQty : Number(future.returnQty), damage: Number(future.damage) }); } return { used: calculateUsed({ opening: input.openingApproved, inQty: input.inQty, issued: input.issued, returnQty: input.returnQty, damage: input.damage }), closing: calculateClosing({ opening: input.openingApproved, inQty: input.inQty, issued: input.issued, returnQty: input.returnQty, damage: input.damage }) }; }),
+    save: protectedProcedure.input(z.object({ id: z.number().int().optional(), stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int(), openingApproved: numeric, inQty: numeric, issued: numeric, returnQty: numeric, damage: numeric, note: z.string().optional(), autoIssued: numeric.optional(), manualIssued: z.boolean().default(false) })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const manualIssued = input.manualIssued; const effectiveIssued = resolveIssuedQuantity(input.autoIssued ?? input.issued, input.issued, manualIssued); const row = { stockDate: input.stockDate, department: input.department, itemId: input.itemId, openingApproved: String(input.openingApproved), inQty: String(input.inQty), issued: String(effectiveIssued), returnQty: String(input.returnQty), damage: String(input.damage), note: input.note, autoIssued: input.autoIssued === undefined ? null : String(input.autoIssued), manualIssued, createdBy: ctx.user.id }; const existing = (await db.select().from(dailyStock).where(and(eq(dailyStock.stockDate, input.stockDate), eq(dailyStock.department, input.department), eq(dailyStock.itemId, input.itemId))).limit(1))[0]; if (existing) await db.update(dailyStock).set(row).where(eq(dailyStock.id, existing.id)); else await db.insert(dailyStock).values(row); const futureRows = await db.select().from(dailyStock).where(and(eq(dailyStock.department, input.department), eq(dailyStock.itemId, input.itemId), gte(dailyStock.stockDate, input.stockDate))).orderBy(dailyStock.stockDate); let previousClosing: number | null = null; for (const future of futureRows) { const opening = future.stockDate === input.stockDate ? input.openingApproved : previousClosing ?? Number(future.openingApproved); if (future.stockDate !== input.stockDate && Number(future.openingApproved) !== opening) await db.update(dailyStock).set({ openingApproved: String(opening) }).where(eq(dailyStock.id, future.id)); previousClosing = calculateClosing({ opening, inQty: future.stockDate === input.stockDate ? input.inQty : Number(future.inQty), issued: future.stockDate === input.stockDate ? effectiveIssued : Number(future.issued), returnQty: future.stockDate === input.stockDate ? input.returnQty : Number(future.returnQty), damage: Number(future.damage) }); }       return { used: calculateUsed({ opening: input.openingApproved, inQty: input.inQty, issued: effectiveIssued, returnQty: input.returnQty, damage: input.damage }), closing: calculateClosing({ opening: input.openingApproved, inQty: input.inQty, issued: effectiveIssued, returnQty: input.returnQty, damage: input.damage }) }; }),
     proposeOpening: protectedProcedure.input(z.object({ id: z.number().int(), proposedValue: numeric, reason: z.string().optional() })).mutation(async ({ input, ctx }) => { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const existing = (await db.select().from(dailyStock).where(eq(dailyStock.id, input.id)).limit(1))[0]; if (!existing) throw new Error("Stock row not found"); await db.update(dailyStock).set({ openingPending: String(input.proposedValue) }).where(eq(dailyStock.id, input.id)); await db.insert(approvals).values({ entityType: "opening", entityId: input.id, oldValue: existing.openingApproved, proposedValue: String(input.proposedValue), submittedBy: ctx.user.id, reason: input.reason }); return { status: "pending" as const }; }),
   }),
   adjustments: router({

@@ -246,3 +246,10 @@
 - [x] Diagnose and fix Vercel production sign-in error `Unable to reach sign-in service`; corrected the Vercel Transaction Pooler database URL, redeployed, and verified live administrator login plus Dashboard data.
 - [x] Replace the Vercel `SUPABASE_DATABASE_URL` placeholder with the authorized Transaction Pooler URI, redeploy, and verify login plus database-backed auth.me.
 - [x] Replace the Vercel `SUPABASE_DATABASE_URL` placeholder with the authorized Transaction Pooler URI, redeploy, and verify login plus database-backed auth.me.
+- [x] Diagnose and repair the live Vercel Auto Carry Forward failure so Closing flows into the next date’s Opening and earlier edits cascade through later dates in Production and Packaging.
+- [x] Diagnose and repair the live Issued manual-edit failure so Auto Issued can be overridden, saved, and retained without being overwritten by later refreshes.
+
+- [x] Fix live daily-ledger Opening derivation so an unsaved or newly selected date receives the prior persisted Closing per item, while preserving explicit saved Openings where appropriate.
+- [x] Fix StockPanel draft synchronization so server-cascaded Opening values and persisted manualIssued flags cannot be hidden or overwritten by stale drafts after save/refetch/date changes.
+- [x] Add regression tests for Opening carry-forward across existing and unsaved dates, early-date cascade, and manual Issued override persistence through save/list mapping.
+- [x] Re-run TypeScript, full Vitest suite, production build, and live read-only verification; then checkpoint and push the verified fix to GitHub main for Vercel redeployment.

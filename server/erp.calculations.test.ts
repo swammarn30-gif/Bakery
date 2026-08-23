@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, deriveSequentialStockRows, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -101,6 +101,18 @@ describe("ERP calculations", () => {
     const rows = recalculateSequentialOpenings([{ itemId: 2, date: "2026-01-02", opening: 0, closing: 7 }, { itemId: 1, date: "2026-01-02", opening: 0, closing: 4 }, { itemId: 1, date: "2026-01-01", opening: 10, closing: 4 }, { itemId: 2, date: "2026-01-01", opening: 3, closing: 7 }]);
     expect(rows.find(row => row.itemId === 1 && row.date === "2026-01-02")?.opening).toBe(4);
     expect(rows.find(row => row.itemId === 2 && row.date === "2026-01-02")?.opening).toBe(7);
+  });
+  it("derives the next saved row Opening from the previous Closing even when a date is missing", () => {
+    const rows = deriveSequentialStockRows([
+      { itemId: 7, stockDate: "2026-01-01", openingApproved: "100", inQty: "20", issued: "30", returnQty: "2", damage: "1" },
+      { itemId: 7, stockDate: "2026-01-03", openingApproved: "0", inQty: "5", issued: "10", returnQty: "0", damage: "0" },
+    ]);
+    expect(rows.find(entry => entry.row.stockDate === "2026-01-01")?.closing).toBe(92);
+    expect(rows.find(entry => entry.row.stockDate === "2026-01-03")?.opening).toBe(92);
+  });
+  it("keeps a manual Issued value while automatic Issued can refresh independently", () => {
+    expect(resolveIssuedQuantity(40, 17, true)).toBe(17);
+    expect(resolveIssuedQuantity(55, 17, false)).toBe(55);
   });
 
   it("uses authoritative Recipe/BOM lines instead of duplicate visible fields", () => {

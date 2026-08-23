@@ -149,6 +149,27 @@ export function resolveIssuedQuantity(autoIssued: number, savedIssued: number, m
   return manualIssued ? savedIssued : autoIssued;
 }
 
+type SequentialStockRow = {
+  itemId: number;
+  stockDate: string;
+  openingApproved: number | string | null | undefined;
+  inQty: number | string | null | undefined;
+  issued: number | string | null | undefined;
+  returnQty: number | string | null | undefined;
+  damage: number | string | null | undefined;
+};
+
+/** Derive the authoritative Opening/Closing chain without mutating persisted rows. */
+export function deriveSequentialStockRows<T extends SequentialStockRow>(rows: T[]) {
+  const lastClosing = new Map<number, number>();
+  return [...rows].sort((a, b) => a.stockDate.localeCompare(b.stockDate) || a.itemId - b.itemId).map(row => {
+    const opening = lastClosing.has(row.itemId) ? lastClosing.get(row.itemId)! : Number(row.openingApproved ?? 0);
+    const closing = calculateClosing({ opening, inQty: Number(row.inQty ?? 0), issued: Number(row.issued ?? 0), returnQty: Number(row.returnQty ?? 0), damage: Number(row.damage ?? 0) });
+    lastClosing.set(row.itemId, closing);
+    return { row, opening, closing };
+  });
+}
+
 export function recalculateSequentialOpenings<T extends { itemId: number; date: string; opening: number; closing: number }>(rows: T[], fallbackOpening = 0) {
   const lastClosing = new Map<number, number>();
   return [...rows].sort((a, b) => a.date.localeCompare(b.date) || a.itemId - b.itemId).map(row => {
