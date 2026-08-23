@@ -307,3 +307,8 @@
 - [x] Remove both upper navigation bars on mobile—the `B Bakery ERP` brand header and the `B / menu / current page` bar—while retaining the liquid bottom navigation and all desktop navigation behavior. Authenticated 375px live verification confirmed both upper bars are hidden, the Packaging ledger and bottom navigation remain visible, More opens secondary workflows, and the desktop header/menu remain available.
 
 - [x] Change the active mobile bottom-navigation circle to Bakery ERP’s amber/gold brand color, with a readable high-contrast active icon and label. Live authenticated mobile verification measured amber active-circle color `oklch(0.828 0.189 84.429)` with a dark slate icon and confirmed the Packaging ledger plus More navigation remain usable.
+
+- [x] Verify the reported live mobile Issued manual-edit behavior without altering business data: the first live Packaging Issued input is enabled, writable, and decimal-capable; its change handler schedules an 800ms autosave with `manualIssued: true`, and 31 focused calculation tests for manual Issued preservation pass. No defect was reproduced during read-only live verification.
+
+- [x] Superseded: do not delete Production rows after 2026-08-09. The user clarified that daily records and automatic Opening values must remain.
+- [x] Clear only In, Issued, Return, and Damage for all Production dates after 2026-08-09 through the authenticated Website UI autosave path; preserve Opening, keep Packaging unchanged, and verify the cleared movements by date. Independent website-UI checks found zero non-zero movement rows on every Production date from 2026-08-10 through 2026-08-22; 41 automatic Opening values remain available on each checked date.
