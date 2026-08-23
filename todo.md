@@ -324,3 +324,11 @@
 - [x] Add regression coverage, responsive verification, GitHub sync, and Vercel production deployment for the requested inventory-navigation changes. Low-stock calculations and More-menu filtering have 5 focused passing tests; TypeScript and Vercel build pass; GitHub commit `a08c6ed` is live in Vercel deployment `dpl_9Ykr2aA2KhMCQUzx6S7Cp7hvKjCu` (READY).
 
 - [x] Replace manual Minimum Stock thresholding in Low Stock with a department-specific dynamic threshold: from the first recorded ledger date through the item’s latest date, calculate average daily Used and mark Low Stock only when Current Closing is below Average Used × 3. The Low Stock table now shows Current Closing, Avg Used, 3-day threshold, and Shortfall; focused tests, TypeScript, Vercel build, GitHub commit `e66d5f9`, and Vercel deployment `dpl_J1qQRbokph3Q3e4r2HRVUwuAFcoi` are verified READY.
+
+- [x] Generate one mobile Bakery ERP visual mockup showing the requested iPhone-inspired Liquid Glass direction while retaining the spreadsheet-style Production/Packaging table concept.
+
+- [ ] Regenerate the approved Liquid Glass mobile Bakery ERP mockup with all item-row icons removed, retaining text-only Item and unit cells plus the glass spreadsheet presentation.
+
+- [ ] Add an Item-name search bar above Production and Packaging Daily Ledger tables that filters only the active department and selected date’s table rows.
+- [ ] Add a Liquid Glass transfer control beside that search bar with Import and Export actions scoped only to the active Daily Ledger department and selected date.
+- [ ] Add regression coverage, responsive validation, GitHub sync, and Vercel deployment for the Daily Ledger search and date-scoped transfer controls.
