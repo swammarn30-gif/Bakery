@@ -225,3 +225,158 @@
 .compact-ledger-shell > header,
 .compact-ledger-shell > header + div { display: none; }
 .compact-ledger-shell > main { max-width: none; padding: 0; }
+
+/* Icon-free iPhone-inspired Liquid Glass treatment for the Bakery ERP shell and ledgers. */
+#root { min-height: 100dvh; }
+
+.compact-ledger-shell {
+  background:
+    radial-gradient(circle at 92% 3%, rgba(255, 205, 114, 0.38), transparent 28rem),
+    radial-gradient(circle at 5% 42%, rgba(189, 220, 255, 0.5), transparent 30rem),
+    linear-gradient(148deg, #edf5ff 0%, #f8fafc 42%, #fff5df 100%);
+}
+
+.compact-ledger-shell [data-slot="card"],
+.compact-ledger-shell section > .flex.flex-wrap,
+.compact-ledger-shell section > .flex.flex-col,
+.compact-ledger-shell div.bg-card.overflow-x-auto {
+  border-color: rgba(255, 255, 255, 0.75);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(244, 249, 255, 0.54));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 18px 42px rgba(31, 57, 91, 0.1);
+  backdrop-filter: blur(20px) saturate(142%);
+  -webkit-backdrop-filter: blur(20px) saturate(142%);
+}
+
+.compact-ledger-shell div.bg-card.overflow-x-auto {
+  border-radius: 1.5rem;
+}
+
+.compact-ledger-shell table thead {
+  background: linear-gradient(100deg, rgba(210, 229, 255, 0.9), rgba(255, 249, 231, 0.78));
+  color: #122247;
+}
+
+.compact-ledger-shell table tbody tr {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.compact-ledger-shell table tbody tr:nth-child(even) {
+  background: rgba(235, 244, 255, 0.35);
+}
+
+.compact-ledger-shell table td.sticky,
+.compact-ledger-shell table th.sticky {
+  background: rgba(248, 251, 255, 0.9) !important;
+  backdrop-filter: blur(18px);
+}
+
+.compact-ledger-shell table input {
+  border-color: rgba(206, 220, 239, 0.85);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 2px rgba(45, 69, 105, 0.05);
+}
+
+nav[aria-label="Mobile primary navigation"] > div {
+  border-color: rgba(255, 255, 255, 0.82) !important;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0.72), rgba(223, 239, 255, 0.58)) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.95), 0 18px 42px rgba(28, 57, 94, 0.2) !important;
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+nav[aria-label="Mobile primary navigation"] button {
+  color: #4b5871;
+}
+
+nav[aria-label="Mobile primary navigation"] button > span:first-child {
+  border-color: rgba(255, 255, 255, 0.82) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.88), 0 8px 20px rgba(31, 53, 83, 0.1) !important;
+  color: #17254a !important;
+  backdrop-filter: blur(16px);
+}
+
+nav[aria-label="Mobile primary navigation"] button[aria-current="page"],
+nav[aria-label="Mobile primary navigation"] button[aria-expanded="true"] {
+  color: #a55d00;
+}
+
+nav[aria-label="Mobile primary navigation"] button[aria-current="page"] > span:first-child,
+nav[aria-label="Mobile primary navigation"] button[aria-expanded="true"] > span:first-child {
+  border-color: rgba(255, 251, 234, 0.95) !important;
+  background: linear-gradient(145deg, #ffd878, #f6a81b) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.95), 0 10px 24px rgba(232, 159, 33, 0.35) !important;
+  color: #372109 !important;
+}
+
+@media (max-width: 767px) {
+  #root > div > header,
+  #root > div > header + div {
+    display: none;
+  }
+
+  #root > div > main {
+    padding: 0;
+  }
+
+  #root > div > main .min-h-screen {
+    min-height: 100dvh;
+    padding-top: 0.75rem;
+    background:
+      radial-gradient(circle at 92% 0%, rgba(255, 207, 117, 0.42), transparent 20rem),
+      radial-gradient(circle at 4% 48%, rgba(193, 224, 255, 0.52), transparent 24rem),
+      linear-gradient(148deg, #edf5ff 0%, #f8fafc 43%, #fff6e5 100%) !important;
+  }
+
+  .compact-ledger-shell > main::before {
+    content: "BAKERY ERP  ·  DAILY LEDGER";
+    display: block;
+    margin: 0.15rem 1rem 0.7rem;
+    color: #122247;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .compact-ledger-shell section > .flex.flex-wrap {
+    margin-inline: 0.3rem;
+    border-radius: 1.35rem;
+    padding: 0.7rem 0.8rem;
+  }
+
+  .compact-ledger-shell section > .flex.flex-col {
+    margin-inline: 0.3rem;
+    border-radius: 1.35rem;
+  }
+
+  .compact-ledger-shell div.bg-card.overflow-x-auto {
+    margin-inline: 0.3rem;
+    border-radius: 1.65rem;
+  }
+
+  .compact-ledger-shell table thead {
+    font-size: 0.66rem;
+  }
+
+  .compact-ledger-shell table td,
+  .compact-ledger-shell table th {
+    padding-top: 0.72rem;
+    padding-bottom: 0.72rem;
+  }
+
+  [data-slot="card"] {
+    border-color: rgba(255, 255, 255, 0.78);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(242, 248, 255, 0.62));
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.92), 0 16px 38px rgba(31, 57, 91, 0.1);
+    backdrop-filter: blur(20px) saturate(135%);
+    -webkit-backdrop-filter: blur(20px) saturate(135%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  nav[aria-label="Mobile primary navigation"] > div,
+  nav[aria-label="Mobile primary navigation"] button > span:first-child,
+  .compact-ledger-shell table input {
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1), background 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+}

@@ -91,6 +91,7 @@ function StockPanel({ department }: { department: "production" | "packaging" }) 
   const dailyImport = trpc.imports.applyProduction.useMutation({ onSuccess: result => { toast.success(`Imported ${result.rowCount} ${department} row(s).`); void rows.refetch(); }, onError: error => toast.error(error.message) });
   const [autoItemId, setAutoItemId] = useState<number | null>(null); const autoIssued = trpc.stock.autoIssued.useQuery({ stockDate: date, department, itemId: autoItemId ?? 0 }, { enabled: autoItemId !== null });
   useEffect(() => { draftsRef.current = {}; setDrafts({}); setItemQuery(""); }, [date, department]);
+  useEffect(() => { setDate(masterDate); }, [masterDate]);
   useEffect(() => () => { saveTimers.current.forEach(timer => clearTimeout(timer)); saveTimers.current.clear(); }, []); useEffect(() => { if (autoItemId !== null && autoIssued.data) { const autoValue = formatQuantity(autoIssued.data.autoIssued); scheduleSave(autoItemId, { issued: autoValue, manualIssued: false }); toast.success(`Auto Issued ${autoValue}`); setAutoItemId(null); } }, [autoItemId, autoIssued.data]);
   const rowFor = (item: NonNullable<typeof items.data>[number]) => {
     const row = rows.data?.find(entry => entry.itemId === item.id);
