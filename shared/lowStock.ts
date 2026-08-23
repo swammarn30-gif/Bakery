@@ -1,4 +1,4 @@
-import { calculateUsed, deriveSequentialStockRows } from "./calculations";
+import { calculateUsed, deriveSequentialStockRows } from "./calculations.js";
 
 export type LowStockItem = {
   id: number;
