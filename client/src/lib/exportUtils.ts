@@ -93,3 +93,7 @@ export function toDateGroupedExport(rows: ExportStockRow[], nameOf: (itemId: num
 export function departmentExportFilename(department: "production" | "packaging", from: string, to: string) {
   return `Bakery_${department}_${from}_to_${to}.xlsx`;
 }
+
+export function isDepartmentExportReady(hasDepartmentRows: boolean, hasItemMaster: boolean, isFetching: boolean) {
+  return hasDepartmentRows && hasItemMaster && !isFetching;
+}

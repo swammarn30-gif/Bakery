@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dateColumnsBetween, departmentExportFilename, toDateColumnExportRows, toDateGroupedExport } from "./exportUtils";
+import { dateColumnsBetween, departmentExportFilename, isDepartmentExportReady, toDateColumnExportRows, toDateGroupedExport } from "./exportUtils";
 
 describe("department-specific date-column exports", () => {
   it("creates ordered date columns and preserves stock formulas", () => {
@@ -43,5 +43,12 @@ describe("department-specific date-column exports", () => {
     expect(grouped.rows[0]?.values["2026-08-01|Closing"]).toBe(88);
     expect(grouped.rows[1]?.item).toBe("Box");
     expect(grouped.rows[1]?.values["2026-08-02|Opening"]).toBe("");
+  });
+
+  it("blocks a department workbook until both query datasets are ready", () => {
+    expect(isDepartmentExportReady(false, true, false)).toBe(false);
+    expect(isDepartmentExportReady(true, false, false)).toBe(false);
+    expect(isDepartmentExportReady(true, true, true)).toBe(false);
+    expect(isDepartmentExportReady(true, true, false)).toBe(true);
   });
 });

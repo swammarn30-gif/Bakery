@@ -312,3 +312,7 @@
 
 - [x] Superseded: do not delete Production rows after 2026-08-09. The user clarified that daily records and automatic Opening values must remain.
 - [x] Clear only In, Issued, Return, and Damage for all Production dates after 2026-08-09 through the authenticated Website UI autosave path; preserve Opening, keep Packaging unchanged, and verify the cleared movements by date. Independent website-UI checks found zero non-zero movement rows on every Production date from 2026-08-10 through 2026-08-22; 41 automatic Opening values remain available on each checked date.
+
+- [x] Generate separate Website-UI Excel exports for Production and Packaging Opening/Closing histories, then audit formula correctness and Closing-to-next-day-Opening continuity across every exported date. Final ready-state Aug 1–22 exports contain 880 Production and 1,407 Packaging ledger records; all 2,287 formula checks and all 2,173 Closing-to-next-day-Opening checks passed with zero exceptions.
+- [x] Repair the discovered Website-UI history-export readiness defect: the Aug 1–22 Production and Packaging workbooks initially contained headers/items but blank data values because the transfer-page range queries were still loading. The Export buttons now remain disabled until the relevant department data and Item Master are ready; focused tests, TypeScript, and Vercel build pass.
+- [ ] Push and deploy the verified export-readiness fix to GitHub and Vercel, then confirm the live UI blocks premature downloads and exports populated history workbooks after loading completes.
