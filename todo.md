@@ -243,4 +243,6 @@
 - [x] Sync the verified latest ERP overhaul to GitHub `main` and confirm the connected Cloudflare build/deployment pipeline receives the new commit; Cloudflare Build history confirmed `main / 6add58b` succeeded. Later Vercel hosting became the selected target.
 - [x] Netlify hosting exploration superseded by the user’s later Vercel hosting decision; no Netlify deployment was performed.
 - [x] Adapt the latest Bakery ERP source for Vercel-compatible build, SPA routing, serverless API/auth behavior, and Supabase environment configuration; TypeScript, 83 Vitest tests, and Vercel production build pass; synchronized as GitHub commit `0308b73`.
-- [ ] Diagnose and fix Vercel production sign-in error `Unable to reach sign-in service`, then validate the secure Supabase Auth path after redeployment.
+- [x] Diagnose and fix Vercel production sign-in error `Unable to reach sign-in service`; corrected the Vercel Transaction Pooler database URL, redeployed, and verified live administrator login plus Dashboard data.
+- [x] Replace the Vercel `SUPABASE_DATABASE_URL` placeholder with the authorized Transaction Pooler URI, redeploy, and verify login plus database-backed auth.me.
+- [x] Replace the Vercel `SUPABASE_DATABASE_URL` placeholder with the authorized Transaction Pooler URI, redeploy, and verify login plus database-backed auth.me.
