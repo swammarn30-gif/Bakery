@@ -1,4 +1,4 @@
-import { signInWithSupabaseCredentials } from "../../server/passwordAuthCore";
+import { signInWithSupabaseCredentials } from "../../server/passwordAuthCore.js";
 
 type VercelRequest = { method?: string; body?: unknown };
 type VercelResponse = {

@@ -1,8 +1,8 @@
 import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { approvals, auditLog, dailyStock, items, purchases, saleShopLines, sales, shops, InsertUser, users } from "../drizzle/schema";
-import { ENV } from "./_core/env";
+import { approvals, auditLog, dailyStock, items, purchases, saleShopLines, sales, shops, InsertUser, users } from "../drizzle/schema.js";
+import { ENV } from "./_core/env.js";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 let _client: ReturnType<typeof postgres> | null = null;

@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { getUserByOpenId, upsertUser } from "./db";
+import { getUserByOpenId, upsertUser } from "./db.js";
 
 type SupabaseRuntimeConfig = {
   supabaseUrl?: string;

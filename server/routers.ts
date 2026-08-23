@@ -1,12 +1,12 @@
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
-import { systemRouter } from "./_core/systemRouter";
-import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { COOKIE_NAME } from "../shared/const.js";
+import { getSessionCookieOptions } from "./_core/cookies.js";
+import { systemRouter } from "./_core/systemRouter.js";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc.js";
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
-import { approvals, dailyStock, items, purchases, saleShopLines, sales, shops, getDb, listDailyStock, listItems, listPendingApprovals, listPurchases, listSales, listShops, writeAudit } from "./db";
-import { orders, recipes, recipeLines, stockAdjustments, importBatches } from "../drizzle/schema";
+import { approvals, dailyStock, items, purchases, saleShopLines, sales, shops, getDb, listDailyStock, listItems, listPendingApprovals, listPurchases, listSales, listShops, writeAudit } from "./db.js";
+import { orders, recipes, recipeLines, stockAdjustments, importBatches } from "../drizzle/schema.js";
 import { z } from "zod";
-import { calculateClosing, calculateUsed, migrateBackupSnapshot, normalizeDateRange, normalizePurchase, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations";
+import { calculateClosing, calculateUsed, migrateBackupSnapshot, normalizeDateRange, normalizePurchase, sumShopQuantities, validateBackupSnapshot, validateImportRows, weightedAverageCost } from "../shared/calculations.js";
 
 const dateRange = z.object({ from: z.string(), to: z.string() }).transform(v => normalizeDateRange(v.from, v.to));
 const numeric = z.coerce.number().finite();

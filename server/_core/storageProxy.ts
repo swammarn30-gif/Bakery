@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { ENV } from "./env";
+import { ENV } from "./env.js";
 
 async function getSignedStorageUrl(key: string): Promise<string | null> {
   if (!ENV.forgeApiUrl || !ENV.forgeApiKey) return null;

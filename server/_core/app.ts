@@ -1,9 +1,9 @@
 import express, { type Request, type Response } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerStorageProxy } from "./storageProxy";
-import { appRouter } from "../routers";
-import { createContext } from "./context";
-import { signInWithSupabaseCredentials } from "../passwordAuthCore";
+import { registerStorageProxy } from "./storageProxy.js";
+import { appRouter } from "../routers.js";
+import { createContext } from "./context.js";
+import { signInWithSupabaseCredentials } from "../passwordAuthCore.js";
 
 export function createExpressApp() {
   const app = express();
