@@ -241,3 +241,5 @@
 - [x] Complete an end-to-end audit of frontend, Supabase, tRPC, Worker/server, database, environment, build, and deployment code to identify the mobile Login timeout root cause.
 - [x] Redesign the confirmed ledger workflow: remove excess shell space, match the reference spreadsheet table, normalize `400.000` display, keep Issued manually editable after auto-fill, restore Order-to-Issued automation, and restore cascading Closing-to-Opening carry-forward; added synthesized daily rows for unsaved order-driven materials and 3 formatting regression tests.
 - [ ] Sync the verified latest ERP overhaul to GitHub `main` and confirm the connected Cloudflare build/deployment pipeline receives the new commit.
+- [ ] Adapt the latest Bakery ERP source for Netlify-compatible build/routing/server behavior, validate auth/API/Supabase boundaries, and prepare the GitHub/Netlify hosting handoff.
+- [ ] Adapt the latest Bakery ERP source for Vercel-compatible build, SPA routing, serverless API/auth behavior, and Supabase environment configuration; validate before hosting handoff.
