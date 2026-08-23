@@ -21,6 +21,7 @@ describe("imports.applyProduction", () => {
     expect(result.rowCount).toBe(1);
     expect(state.inserts).toHaveLength(2);
     expect(state.inserts[0]).toMatchObject({ filename: "daily.xlsx", status: "applied", rowCount: 1 });
+    expect(state.inserts[1]).toMatchObject({ stockDate: "2026-08-18", issued: "1", manualIssued: true, autoIssued: null });
     expect(state.audits).toBe(1);
   });
 
