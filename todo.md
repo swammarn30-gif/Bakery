@@ -297,3 +297,5 @@
 - [x] Add the user-approved source Packaging item `16×24 pcs` through the destination Item Master Website UI, then verify it is available only for Packaging Aug 21 ledger entry. Created as an active Packaging material with pcs base unit; destination Dashboard item count increased from 114 to 115 after refresh.
 - [x] Fix automatic carry-forward so correcting a prior day through the Website UI updates later-day automatic Opening values to the prior Closing, then verify this live before resuming later-date correction. Verified live after the Aug 1 S Closing of 737 became Aug 2 S Opening 737; all Packaging Aug 2 source rows then had zero Opening mismatches.
 - [x] Fix the daily-ledger multi-field autosave path so a Website UI row edit persists the complete latest draft rather than reverting on a date reload. Deployed GitHub commit b204161 with a complete-draft ref-backed save queue and regression test; live Packaging Aug 1 and Aug 2 data persisted across a clean deployment reload.
+
+- [ ] Diagnose and fix the mobile Packaging ledger remaining on the loading skeleton after selecting a date, and verify that real rows render reliably on the live Vercel site.
