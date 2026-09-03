@@ -1,0 +1,25 @@
+{
+  "name": "Bakery ERP",
+  "short_name": "Bakery ERP",
+  "description": "Mobile-first bakery production, packaging, purchasing, and stock control.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0d172a",
+  "background_color": "#eef6ff",
+  "icons": [
+    {
+      "src": "/manus-storage/bakery-pwa-icon-concept-1_29308bd3.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/manus-storage/bakery-pwa-icon-concept-1_29308bd3.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

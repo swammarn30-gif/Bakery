@@ -335,3 +335,7 @@
 
 - [x] Diagnose and repair the reported live Vercel Supabase Sign In failure before proceeding with the approved Liquid Glass UI redesign. Vercel production logs identified an ESM module-resolution crash in `shared/lowStock`; GitHub commit `2852cb7` / deployment `dpl_Hq49azB8DDJhSpTosbkUmq8M1k6c` is READY, and a clean production password-sign-in test reached the Administrator dashboard.
 - [x] After stable live sign-in is verified, apply the user-approved icon-free iPhone-inspired Liquid Glass style to the mobile ERP shell while preserving the spreadsheet-style Production and Packaging ledgers. The live Production table, date-scoped search/import/export controls, desktop shell, formulas, autosave, and mobile primary-navigation behavior remain intact; GitHub commit `61fae9d` is Vercel deployment `dpl_7Z12RXzuL7qu4yGjzT8uCb4Jxsa7` (READY).
+
+- [ ] Use selected Liquid Glass PWA icon Concept 1 (Bread + Wheat) in the installable app manifest and favicon metadata.
+- [ ] Repair Date Range Export/Import so Production and Packaging files contain the correct rows, dates, departments, and derived ledger values.
+- [ ] Add a Report-page Export button that exports the currently selected item, department, and date range using the visible report columns and totals.

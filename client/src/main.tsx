@@ -6,9 +6,11 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getPersistedSupabaseAccessToken, supabase } from "./lib/supabase";
+import { registerPwaServiceWorker } from "./lib/pwa";
 import "./index.css";
 
 const queryClient = new QueryClient();
+registerPwaServiceWorker();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
