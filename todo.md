@@ -336,6 +336,10 @@
 - [x] Diagnose and repair the reported live Vercel Supabase Sign In failure before proceeding with the approved Liquid Glass UI redesign. Vercel production logs identified an ESM module-resolution crash in `shared/lowStock`; GitHub commit `2852cb7` / deployment `dpl_Hq49azB8DDJhSpTosbkUmq8M1k6c` is READY, and a clean production password-sign-in test reached the Administrator dashboard.
 - [x] After stable live sign-in is verified, apply the user-approved icon-free iPhone-inspired Liquid Glass style to the mobile ERP shell while preserving the spreadsheet-style Production and Packaging ledgers. The live Production table, date-scoped search/import/export controls, desktop shell, formulas, autosave, and mobile primary-navigation behavior remain intact; GitHub commit `61fae9d` is Vercel deployment `dpl_7Z12RXzuL7qu4yGjzT8uCb4Jxsa7` (READY).
 
-- [ ] Use selected Liquid Glass PWA icon Concept 1 (Bread + Wheat) in the installable app manifest and favicon metadata.
-- [ ] Repair Date Range Export/Import so Production and Packaging files contain the correct rows, dates, departments, and derived ledger values.
-- [ ] Add a Report-page Export button that exports the currently selected item, department, and date range using the visible report columns and totals.
+- [x] Use selected Liquid Glass PWA icon Concept 1 (Bread + Wheat) in the installable app manifest and favicon metadata; live Vercel manifest verification passed.
+- [x] Repair Date Range Export/Import so Production and Packaging files contain the correct rows, dates, departments, and derived ledger values; grouped workbooks now round-trip through a department-aware parser and sequential carry-forward export.
+- [x] Add a Report-page Export button that exports the currently selected item, department, and date range using the visible report columns and totals; live Report page verification passed.
+
+- [x] Add Purchase item-name search and separate Production/Packaging purchase workflows while preserving quantity-unit conversion, weighted costing, and purchase history behavior; live Purchase verification passed.
+- [x] Refine the overall Liquid Glass treatment across the ERP shell without adding the explicitly excluded total summary bar; spreadsheet-first ledgers and existing formulas remain preserved.
+- [x] Add PWA manifest, service worker, selected icon metadata, focused regression tests, TypeScript/build validation, GitHub sync, Vercel deployment, and live smoke verification. GitHub commit `e6cf03f` is deployed as Vercel `dpl_7deyk3eDhZJqGri8Wdqszb2qM4o4` (READY); 46 focused tests passed.
