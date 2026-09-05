@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { bakeryPwaManifest, selectedPwaIcon512Url, selectedPwaIconUrl } from "./pwa";
 
 describe("Bakery ERP PWA metadata", () => {
-  it("uses the selected Bread + Wheat icon at both install sizes", () => {
-    expect(selectedPwaIconUrl).toBe("https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/insgTjtUZpLvhhBE.png");
-    expect(selectedPwaIcon512Url).toBe("https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/HWoTzaPseshKFZgg.png");
+  it("uses same-origin selected Bread + Wheat icon endpoints at both install sizes", () => {
+    expect(selectedPwaIconUrl).toBe("/api/pwa/icon-192");
+    expect(selectedPwaIcon512Url).toBe("/api/pwa/icon-512");
     expect(bakeryPwaManifest.id).toBe("/");
     expect(bakeryPwaManifest.display).toBe("standalone");
     expect(bakeryPwaManifest.icons).toEqual([

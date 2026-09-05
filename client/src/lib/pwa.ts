@@ -1,5 +1,5 @@
-export const selectedPwaIconUrl = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/insgTjtUZpLvhhBE.png";
-export const selectedPwaIcon512Url = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/HWoTzaPseshKFZgg.png";
+export const selectedPwaIconUrl = "/api/pwa/icon-192";
+export const selectedPwaIcon512Url = "/api/pwa/icon-512";
 
 export const bakeryPwaManifest = {
   id: "/",
