@@ -8,8 +8,8 @@ describe("Bakery ERP PWA metadata", () => {
     expect(bakeryPwaManifest.id).toBe("/");
     expect(bakeryPwaManifest.display).toBe("standalone");
     expect(bakeryPwaManifest.icons).toEqual([
-      { src: selectedPwaIconUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-      { src: selectedPwaIcon512Url, sizes: "512x512", type: "image/png", purpose: "any maskable" },
+      { src: selectedPwaIconUrl, sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: selectedPwaIcon512Url, sizes: "512x512", type: "image/png", purpose: "any" },
     ]);
   });
 

@@ -13,8 +13,8 @@ export const bakeryPwaManifest = {
   theme_color: "#0d172a",
   background_color: "#eef6ff",
   icons: [
-    { src: selectedPwaIconUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-    { src: selectedPwaIcon512Url, sizes: "512x512", type: "image/png", purpose: "any maskable" },
+    { src: selectedPwaIconUrl, sizes: "192x192", type: "image/png", purpose: "any" },
+    { src: selectedPwaIcon512Url, sizes: "512x512", type: "image/png", purpose: "any" },
   ],
 } as const;
 
