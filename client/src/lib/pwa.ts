@@ -1,7 +1,8 @@
-export const selectedPwaIconUrl = "/manus-storage/bakery-pwa-icon-concept-1-192_aa2cf00a.png";
-export const selectedPwaIcon512Url = "/manus-storage/bakery-pwa-icon-concept-1-512_f84085c2.png";
+export const selectedPwaIconUrl = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/insgTjtUZpLvhhBE.png";
+export const selectedPwaIcon512Url = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/HWoTzaPseshKFZgg.png";
 
 export const bakeryPwaManifest = {
+  id: "/",
   name: "Bakery ERP",
   short_name: "Bakery ERP",
   description: "Mobile-first bakery production, packaging, purchasing, and stock control.",
@@ -19,7 +20,7 @@ export const bakeryPwaManifest = {
 
 export function registerPwaServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
-  void navigator.serviceWorker.register("/sw.js").catch(error => {
+  void navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(error => {
     console.warn("[PWA] Service worker registration failed", error);
   });
 }

@@ -3,8 +3,9 @@ import { bakeryPwaManifest, selectedPwaIcon512Url, selectedPwaIconUrl } from "./
 
 describe("Bakery ERP PWA metadata", () => {
   it("uses the selected Bread + Wheat icon at both install sizes", () => {
-    expect(selectedPwaIconUrl).toBe("/manus-storage/bakery-pwa-icon-concept-1-192_aa2cf00a.png");
-    expect(selectedPwaIcon512Url).toBe("/manus-storage/bakery-pwa-icon-concept-1-512_f84085c2.png");
+    expect(selectedPwaIconUrl).toBe("https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/insgTjtUZpLvhhBE.png");
+    expect(selectedPwaIcon512Url).toBe("https://files.manuscdn.com/user_upload_by_module/session_file/310519663502655784/HWoTzaPseshKFZgg.png");
+    expect(bakeryPwaManifest.id).toBe("/");
     expect(bakeryPwaManifest.display).toBe("standalone");
     expect(bakeryPwaManifest.icons).toEqual([
       { src: selectedPwaIconUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
