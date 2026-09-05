@@ -1,4 +1,5 @@
-export const selectedPwaIconUrl = "/manus-storage/bakery-pwa-icon-concept-1_29308bd3.png";
+export const selectedPwaIconUrl = "/manus-storage/bakery-pwa-icon-concept-1-192_aa2cf00a.png";
+export const selectedPwaIcon512Url = "/manus-storage/bakery-pwa-icon-concept-1-512_f84085c2.png";
 
 export const bakeryPwaManifest = {
   name: "Bakery ERP",
@@ -12,7 +13,7 @@ export const bakeryPwaManifest = {
   background_color: "#eef6ff",
   icons: [
     { src: selectedPwaIconUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-    { src: selectedPwaIconUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" },
+    { src: selectedPwaIcon512Url, sizes: "512x512", type: "image/png", purpose: "any maskable" },
   ],
 } as const;
 

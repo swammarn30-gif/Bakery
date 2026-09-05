@@ -343,3 +343,7 @@
 - [x] Add Purchase item-name search and separate Production/Packaging purchase workflows while preserving quantity-unit conversion, weighted costing, and purchase history behavior; live Purchase verification passed.
 - [x] Refine the overall Liquid Glass treatment across the ERP shell without adding the explicitly excluded total summary bar; spreadsheet-first ledgers and existing formulas remain preserved.
 - [x] Add PWA manifest, service worker, selected icon metadata, focused regression tests, TypeScript/build validation, GitHub sync, Vercel deployment, and live smoke verification. GitHub commit `e6cf03f` is deployed as Vercel `dpl_7deyk3eDhZJqGri8Wdqszb2qM4o4` (READY); 46 focused tests passed.
+
+- [ ] Diagnose why the live Vercel app offers only a browser shortcut instead of an installable PWA, including service-worker scope/registration, manifest criteria, icon delivery, and browser installability.
+- [ ] Fix the PWA installability path without intercepting Supabase authentication or tRPC/API requests, then verify the browser exposes an Install app action on the live app.
+- [ ] Add regression coverage, build checks, deployment verification, and a checkpoint for the PWA installability fix.

@@ -10,13 +10,13 @@
   "background_color": "#eef6ff",
   "icons": [
     {
-      "src": "/manus-storage/bakery-pwa-icon-concept-1_29308bd3.png",
+      "src": "/manus-storage/bakery-pwa-icon-concept-1-192_aa2cf00a.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/manus-storage/bakery-pwa-icon-concept-1_29308bd3.png",
+      "src": "/manus-storage/bakery-pwa-icon-concept-1-512_f84085c2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
