@@ -12,3 +12,7 @@ The final Vercel release `dpl_3QJZb9JgyPFrZsqB2qY6xgaV4wgX` is READY. Live `/api
 ## Authentication preservation check
 
 The live page remains on the Administrator dashboard and the browser has the expected Supabase session key `sb-npiifxjxwvxetanhbugk-auth-token`. A direct cookie-only `auth.me` probe returned `json:null` because the app’s tRPC client sends its bearer token from the Supabase session storage rather than relying on a cookie; this probe did not replace the app’s authenticated request path. The visible dashboard and stored session confirm that the PWA changes did not remove the session or alter the application auth flow.
+
+## Android error follow-up
+
+The user-provided screenshot showed Chrome’s Install row disabled with “This app cannot be installed.” The latest release `dpl_47MkUSkJY8kLgL4rQR1hBGhuM8uu` is READY. Its manifest returns `display: standalone`, root `start_url` and scope, and `purpose: any` icons. The live same-origin icon endpoints return HTTP 200 with real 192x192 and 512x512 PNGs. The service worker is versioned `bakery-erp-shell-v2`, has a GET fetch handler while excluding `/api/`, and is activated at the root scope in the browser. The sandbox browser reports no `beforeinstallprompt` event, so the Android browser’s own install UI still needs a fresh site-data/manifest evaluation on the user’s device; no automated tool here can click Android’s native Install action.
