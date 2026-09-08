@@ -351,3 +351,7 @@
 - [x] Diagnose the Android Chrome error shown in the user screenshot: “Install — This app cannot be installed.” The earlier icon/manifest state was stale or invalid for Android’s install evaluator.
 - [x] Fix any remaining Android installability criteria or response/header issue while preserving the authenticated ERP and API paths. Versioned service-worker cache, same-origin valid PNG proxy endpoints, `purpose: any` icons, standalone manifest, and root scope are live.
 - [x] Re-run live Android-oriented PWA checks, deploy, checkpoint, and document the exact install result and user steps. Deployment `dpl_47MkUSkJY8kLgL4rQR1hBGhuM8uu` is READY; live manifest/icon/service-worker checks pass. Native Android Install action remains device/browser controlled and requires a fresh site-data evaluation.
+
+- [ ] Diagnose intermittent production Supabase password Sign In timeouts across client request timing, Vercel API proxy, Supabase Auth, and session restoration.
+- [ ] Apply a targeted login stability fix without weakening authentication, changing ERP workflows, or removing Sign In.
+- [ ] Verify fresh login, repeated login, session restoration, protected ERP access, and production error behavior; deploy and checkpoint the fix.
