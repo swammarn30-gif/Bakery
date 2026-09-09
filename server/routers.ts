@@ -100,15 +100,11 @@ export const appRouter = router({
       if (!db) return [];
       const rows = await listDailyStock(input.department, input.from, input.to);
       const [orderRows, recipeRows, lineRows, itemRows, historyRows] = await Promise.all([
-        input.from === input.to
-          ? db.select().from(orders).where(lte(orders.orderDate, input.to))
-          : db.select().from(orders).where(and(gte(orders.orderDate, input.from), lte(orders.orderDate, input.to))),
+        db.select().from(orders).where(lte(orders.orderDate, input.to)),
         db.select().from(recipes).where(eq(recipes.active, true)),
         db.select().from(recipeLines),
         db.select().from(items),
-        input.from === input.to
-          ? db.select().from(dailyStock).where(and(eq(dailyStock.department, input.department), lte(dailyStock.stockDate, input.to))).orderBy(asc(dailyStock.stockDate))
-          : Promise.resolve([] as typeof rows),
+        db.select().from(dailyStock).where(and(eq(dailyStock.department, input.department), lte(dailyStock.stockDate, input.to))).orderBy(asc(dailyStock.stockDate)),
       ]);
       const isLedgerItem = (item: typeof itemRows[number]) => item.active && (input.department === "production" ? item.itemType === "raw_material" : item.itemType === "packaging_material");
       const recipesByFinishedItem = new Map<number, typeof recipeRows>();
@@ -136,7 +132,7 @@ export const appRouter = router({
       }
       const autoFor = (stockDate: string, itemId: number) => autoIssuedByDateAndItem.get(`${stockDate}:${itemId}`) ?? 0;
       const effectiveHistory = historyRows.map(row => ({ ...row, issued: row.manualIssued ? row.issued : String(autoFor(row.stockDate, row.itemId)) }));
-      const derivedHistory = input.from === input.to ? deriveSequentialStockRows(effectiveHistory) : [];
+      const derivedHistory = deriveSequentialStockRows(effectiveHistory);
       const derivedByKey = new Map(derivedHistory.map(entry => [`${entry.row.stockDate}:${entry.row.itemId}`, entry]));
       const previousClosing = (itemId: number) => [...derivedHistory].reverse().find(entry => entry.row.itemId === itemId && entry.row.stockDate < input.from)?.closing ?? 0;
       const existingByItem = new Map(rows.map(row => [row.itemId, row]));
@@ -146,7 +142,7 @@ export const appRouter = router({
         if (existing) return derived ? { ...existing, openingApproved: String(derived.opening) } : existing;
         return { stockDate: input.from, department: input.department, itemId: item.id, openingApproved: String(previousClosing(item.id)), inQty: "0", issued: "0", returnQty: "0", damage: "0", note: null, autoIssued: null, manualIssued: false } as const;
       }) : rows;
-      return baseRows.map(row => ({ ...row, autoIssued: String(autoFor(row.stockDate, row.itemId)) }));
+      return baseRows.map(row => { const derived = derivedByKey.get(`${row.stockDate}:${row.itemId}`); return { ...row, ...(derived ? { openingApproved: String(derived.opening), issued: String(derived.row.issued) } : {}), autoIssued: String(autoFor(row.stockDate, row.itemId)) }; });
     }),
     autoIssued: protectedProcedure.input(z.object({ stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int() })).query(async ({ input }) => {
       const db = await getDb();

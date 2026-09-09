@@ -13,7 +13,7 @@ const menuItems = [
   { icon: ClipboardList, label: "Workflows", path: "/" },
 ];
 
-const SIGN_IN_ATTEMPT_TIMEOUT_MS = 15000;
+const SIGN_IN_ATTEMPT_TIMEOUT_MS = 30000;
 
 export async function signInWithPasswordRetry<T extends { error: { message: string } | null }>(signIn: () => Promise<T>) {
   let lastError: unknown;
