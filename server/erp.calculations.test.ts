@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, deriveSequentialStockRows, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, resolveOpeningQuantity, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
+import { aggregateSaleRows, calculateClosing, calculateDepartmentIssued, calculateIssuedFromBom, deriveSequentialStockRows, normalizePurchase, toBaseQuantity, calculateSaleClosing, calculateUsed, carryForwardOpening, enforceSingleActiveRecipe, openingApprovalPresentation, applyRecipeEdit, parseRecipeLinesJson, recalculateSequentialOpenings, resolveIssuedQuantity, resolveOpeningQuantity, runningWeightedAverageCost, safeRecipeLinesUpdate, saleRowKey, selectEffectiveRecipe, selectStockRowByItem, sumShopQuantities, validateBackupSnapshot, validateImportRows, valueOf, weightedAverageCost } from "../shared/calculations";
 
 describe("ERP calculations", () => {
   it("uses the specified Production and Packaging Used formula", () => {
@@ -58,6 +58,15 @@ describe("ERP calculations", () => {
 
   it("carries forward the previous cost when the month has no purchases", () => {
     expect(weightedAverageCost([], 2333.333333)).toBeCloseTo(2333.333333);
+  });
+
+  it("updates the running average when a later purchase changes the current month cost", () => {
+    const rows = runningWeightedAverageCost([
+      { date: "2026-09-01", quantity: 100, unitCost: 10 },
+      { date: "2026-09-10", quantity: 100, unitCost: 20 },
+    ]);
+    expect(rows[0].averageCost).toBe(10);
+    expect(rows[1].averageCost).toBe(15);
   });
 
   it("keeps quantity and value separate", () => {

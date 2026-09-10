@@ -57,6 +57,18 @@ export function weightedAverageCost(purchases: Array<{ quantity: number; unitCos
   return value / quantity;
 }
 
+export function runningWeightedAverageCost<T extends { date: string; quantity: number; unitCost: number }>(rows: T[], carriedCost = 0) {
+  let quantity = 0;
+  let value = 0;
+  let averageCost = carriedCost;
+  return [...rows].sort((a, b) => a.date.localeCompare(b.date)).map(row => {
+    quantity += row.quantity;
+    value += row.quantity * row.unitCost;
+    averageCost = quantity > 0 ? value / quantity : averageCost;
+    return { ...row, averageCost };
+  });
+}
+
 export function valueOf(quantity: number, averageCost: number) {
   return quantity * averageCost;
 }

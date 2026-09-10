@@ -2,7 +2,7 @@ import { boolean, decimal, index, integer, pgEnum, pgTable, text, timestamp, uni
 
 export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 export const itemTypeEnum = pgEnum("item_type", ["raw_material", "packaging_material", "finished_good", "other"]);
-export const purchaseStatusEnum = pgEnum("purchase_status", ["draft", "approved"]);
+export const purchaseStatusEnum = pgEnum("purchase_status", ["draft", "approved", "cancelled"]);
 export const departmentEnum = pgEnum("department", ["production", "packaging"]);
 export const approvalEntityTypeEnum = pgEnum("approval_entity_type", ["opening", "stock_adjustment"]);
 export const approvalStatusEnum = pgEnum("approval_status", ["pending", "approved", "rejected"]);
@@ -56,6 +56,7 @@ export const dailyStock = pgTable("dailyStock", {
   openingApproved: decimal("openingApproved", { precision: 18, scale: 4 }).default("0").notNull(),
   openingPending: decimal("openingPending", { precision: 18, scale: 4 }),
   inQty: decimal("inQty", { precision: 18, scale: 4 }).default("0").notNull(),
+  purchaseInQty: decimal("purchaseInQty", { precision: 18, scale: 4 }).default("0").notNull(),
   issued: decimal("issued", { precision: 18, scale: 4 }).default("0").notNull(),
   autoIssued: decimal("autoIssued", { precision: 18, scale: 4 }),
   manualIssued: boolean("manualIssued").default(false).notNull(),

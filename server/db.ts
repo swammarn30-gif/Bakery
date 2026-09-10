@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { approvals, auditLog, dailyStock, items, purchases, saleShopLines, sales, shops, InsertUser, users } from "../drizzle/schema.js";
@@ -7,12 +7,24 @@ import { ENV } from "./_core/env.js";
 let _db: ReturnType<typeof drizzle> | null = null;
 let _client: ReturnType<typeof postgres> | null = null;
 let configuredConnectionString: string | undefined;
+let _purchaseWorkflowSchemaReady: Promise<void> | null = null;
 
 export function configureDatabase(connectionString: string | undefined) {
   if (!connectionString || configuredConnectionString === connectionString) return;
   configuredConnectionString = connectionString;
   _client = null;
   _db = null;
+  _purchaseWorkflowSchemaReady = null;
+}
+
+async function ensurePurchaseWorkflowSchema(db: ReturnType<typeof drizzle>) {
+  if (!_purchaseWorkflowSchemaReady) {
+    _purchaseWorkflowSchemaReady = (async () => {
+      try { await db.execute(sql.raw(`ALTER TYPE "purchase_status" ADD VALUE IF NOT EXISTS 'cancelled'`)); } catch (error) { console.warn("[Database] Purchase status compatibility update skipped:", error); }
+      try { await db.execute(sql.raw(`ALTER TABLE "dailyStock" ADD COLUMN IF NOT EXISTS "purchaseInQty" decimal(18,4) NOT NULL DEFAULT '0'`)); } catch (error) { console.warn("[Database] Purchase In compatibility update skipped:", error); }
+    })();
+  }
+  await _purchaseWorkflowSchemaReady;
 }
 
 export async function getDb() {
@@ -21,6 +33,7 @@ export async function getDb() {
     try {
       _client = postgres(connectionString, { prepare: false });
       _db = drizzle(_client);
+      await ensurePurchaseWorkflowSchema(_db);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _client = null;
