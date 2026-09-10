@@ -75,18 +75,25 @@ export async function signInWithPasswordRest(email: string, password: string, ti
   if (!url || !anonKey) return { data: null, error: { message: "Supabase Auth is not configured." } };
 
   const authEndpoint = `${url}/auth/v1/token?grant_type=password`;
-  const directTimeout = typeof window !== "undefined" ? Math.min(8000, timeoutMs) : timeoutMs;
-  const direct = await fetchAuthToken(authEndpoint, email, password, directTimeout, fetchImpl, { apikey: anonKey });
   let result: DirectSignInResult;
 
-  if (direct.response) {
-    result = await parseAuthResponse(direct.response);
-  } else if (typeof window !== "undefined" && isTransportFailure(direct)) {
-    const proxy = await fetchAuthToken("/api/auth/sign-in", email, password, Math.max(1000, timeoutMs - directTimeout), fetchImpl, { "x-supabase-url": url, apikey: anonKey });
-    if (proxy.response) result = await parseAuthResponse(proxy.response);
-    else result = { data: null, error: { message: isAbort(proxy.transportError) || isAbort(direct.transportError) ? "Sign in timed out. Check your connection and try again." : "Unable to reach sign-in service. Check your connection and try again." } };
+  if (typeof window !== "undefined") {
+    // Prefer same-origin Vercel proxy on mobile. Direct Supabase requests can
+    // stall until the browser's network state is toggled, while the proxy
+    // reaches Supabase from the server and avoids that connection issue.
+    const proxyTimeout = Math.min(10000, Math.max(4000, timeoutMs - 5000));
+    const proxy = await fetchAuthToken("/api/auth/sign-in", email, password, proxyTimeout, fetchImpl, { "x-supabase-url": url, apikey: anonKey });
+    if (proxy.response) {
+      result = await parseAuthResponse(proxy.response);
+    } else {
+      const direct = await fetchAuthToken(authEndpoint, email, password, Math.max(1000, timeoutMs - proxyTimeout), fetchImpl, { apikey: anonKey });
+      if (direct.response) result = await parseAuthResponse(direct.response);
+      else result = { data: null, error: { message: isAbort(proxy.transportError) || isAbort(direct.transportError) ? "Sign in timed out. Check your connection and try again." : "Unable to reach sign-in service. Check your connection and try again." } };
+    }
   } else {
-    result = { data: null, error: { message: isAbort(direct.transportError) ? "Sign in timed out. Check your connection and try again." : "Unable to reach sign-in service. Check your connection and try again." } };
+    const direct = await fetchAuthToken(authEndpoint, email, password, timeoutMs, fetchImpl, { apikey: anonKey });
+    if (direct.response) result = await parseAuthResponse(direct.response);
+    else result = { data: null, error: { message: isAbort(direct.transportError) ? "Sign in timed out. Check your connection and try again." : "Unable to reach sign-in service. Check your connection and try again." } };
   }
 
   if (result.data) {
