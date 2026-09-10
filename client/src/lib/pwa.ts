@@ -20,7 +20,7 @@ export const bakeryPwaManifest = {
 
 export function registerPwaServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
-  void navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(error => {
+  void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).catch(error => {
     console.warn("[PWA] Service worker registration failed", error);
   });
 }
