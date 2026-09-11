@@ -47,6 +47,10 @@ function isTransportFailure(result: AuthFetchResult) {
   return !result.response && result.transportError;
 }
 
+function isRetryableProxyResponse(response: Response) {
+  return response.status >= 500 && response.status <= 599;
+}
+
 async function parseAuthResponse(response: Response): Promise<DirectSignInResult> {
   let body: Record<string, unknown>;
   try {
@@ -83,7 +87,7 @@ export async function signInWithPasswordRest(email: string, password: string, ti
     // reaches Supabase from the server and avoids that connection issue.
     const proxyTimeout = Math.min(10000, Math.max(4000, timeoutMs - 5000));
     const proxy = await fetchAuthToken("/api/auth/sign-in", email, password, proxyTimeout, fetchImpl, { "x-supabase-url": url, apikey: anonKey });
-    if (proxy.response) {
+    if (proxy.response && !isRetryableProxyResponse(proxy.response)) {
       result = await parseAuthResponse(proxy.response);
     } else {
       const direct = await fetchAuthToken(authEndpoint, email, password, Math.max(1000, timeoutMs - proxyTimeout), fetchImpl, { apikey: anonKey });
@@ -118,4 +122,4 @@ export function getPersistedSupabaseAccessToken(storage: Storage | undefined = t
   }
 }
 
-export const __authTesting = { fetchAuthToken, parseAuthResponse };
+export const __authTesting = { fetchAuthToken, parseAuthResponse, isRetryableProxyResponse };

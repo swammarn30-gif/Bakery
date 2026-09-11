@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getPersistedSupabaseAccessToken, signInWithPasswordRest } from "./supabase";
+import { __authTesting, getPersistedSupabaseAccessToken, signInWithPasswordRest } from "./supabase";
 
 describe("getPersistedSupabaseAccessToken", () => {
   it("returns a valid non-expiring token", () => {
@@ -16,6 +16,11 @@ describe("getPersistedSupabaseAccessToken", () => {
 });
 
 describe("signInWithPasswordRest", () => {
+  it("treats proxy server failures as retryable", () => {
+    expect(__authTesting.isRetryableProxyResponse(new Response(null, { status: 504 }))).toBe(true);
+    expect(__authTesting.isRetryableProxyResponse(new Response(null, { status: 400 }))).toBe(false);
+  });
+
   it("returns the session from a successful Auth response", async () => {
     const result = await signInWithPasswordRest(" user@example.com ", "secret", 1000, async (_input, init) => {
       expect(init?.method).toBe("POST");
