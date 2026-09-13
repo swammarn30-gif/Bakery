@@ -179,10 +179,13 @@ type SequentialStockRow = {
 /** Derive the authoritative Opening/Closing chain without mutating persisted rows. */
 export function deriveSequentialStockRows<T extends SequentialStockRow>(rows: T[]) {
   const lastClosing = new Map<number, number>();
+  const lastMonth = new Map<number, string>();
   return [...rows].sort((a, b) => a.stockDate.localeCompare(b.stockDate) || a.itemId - b.itemId).map(row => {
-    const opening = lastClosing.has(row.itemId) ? lastClosing.get(row.itemId)! : Number(row.openingApproved ?? 0);
+    const month = row.stockDate.slice(0, 7);
+    const opening = lastClosing.has(row.itemId) && lastMonth.get(row.itemId) === month ? lastClosing.get(row.itemId)! : Number(row.openingApproved ?? 0);
     const closing = calculateClosing({ opening, inQty: Number(row.inQty ?? 0), issued: Number(row.issued ?? 0), returnQty: Number(row.returnQty ?? 0), damage: Number(row.damage ?? 0) });
     lastClosing.set(row.itemId, closing);
+    lastMonth.set(row.itemId, month);
     return { row, opening, closing };
   });
 }
