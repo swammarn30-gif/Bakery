@@ -119,6 +119,15 @@ describe("ERP calculations", () => {
     expect(rows.find(entry => entry.row.stockDate === "2026-01-01")?.closing).toBe(92);
     expect(rows.find(entry => entry.row.stockDate === "2026-01-03")?.opening).toBe(92);
   });
+  it("keeps Carry Forward within a month but starts a new month from its manual Opening", () => {
+    const rows = deriveSequentialStockRows([
+      { itemId: 7, stockDate: "2026-08-31", openingApproved: "100", inQty: "0", issued: "10", returnQty: "0", damage: "0" },
+      { itemId: 7, stockDate: "2026-09-01", openingApproved: "50", inQty: "0", issued: "5", returnQty: "0", damage: "0" },
+      { itemId: 7, stockDate: "2026-09-02", openingApproved: "0", inQty: "0", issued: "5", returnQty: "0", damage: "0" },
+    ]);
+    expect(rows.find(entry => entry.row.stockDate === "2026-09-01")?.opening).toBe(50);
+    expect(rows.find(entry => entry.row.stockDate === "2026-09-02")?.opening).toBe(45);
+  });
   it("keeps a manual Issued value while automatic Issued can refresh independently", () => {
     expect(resolveIssuedQuantity(40, 17, true)).toBe(17);
     expect(resolveIssuedQuantity(55, 17, false)).toBe(55);
