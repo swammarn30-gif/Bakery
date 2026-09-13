@@ -145,7 +145,7 @@ export const appRouter = router({
       const effectiveHistory = historyRows.map(row => ({ ...row, issued: row.manualIssued ? row.issued : String(autoFor(row.stockDate, row.itemId)) }));
       const derivedHistory = deriveSequentialStockRows(effectiveHistory);
       const derivedByKey = new Map(derivedHistory.map(entry => [`${entry.row.stockDate}:${entry.row.itemId}`, entry]));
-      const previousClosing = (itemId: number) => [...derivedHistory].reverse().find(entry => entry.row.itemId === itemId && entry.row.stockDate < input.from)?.closing ?? 0;
+      const previousClosing = (itemId: number) => [...derivedHistory].reverse().find(entry => entry.row.itemId === itemId && entry.row.stockDate < input.from && entry.row.stockDate.slice(0, 7) === input.from.slice(0, 7))?.closing ?? 0;
       const existingByItem = new Map(rows.map(row => [row.itemId, row]));
       const baseRows = input.from === input.to ? itemRows.filter(isLedgerItem).map(item => {
         const existing = existingByItem.get(item.id);
@@ -153,7 +153,7 @@ export const appRouter = router({
         if (existing) return derived ? { ...existing, openingApproved: String(derived.opening) } : existing;
         return { stockDate: input.from, department: input.department, itemId: item.id, openingApproved: String(previousClosing(item.id)), inQty: "0", issued: "0", returnQty: "0", damage: "0", note: null, autoIssued: null, manualIssued: false } as const;
       }) : rows;
-      return baseRows.map(row => { const derived = derivedByKey.get(`${row.stockDate}:${row.itemId}`); return { ...row, ...(derived ? { openingApproved: String(derived.opening), issued: String(derived.row.issued) } : {}), autoIssued: String(autoFor(row.stockDate, row.itemId)) }; });
+      return baseRows.map(row => { const derived = derivedByKey.get(`${row.stockDate}:${row.itemId}`); const priorSameMonth = [...derivedHistory].reverse().find(entry => entry.row.itemId === row.itemId && entry.row.stockDate < row.stockDate && entry.row.stockDate.slice(0, 7) === row.stockDate.slice(0, 7)); const carriedOpening = priorSameMonth?.closing; const shouldCarry = row.stockDate.slice(8) !== "01" && carriedOpening !== undefined && Number(derived?.opening ?? row.openingApproved ?? 0) === 0 && carriedOpening !== 0; return { ...row, ...(derived ? { openingApproved: String(shouldCarry ? carriedOpening : derived.opening), issued: String(derived.row.issued) } : carriedOpening !== undefined ? { openingApproved: String(carriedOpening) } : {}), autoIssued: String(autoFor(row.stockDate, row.itemId)) }; });
     }),
     autoIssued: protectedProcedure.input(z.object({ stockDate: z.string(), department: z.enum(["production", "packaging"]), itemId: z.number().int() })).query(async ({ input }) => {
       const db = await getDb();
