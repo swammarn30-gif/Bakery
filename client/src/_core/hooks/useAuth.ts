@@ -24,7 +24,7 @@ export function useAuth(options?: UseAuthOptions) {
     let mounted = true;
     const sessionWithTimeout = Promise.race([
       supabase.auth.getSession(),
-      new Promise<{ data: { session: null } }>(resolve => window.setTimeout(() => resolve({ data: { session: null } }), 5000)),
+      new Promise<{ data: { session: null } }>(resolve => window.setTimeout(() => resolve({ data: { session: null } }), 1500)),
     ]);
     sessionWithTimeout.then(({ data }) => {
       if (mounted) { setHasSession(Boolean(data.session?.access_token)); setSessionReady(true); }
@@ -57,7 +57,7 @@ export function useAuth(options?: UseAuthOptions) {
 
   const state = useMemo(() => ({
     user: meQuery.data ?? null,
-    loading: !sessionReady || meQuery.isLoading || logoutMutation.isPending,
+    loading: !sessionReady || (hasSession && meQuery.isLoading) || logoutMutation.isPending,
     error: meQuery.error ?? logoutMutation.error ?? null,
     isAuthenticated: Boolean(meQuery.data),
   }), [meQuery.data, meQuery.error, meQuery.isLoading, logoutMutation.error, logoutMutation.isPending, sessionReady]);

@@ -123,7 +123,7 @@ function PurchasePanel() {
   const { masterDate } = useMasterDate();
   const items = trpc.items.list.useQuery(undefined, pageQueryOptions);
   const purchases = trpc.purchases.list.useQuery({ from: "2000-01-01", to: "2999-12-31" }, pageQueryOptions);
-  const create = trpc.purchases.create.useMutation({ onSuccess: () => { toast.success("Purchase recorded and added to Stock In"); purchases.refetch(); }, onError: e => toast.error(e.message) });
+  const create = trpc.purchases.create.useMutation({ onSuccess: () => { setItemId(""); setItemSearch(""); setQuantity(""); setTotalValue(""); setSupplier(""); setQuantityUnit(purchaseDepartment === "packaging" ? "pcs" : "kg"); toast.success("Purchase recorded and added to Stock In"); void purchases.refetch(); }, onError: e => toast.error(e.message) });
   const cancel = trpc.purchases.cancel.useMutation({ onSuccess: () => { toast.success("Purchase cancelled and Stock In reversed"); purchases.refetch(); }, onError: e => toast.error(e.message) });
   const [purchaseDate, setPurchaseDate] = useState(masterDate);
   const [purchaseDepartment, setPurchaseDepartment] = useState<"production" | "packaging">("production");
@@ -149,8 +149,8 @@ function PurchasePanel() {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><CardTitle className="text-base">Record {purchaseDepartment === "production" ? "Production" : "Packaging"} purchase</CardTitle><p className="text-sm text-muted-foreground">Search the active department’s items before recording stock.</p></div>
             <div className="flex rounded-xl border border-white/80 bg-white/65 p-1 shadow-sm backdrop-blur-xl">
-              <Button type="button" size="sm" variant={purchaseDepartment === "production" ? "default" : "ghost"} onClick={() => { setPurchaseDepartment("production"); setItemId(""); setItemSearch(""); }}>Production</Button>
-              <Button type="button" size="sm" variant={purchaseDepartment === "packaging" ? "default" : "ghost"} onClick={() => { setPurchaseDepartment("packaging"); setItemId(""); setItemSearch(""); }}>Packaging</Button>
+              <Button type="button" size="sm" variant={purchaseDepartment === "production" ? "default" : "ghost"} onClick={() => { setPurchaseDepartment("production"); setItemId(""); setItemSearch(""); setQuantityUnit("kg"); }}>Production</Button>
+              <Button type="button" size="sm" variant={purchaseDepartment === "packaging" ? "default" : "ghost"} onClick={() => { setPurchaseDepartment("packaging"); setItemId(""); setItemSearch(""); setQuantityUnit("pcs"); }}>Packaging</Button>
             </div>
           </div>
         </CardHeader>
@@ -159,7 +159,7 @@ function PurchasePanel() {
           <div className="lg:col-span-2"><Label>Search item</Label><div className="flex items-center gap-2 rounded-xl border border-white/80 bg-white/70 px-3 shadow-inner"><Search className="h-4 w-4 shrink-0 text-slate-500" /><Input value={itemSearch} onChange={e => { setItemSearch(e.target.value); setItemId(""); }} placeholder={`Search ${purchaseDepartment} item…`} aria-label={`Search ${purchaseDepartment} purchase items`} className="h-10 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0" /></div></div>
           <div className="lg:col-span-2"><Label>Item</Label><Select value={itemId} onValueChange={setItemId}><SelectTrigger><SelectValue placeholder={purchaseItems.length ? "Choose searched item" : "No matching items"} /></SelectTrigger><SelectContent>{purchaseItems.map(item => <SelectItem key={item.id} value={String(item.id)}>{item.name} ({item.unit})</SelectItem>)}</SelectContent></Select></div>
           <div><Label>Quantity</Label><Input inputMode="decimal" value={quantity} onChange={e => setQuantity(e.target.value)} /></div>
-          <div><Label>Unit</Label><Select value={quantityUnit} onValueChange={value => setQuantityUnit(value as typeof quantityUnit)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kg">Kg</SelectItem><SelectItem value="g">g</SelectItem><SelectItem value="viss">Viss (1 = 1600g)</SelectItem><SelectItem value="pcs">pcs</SelectItem></SelectContent></Select></div>
+          {purchaseDepartment === "production" ? <div><Label>Unit</Label><div className="flex h-10 items-center gap-1 rounded-xl border border-white/80 bg-white/70 p-1"><Button type="button" size="sm" variant={quantityUnit === "kg" ? "default" : "ghost"} onClick={() => setQuantityUnit("kg")}>Kg</Button><Button type="button" size="sm" variant={quantityUnit === "g" ? "default" : "ghost"} onClick={() => setQuantityUnit("g")}>G</Button><Button type="button" size="sm" variant={quantityUnit === "viss" ? "default" : "ghost"} onClick={() => setQuantityUnit("viss")}>Viss</Button></div></div> : <div><Label>Unit</Label><Input value="Pcs" readOnly className="bg-slate-100/80" /></div>}
           <div><Label>Total purchase value</Label><Input inputMode="decimal" value={totalValue} onChange={e => setTotalValue(e.target.value)} placeholder="e.g. 1500000" /></div>
           <div><Label>Supplier</Label><Input value={supplier} onChange={e => setSupplier(e.target.value)} /></div>
           <Button className="sm:col-span-2 lg:col-span-6" disabled={!itemId || !quantity || !totalValue || create.isPending} onClick={() => create.mutate({ purchaseDate, itemId: Number(itemId), quantity: Number(quantity), quantityUnit, totalValue: Number(totalValue), supplier })}>Save {purchaseDepartment} purchase</Button>
